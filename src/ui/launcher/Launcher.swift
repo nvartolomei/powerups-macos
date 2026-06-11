@@ -35,8 +35,16 @@ class Launcher {
     }
 
     static func matchingApps(_ query: String) -> [LauncherApp] {
-        guard !query.isEmpty else { return [] }
-        return Array(appsCache.lazy.filter { $0.name.localizedCaseInsensitiveContains(query) }.prefix(maxResults))
+        let normalized = LauncherSearch.normalizedQuery(query)
+        guard !normalized.isEmpty else { return [] }
+        var matches = [(rank: Int, app: LauncherApp)]()
+        for app in appsCache {
+            if let rank = LauncherSearch.matchRank(normalized, app.words, app.lowercasedName) {
+                matches.append((rank, app))
+            }
+        }
+        matches.sort { $0.rank == $1.rank ? $0.app.name.localizedCaseInsensitiveCompare($1.app.name) == .orderedAscending : $0.rank < $1.rank }
+        return matches.prefix(maxResults).map { $0.app }
     }
 
     static func open(_ app: LauncherApp) {
@@ -71,7 +79,7 @@ class Launcher {
                 if url.lastPathComponent.hasPrefix(".") {
                     enumerator.skipDescendants()
                 } else if url.pathExtension == "app" {
-                    apps.append(LauncherApp(url: url, name: url.deletingPathExtension().lastPathComponent))
+                    apps.append(LauncherApp(url, url.deletingPathExtension().lastPathComponent))
                     enumerator.skipDescendants()
                 } else if enumerator.level >= 2 {
                     enumerator.skipDescendants()
@@ -85,4 +93,13 @@ class Launcher {
 struct LauncherApp {
     let url: URL
     let name: String
+    let lowercasedName: String
+    let words: [[Character]]
+
+    init(_ url: URL, _ name: String) {
+        self.url = url
+        self.name = name
+        lowercasedName = name.lowercased()
+        words = LauncherSearch.humpWords(name)
+    }
 }

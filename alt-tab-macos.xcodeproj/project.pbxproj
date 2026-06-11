@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF0C8E10AB12CD34EF560008 /* LauncherSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560006 /* LauncherSearch.swift */; };
+		BF0C8E10AB12CD34EF560009 /* LauncherSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560006 /* LauncherSearch.swift */; };
+		BF0C8E10AB12CD34EF56000A /* LauncherSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560007 /* LauncherSearchTests.swift */; };
 		BF0C8E10AB12CD34EF560004 /* Launcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560002 /* Launcher.swift */; };
 		BF0C8E10AB12CD34EF560005 /* LauncherPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */; };
 		1C96101BC5817A7F85FA1F8D /* titles_show_running_applications_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961F57248D4E2377A9038E /* titles_show_running_applications_light@2x.jpg */; };
@@ -307,6 +310,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BF0C8E10AB12CD34EF560006 /* LauncherSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherSearch.swift; sourceTree = "<group>"; };
+		BF0C8E10AB12CD34EF560007 /* LauncherSearchTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherSearchTests.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF560002 /* Launcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Launcher.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherPanel.swift; sourceTree = "<group>"; };
 		1C961003A0D16B9AE3932B3F /* thumbnails_show_colored_circles_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "thumbnails_show_colored_circles_light@2x.jpg"; sourceTree = "<group>"; };
@@ -844,6 +849,7 @@
 				BF0C84933936C6FE676CD33C /* AppearanceTests.swift */,
 				BF0C899905524253DC170B56 /* KeyboardEventsTests.swift */,
 				BF0CAAAA0000000000000001 /* SearchAcronymTests.swift */,
+				BF0C8E10AB12CD34EF560007 /* LauncherSearchTests.swift */,
 				BF0C829EAA93A4C4ADB42CF8 /* Mocks.swift */,
 				BF0C855CD9DBCAEFE48F9EA5 /* AXUIElementTests.swift */,
 				BF0C854910CCD4FB493C3A5D /* ImageScalingTests.swift */,
@@ -1162,6 +1168,7 @@
 			isa = PBXGroup;
 			children = (
 				BF0C8E10AB12CD34EF560002 /* Launcher.swift */,
+				BF0C8E10AB12CD34EF560006 /* LauncherSearch.swift */,
 				BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */,
 			);
 			path = launcher;
@@ -1741,6 +1748,8 @@
 				BF0C8F9B8014AD21E68B1349 /* HelperExtensionsTestable.swift in Sources */,
 				BF0C8CEBBC2E851D16FF4757 /* CustomRecorderControlTests.swift in Sources */,
 				BF0C87B5EDCFC573CE220137 /* Helpers.swift in Sources */,
+				BF0C8E10AB12CD34EF560009 /* LauncherSearch.swift in Sources */,
+				BF0C8E10AB12CD34EF56000A /* LauncherSearchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1850,6 +1859,7 @@
 				BF0C8F8F1B7A3C4D5E6F7082 /* ContextMenuEvents.swift in Sources */,
 				BF0C8E10AB12CD34EF560004 /* Launcher.swift in Sources */,
 				BF0C8E10AB12CD34EF560005 /* LauncherPanel.swift in Sources */,
+				BF0C8E10AB12CD34EF560008 /* LauncherSearch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
