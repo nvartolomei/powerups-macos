@@ -63,7 +63,7 @@ class Launcher {
             DispatchQueue.main.async {
                 appsCache = apps
                 if LauncherPanel.shared.isVisible {
-                    LauncherPanel.shared.updateResults()
+                    LauncherPanel.shared.updateResults(force: true)
                 }
             }
         }
@@ -95,11 +95,14 @@ struct LauncherApp {
     let name: String
     let lowercasedName: String
     let words: [[Character]]
+    let icon: NSImage
 
+    /// called on a background thread: cold icon loads hit the disk and would block the main thread on first render
     init(_ url: URL, _ name: String) {
         self.url = url
         self.name = name
         lowercasedName = name.lowercased()
         words = LauncherSearch.humpWords(name)
+        icon = NSWorkspace.shared.icon(forFile: url.path)
     }
 }

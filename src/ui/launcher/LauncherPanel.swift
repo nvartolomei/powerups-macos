@@ -13,6 +13,9 @@ class LauncherPanel: NSPanel {
     private var results = [LauncherApp]()
     private var selectedIndex = 0
     private var topY = CGFloat(0)
+    private var lastRenderedQuery: String?
+    private var pendingRender: DispatchWorkItem?
+    private static let renderDelay = DispatchTimeInterval.milliseconds(50)
 
     convenience init() {
         self.init(contentRect: .zero, styleMask: .nonactivatingPanel, backing: .buffered, defer: false)
@@ -55,7 +58,18 @@ class LauncherPanel: NSPanel {
     }
 
     @objc private func searchFieldChanged() {
-        updateResults()
+        scheduleUpdateResults()
+    }
+
+    /// debounce: render once the query settles, so fast bursts of keystrokes don't render intermediate results
+    private func scheduleUpdateResults() {
+        pendingRender?.cancel()
+        let render = DispatchWorkItem { [weak self] in
+            guard let self, self.isVisible else { return }
+            self.updateResults()
+        }
+        pendingRender = render
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.renderDelay, execute: render)
     }
 
     func show() {
@@ -63,7 +77,7 @@ class LauncherPanel: NSPanel {
         Appearance.update()
         updateAppearance()
         searchField.stringValue = ""
-        updateResults()
+        updateResults(force: true)
         repositionOnPreferredScreen()
         alphaValue = 1
         makeKeyAndOrderFront(nil)
@@ -84,10 +98,15 @@ class LauncherPanel: NSPanel {
         Launcher.hide()
     }
 
-    func updateResults() {
-        results = Launcher.matchingApps(searchField.stringValue)
+    /// the search field reports edits through both its action and controlTextDidChange; we render a given query once
+    func updateResults(force: Bool = false) {
+        pendingRender?.cancel()
+        let query = searchField.stringValue
+        if !force && query == lastRenderedQuery { return }
+        lastRenderedQuery = query
+        results = Launcher.matchingApps(query)
         selectedIndex = 0
-        layoutContents()
+        caTransaction { layoutContents() }
     }
 
     private func layoutContents() {
@@ -128,14 +147,15 @@ class LauncherPanel: NSPanel {
 
 extension LauncherPanel: NSSearchFieldDelegate {
     func controlTextDidChange(_ notification: Notification) {
-        updateResults()
+        scheduleUpdateResults()
     }
 
+    /// a coalesced render may still be pending; updateResults is deduplicated, so flushing it first is cheap
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         if commandSelector == #selector(NSResponder.cancelOperation(_:)) { Launcher.hide(); return true }
-        if commandSelector == #selector(NSResponder.insertNewline(_:)) { openResult(selectedIndex); return true }
-        if commandSelector == #selector(NSResponder.moveUp(_:)) { cycleSelectedIndex(-1); return true }
-        if commandSelector == #selector(NSResponder.moveDown(_:)) { cycleSelectedIndex(1); return true }
+        if commandSelector == #selector(NSResponder.insertNewline(_:)) { updateResults(); openResult(selectedIndex); return true }
+        if commandSelector == #selector(NSResponder.moveUp(_:)) { updateResults(); cycleSelectedIndex(-1); return true }
+        if commandSelector == #selector(NSResponder.moveDown(_:)) { updateResults(); cycleSelectedIndex(1); return true }
         return false
     }
 }
@@ -178,7 +198,7 @@ private class LauncherRowView: NSView {
     }
 
     func updateContent(_ app: LauncherApp, _ selected: Bool) {
-        icon.image = NSWorkspace.shared.icon(forFile: app.url.path)
+        icon.image = app.icon
         label.stringValue = app.name
         label.textColor = Appearance.fontColor
         layoutRow()
