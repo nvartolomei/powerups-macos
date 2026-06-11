@@ -14,8 +14,6 @@ class GeneralTab {
                 menubarIconDropdown!,
                 menuIconShownToggle,
             ])
-        let language = TableGroupView.Row(leftTitle: NSLocalizedString("Language", comment: ""),
-            rightViews: [LabelAndControl.makeDropdown("language", LanguagePreference.allCases, extraAction: setLanguageCallback)])
         for i in 0..<MenubarIconPreference.allCases.count {
             let image = NSImage.initCopy("menubar-\(i)")
             image.isTemplate = i < 2
@@ -29,8 +27,6 @@ class GeneralTab {
         let table = TableGroupView(width: SettingsWindow.contentWidth)
         table.addRow(startAtLogin)
         table.addRow(menubarIcon)
-        table.addNewTable()
-        table.addRow(language)
         let exportButton = NSButton(title: NSLocalizedString("Export settings…", comment: ""), target: nil, action: nil)
         exportButton.onAction = { _ in exportSettings() }
         let importButton = NSButton(title: NSLocalizedString("Import settings…", comment: ""), target: nil, action: nil)
@@ -103,21 +99,4 @@ class GeneralTab {
         }
     }
 
-    static func setLanguageCallback(_ sender: NSControl) {
-        if Preferences.language == .systemDefault {
-            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
-        } else {
-            UserDefaults.standard.set([Preferences.language.appleLanguageCode!], forKey: "AppleLanguages")
-        }
-        // Inform the user that the app needs to restart to apply the language change
-        let alert = NSAlert()
-        alert.alertStyle = .informational
-        alert.messageText = NSLocalizedString("Language Change", comment: "")
-        alert.informativeText = NSLocalizedString("The application needs to restart to apply the language change.", comment: "")
-        alert.addButton(withTitle: NSLocalizedString("Restart Now", comment: ""))
-        alert.addButton(withTitle: NSLocalizedString("Later", comment: ""))
-        if alert.runModal() == .alertFirstButtonReturn {
-            App.restart()
-        }
-    }
 }

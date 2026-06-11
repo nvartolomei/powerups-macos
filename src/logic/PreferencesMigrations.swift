@@ -23,6 +23,8 @@ class PreferencesMigrations {
         for (version, migration) in [
             // the Thumbnails style was removed; appearanceStyle indexes shifted
             ("10.12.0", migrateAppearanceStyleAfterThumbnailsRemoval),
+            // all localizations except English were removed; clear any forced language
+            ("10.12.0", removeForcedLanguage),
             ("10.2.0", migrateBlacklistToExceptions),
             ("9.0.0", migrateShortcutIndexes),
             ("7.27.0", migrateCursorFollowFocus),
@@ -57,6 +59,11 @@ class PreferencesMigrations {
     private static func shouldRun(_ versionInPlist: String, _ versionThreshold: String) -> Bool {
         // x.compare(y) is .orderedDescending if x > y
         versionInPlist.compare(versionThreshold, options: .numeric) != .orderedDescending
+    }
+
+    private static func removeForcedLanguage() {
+        UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        UserDefaults.standard.removeObject(forKey: "language")
     }
 
     private static func migrateAppearanceStyleAfterThumbnailsRemoval() {

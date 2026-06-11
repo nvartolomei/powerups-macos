@@ -36,7 +36,6 @@ class Preferences {
             "startAtLogin": "true",
             "menubarIcon": MenubarIconPreference.outlined.indexAsString,
             "menubarIconShown": "true",
-            "language": LanguagePreference.systemDefault.indexAsString,
             "exceptions": defaultExceptions(),
             "hideAppBadges": "false",
             "hideSpaceNumberLabels": "false",
@@ -129,7 +128,6 @@ class Preferences {
     static var shortcutStyle: ShortcutStylePreference { CachedUserDefaults.macroPref("shortcutStyle", ShortcutStylePreference.allCases) }
     static var menubarIcon: MenubarIconPreference { CachedUserDefaults.macroPref("menubarIcon", MenubarIconPreference.allCases) }
     static var menubarIconShown: Bool { CachedUserDefaults.bool("menubarIconShown") }
-    static var language: LanguagePreference { CachedUserDefaults.macroPref("language", LanguagePreference.allCases) }
 
     static let minShortcutCount = 1
     static let maxShortcutCount = 9
