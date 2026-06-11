@@ -61,51 +61,6 @@ class ClickHoverImageView: MouseHoverView {
 }
 
 class LabelAndControl: NSObject {
-    // periphery:ignore
-    static func makeLabelWithImageRadioButtons(_ labelText: String,
-                                               _ rawName: String,
-                                               _ macroPreferences: [ImageMacroPreference],
-                                               extraAction: ActionClosure? = nil,
-                                               buttonSpacing: CGFloat = 15) -> [NSView] {
-        let view = makeImageRadioButtons(rawName, macroPreferences, extraAction: extraAction, buttonSpacing: buttonSpacing)
-        return [makeLabel(labelText), view]
-    }
-
-    static func makeImageRadioButtons(_ rawName: String,
-                                      _ macroPreferences: [ImageMacroPreference],
-                                      extraAction: ActionClosure? = nil,
-                                      buttonSpacing: CGFloat = 15) -> NSStackView {
-        var buttons = [ImageTextButtonView]()
-        let buttonViews = macroPreferences.enumerated().map { (index, preference) -> ImageTextButtonView in
-            let state: NSControl.StateValue = CachedUserDefaults.intFromMacroPref(rawName, macroPreferences) == index ? .on : .off
-            let buttonView = ImageTextButtonView(title: preference.localizedString, rawName: rawName, image: preference.image, state: state)
-            buttons.append(buttonView)
-            buttonView.onClick = { control in
-                buttons.enumerated().forEach { (i, otherButtonView) in
-                    if otherButtonView != buttonView {
-                        otherButtonView.state = i == index ? .on : .off
-                    }
-                }
-                controlWasChanged(buttonView.button, String(index))
-                extraAction?(buttonView.button)
-            }
-            return buttonView
-        }
-        let view = NSStackView(views: buttonViews)
-        view.orientation = .horizontal
-        view.distribution = .fillEqually
-        view.spacing = buttonSpacing
-        view.alignment = .centerY
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        buttonViews.forEach {
-            $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
-            $0.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        }
-        return view
-    }
-
     static func makeLabelWithRecorder(_ labelText: String, _ rawName: String, _ shortcut: Shortcut?, _ clearable: Bool = true, labelPosition: LabelPosition = .leftWithSeparator) -> [NSView] {
         let input = CustomRecorderControl(shortcut, clearable, rawName)
         let views = makeLabelWithProvidedControl(labelText, rawName, input, labelPosition: labelPosition, extraAction: { _ in ControlsTab.shortcutChangedCallback(input) })

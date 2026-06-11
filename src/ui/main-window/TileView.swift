@@ -16,12 +16,6 @@ class TileView: FlippedView {
 
     var mouseUpCallback: (() -> Void)!
     var mouseMovedCallback: (() -> Void)!
-    var indexInRecycledViews: Int!
-
-    var isFirstInRow = false
-    var isLastInRow = false
-    var indexInRow = 0
-    var numberOfViewsInRow = 0
 
     // for VoiceOver cursor
     override var canBecomeKeyView: Bool { true }
@@ -35,7 +29,6 @@ class TileView: FlippedView {
     }
 
     private func updateLabelTooltipIfNeeded() {
-        guard Preferences.appearanceStyle != .appIcons else { return }
         label.toolTip = fullTitleWidth >= label.frame.size.width ? fullTitle : nil
     }
 
@@ -44,13 +37,8 @@ class TileView: FlippedView {
         setupView()
     }
 
-    /// The frame used by TileUnderLayer to position the highlight rectangle.
-    /// In appIcons style, it covers appIcon + edge insets. Otherwise, it covers the full cell.
+    /// The frame used by TileUnderLayer to position the highlight rectangle. It covers the full cell.
     var highlightFrame: CGRect {
-        if Preferences.appearanceStyle == .appIcons {
-            return CGRect(x: 0, y: 0,
-                          width: frame.width, height: appIcon.frame.height + Appearance.edgeInsetsSize * 2)
-        }
         return CGRect(origin: .zero, size: frame.size)
     }
 
@@ -61,15 +49,6 @@ class TileView: FlippedView {
         updateSizes(newHeight)
         updatePositions(newHeight)
         applySearchHighlight()
-    }
-
-    func drawHighlight() {
-        if Preferences.appearanceStyle == .appIcons {
-            let isFocused = indexInRecycledViews == Windows.selectedWindowIndex
-            let isHovered = indexInRecycledViews == Windows.hoveredWindowIndex
-            label.isHidden = !(isFocused || isHovered)
-            updateAppIconsLabel(isFocused: isFocused, isHovered: isHovered)
-        }
     }
 
     func updateDockLabelIcon(_ dockLabel: String?) {
@@ -83,100 +62,13 @@ class TileView: FlippedView {
     private func setupView() {
         setAccessibilityChildren([])
         wantsLayer = true
-        layer!.masksToBounds = false // without this, label will be clipped in app-icons style since its larger than its parentView
-        setupSharedSubviews()
-        setupStyleSpecificSubviews()
-    }
-
-    private func setupSharedSubviews() {
-        let shadow = TileView.makeShadow(Appearance.imagesShadowColor)
-        let appIconShadow = TileView.makeAppIconShadow(Appearance.imagesShadowColor)
-        appIcon.applyShadow(appIconShadow)
-        dockLabelIcon.shadow = shadow
+        appIcon.applyShadow(TileView.makeAppIconShadow(Appearance.imagesShadowColor))
+        dockLabelIcon.shadow = TileView.makeShadow(Appearance.imagesShadowColor)
         layer!.addSublayer(appIcon)
         addSubview(dockLabelIcon)
         label.fixHeight()
-    }
-
-    private func setupStyleSpecificSubviews() {
-        if Preferences.appearanceStyle == .appIcons {
-            addSubviews([label])
-            setSubviewAbove(windowlessAppIndicator)
-            label.alignment = .center
-            label.isHidden = true
-        } else {
-            setSubviewAbove(windowlessAppIndicator)
-            addSubviews([label, statusIcons])
-        }
-    }
-
-    private func updateAppIconsLabel(isFocused: Bool, isHovered: Bool) {
-        let focusedView = TilesView.recycledViews[Windows.selectedWindowIndex]
-        var hoveredView: TileView? = nil
-        if Windows.hoveredWindowIndex != nil {
-            hoveredView = TilesView.recycledViews[Windows.hoveredWindowIndex!]
-        }
-        if isFocused || (!isFocused && !isHovered) {
-            hoveredView?.label.isHidden = true
-            focusedView.label.isHidden = false
-            focusedView.updateAppIconsLabelFrame()
-        } else if isHovered {
-            hoveredView?.label.isHidden = false
-            focusedView.label.isHidden = true
-            if let hoveredView {
-                hoveredView.updateAppIconsLabelFrame()
-            }
-        }
-    }
-
-    private func getMaxAllowedLabelWidth() -> CGFloat {
-        let viewWidth = frame.width
-        let maxAllowedWidth = min(viewWidth * 2, TilesView.thumbnailsWidth)
-        let availableLeftWidth = isFirstInRow ? 0 : CGFloat(indexInRow) * viewWidth
-        let availableRightWidth = isLastInRow ? 0 : CGFloat(numberOfViewsInRow - 1 - indexInRow) * viewWidth
-        let totalWidth = availableLeftWidth + availableRightWidth + viewWidth
-        let maxLabelWidth = min(totalWidth, maxAllowedWidth)
-        return maxLabelWidth - Appearance.intraCellPadding * 2
-    }
-
-    private func updateAppIconsLabelFrame() {
-        let viewWidth = frame.width
-        let labelWidth = fullTitleWidth
-        let padding = (Appearance.resolvedSize == .small ? 0 : (Appearance.resolvedSize == .medium ? 1 : 2)) * Appearance.intraCellPadding
-        let maxAllowedLabelWidth = getMaxAllowedLabelWidth()
-        let sidesToOffset: CGFloat = (isFirstInRow ? 1 : 0) + (isLastInRow ? 1 : 0)
-        let paddingForOffset = sidesToOffset * padding
-        var effectiveLabelWidth = max(min(labelWidth, maxAllowedLabelWidth), viewWidth) - paddingForOffset
-        // if the label is small, and with an offset only on one side, we reduce its width to center its text
-        if sidesToOffset == 1 && labelWidth <= (effectiveLabelWidth - paddingForOffset) {
-            effectiveLabelWidth -= paddingForOffset
-        }
-        var leftOffset = CGFloat(0)
-        if isFirstInRow {
-            leftOffset = -padding
-        } else if isLastInRow {
-            leftOffset = effectiveLabelWidth - viewWidth + padding
-        } else {
-            let halfNeededOffset = max(0, (effectiveLabelWidth - viewWidth) / 2)
-            let availableLeftWidth = isFirstInRow ? 0 : CGFloat(indexInRow) * viewWidth
-            let availableRightWidth = isLastInRow ? 0 : CGFloat(numberOfViewsInRow - 1 - indexInRow) * viewWidth
-            if availableLeftWidth >= halfNeededOffset && availableRightWidth >= halfNeededOffset {
-                leftOffset = halfNeededOffset
-            } else if availableLeftWidth <= halfNeededOffset && availableRightWidth <= halfNeededOffset {
-                leftOffset = availableLeftWidth
-            } else if availableRightWidth <= halfNeededOffset {
-                leftOffset = min(effectiveLabelWidth - viewWidth - availableRightWidth, availableLeftWidth)
-            } else if availableLeftWidth <= halfNeededOffset {
-                leftOffset = availableLeftWidth
-            }
-        }
-        let xPosition = -leftOffset
-        let height = TilesView.layoutCache.labelHeight
-        let yPosition = appIcon.frame.maxY + Appearance.intraCellPadding * 2
-        label.frame = NSRect(x: xPosition, y: yPosition, width: effectiveLabelWidth, height: height)
-        label.setWidth(effectiveLabelWidth)
-        label.toolTip = labelWidth >= label.frame.size.width ? fullTitle : nil
-        applySearchHighlight()
+        setSubviewAbove(windowlessAppIndicator)
+        addSubviews([label, statusIcons])
     }
 
     private func updateAppIcon(_ element: Window, _ title: String) {
@@ -390,40 +282,36 @@ class TileView: FlippedView {
 
     private func updateSizes(_ newHeight: CGFloat) {
         setFrameWidthHeight(newHeight)
-        if Preferences.appearanceStyle != .appIcons {
-            let hWidth = frame.width - Appearance.edgeInsetsSize * 2
-            let labelWidth = hWidth - appIcon.frame.width - Appearance.appIconLabelSpacing - statusIcons.totalWidth
-            label.setWidth(labelWidth)
-        }
+        let hWidth = frame.width - Appearance.edgeInsetsSize * 2
+        let labelWidth = hWidth - appIcon.frame.width - Appearance.appIconLabelSpacing - statusIcons.totalWidth
+        label.setWidth(labelWidth)
     }
 
     private func updatePositions(_ newHeight: CGFloat) {
         let edgeInsets = Appearance.edgeInsetsSize
         assignIfDifferent(&appIcon.frame.origin, NSPoint(x: edgeInsets, y: edgeInsets))
-        if Preferences.appearanceStyle != .appIcons {
-            let hWidth = frame.width - edgeInsets * 2
-            let hHeight = max(appIcon.frame.height, TilesView.layoutCache.labelHeight)
-            if App.shared.userInterfaceLayoutDirection == .rightToLeft {
-                assignIfDifferent(&appIcon.frame.origin.x, edgeInsets + hWidth - appIcon.frame.width)
-            }
-            statusIcons.layoutIcons(hWidth: hWidth, hHeight: hHeight, edgeInsets: edgeInsets)
-            let labelWidth = hWidth - appIcon.frame.width - Appearance.appIconLabelSpacing - statusIcons.totalWidth
-            let labelX: CGFloat
-            if App.shared.userInterfaceLayoutDirection == .leftToRight {
-                labelX = appIcon.frame.maxX + Appearance.appIconLabelSpacing
-            } else {
-                labelX = edgeInsets + hWidth - appIcon.frame.width - Appearance.appIconLabelSpacing - labelWidth
-            }
-            assignIfDifferent(&label.frame.origin.x, labelX)
-            assignIfDifferent(&label.frame.origin.y, edgeInsets + ((hHeight - TilesView.layoutCache.labelHeight) / 2).rounded())
+        let hWidth = frame.width - edgeInsets * 2
+        let hHeight = max(appIcon.frame.height, TilesView.layoutCache.labelHeight)
+        if App.shared.userInterfaceLayoutDirection == .rightToLeft {
+            assignIfDifferent(&appIcon.frame.origin.x, edgeInsets + hWidth - appIcon.frame.width)
         }
+        statusIcons.layoutIcons(hWidth: hWidth, hHeight: hHeight, edgeInsets: edgeInsets)
+        let labelWidth = hWidth - appIcon.frame.width - Appearance.appIconLabelSpacing - statusIcons.totalWidth
+        let labelX: CGFloat
+        if App.shared.userInterfaceLayoutDirection == .leftToRight {
+            labelX = appIcon.frame.maxX + Appearance.appIconLabelSpacing
+        } else {
+            labelX = edgeInsets + hWidth - appIcon.frame.width - Appearance.appIconLabelSpacing - labelWidth
+        }
+        assignIfDifferent(&label.frame.origin.x, labelX)
+        assignIfDifferent(&label.frame.origin.y, edgeInsets + ((hHeight - TilesView.layoutCache.labelHeight) / 2).rounded())
         updateWindowlessAppIndicatorPosition()
         updateDockLabelIconPosition()
     }
 
     private func updateDockLabelIconPosition() {
         let iconSize = max(appIcon.frame.width, appIcon.frame.height)
-        let offset = (iconSize * (Preferences.appearanceStyle == .appIcons && Appearance.resolvedSize == .large ? 0.03 : 0.05)).rounded()
+        let offset = (iconSize * 0.05).rounded()
         let badgeTopRightX = appIcon.frame.maxX + offset
         let badgeTopRightY = appIcon.frame.minY - offset
         assignIfDifferent(&dockLabelIcon.frame.origin.x, badgeTopRightX - dockLabelIcon.frame.width)
@@ -441,8 +329,7 @@ class TileView: FlippedView {
     }
 
     private func windowlessIndicatorYPosition() -> CGFloat {
-        let verticalOffset = Preferences.appearanceStyle == .titles ? CGFloat(5) : CGFloat(10)
-        return (appIcon.frame.maxY - windowlessAppIndicator.frame.height + verticalOffset).rounded()
+        return (appIcon.frame.maxY - windowlessAppIndicator.frame.height + 5).rounded()
     }
 
     private func getAppOrAndWindowTitle() -> String {
@@ -457,12 +344,7 @@ class TileView: FlippedView {
     }
 
     private func setFrameWidthHeight(_ newHeight: CGFloat) {
-        var contentWidth = CGFloat(0)
-        if Preferences.appearanceStyle == .titles {
-            contentWidth = TileView.maxThumbnailWidth() - Appearance.edgeInsetsSize * 2
-        } else {
-            contentWidth = Appearance.iconSize
-        }
+        let contentWidth = TileView.maxThumbnailWidth() - Appearance.edgeInsetsSize * 2
         let frameWidth = (contentWidth + Appearance.edgeInsetsSize * 2).rounded()
         let widthMin = TileView.minThumbnailWidth()
         let width = max(frameWidth, widthMin).rounded()
@@ -529,24 +411,11 @@ class TileView: FlippedView {
         return TilesPanel.maxThumbnailsWidth(screen) * Appearance.windowMinWidthInRow - Appearance.interCellPadding * 2
     }
 
-    static func iconSize(_ screen: NSScreen = NSScreen.preferred) -> NSSize {
-        if Preferences.appearanceStyle == .appIcons {
-            let widthMin = TileView.minThumbnailWidth(screen)
-            let contentWidth = Appearance.iconSize
-            let frameWidth = contentWidth + Appearance.edgeInsetsSize * 2
-            let width = max(frameWidth, widthMin).rounded()
-            if widthMin > frameWidth {
-                let iconSize = width - Appearance.edgeInsetsSize * 2
-                return NSSize(width: iconSize, height: iconSize)
-            }
-        }
+    static func iconSize() -> NSSize {
         return NSSize(width: Appearance.iconSize, height: Appearance.iconSize)
     }
 
     static func height(_ labelHeight: CGFloat) -> CGFloat {
-        if Preferences.appearanceStyle == .titles {
-            return max(TileView.iconSize().height, labelHeight) + Appearance.edgeInsetsSize * 2
-        }
-        return TileView.iconSize().height + Appearance.edgeInsetsSize * 2 + Appearance.intraCellPadding * 2 + labelHeight
+        return max(TileView.iconSize().height, labelHeight) + Appearance.edgeInsetsSize * 2
     }
 }

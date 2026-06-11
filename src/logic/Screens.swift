@@ -60,10 +60,6 @@ extension NSScreen {
         return frame.width / frame.height
     }
 
-    func isHorizontal() -> Bool {
-        return ratio() >= 1
-    }
-
     func number() -> CGDirectDisplayID? {
         return deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID
     }

@@ -3,7 +3,6 @@ import Cocoa
 class PreferencesEvents {
     private static var initialized = false
     private static let preferencesRequiringUiReset = [
-        "appearanceStyle",
         "appearanceSize",
         "appearanceTheme",
         "showOnScreen",

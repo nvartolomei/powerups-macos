@@ -37,7 +37,6 @@ class TileFontIconView: NSView {
         static let maxTextHeight = CGFloat(18)
         static let horizontalPaddingRatio = CGFloat(0.10)
         static let minHorizontalPadding = CGFloat(2)
-        static let appIconsMinRectWidthRatio = CGFloat(1.35)
         static let maxDigits = 4
     }
 
@@ -76,7 +75,7 @@ class TileFontIconView: NSView {
                      fillColor: NSColor = NSColor(srgbRed: 1, green: 0.25, blue: 0.2, alpha: 0.9),
                      textColor: NSColor = .white) {
         self.init(rendering: .badge, initialText: "0", size: badgeSize, symbolColor: .clear, badgeFillColor: fillColor, badgeTextColor: textColor)
-        frame.size = badgeFrameSize(textWidth: maxBadgeTextWidth(), text: String(repeating: "8", count: BadgeSizing.maxDigits))
+        frame.size = badgeFrameSize(textWidth: maxBadgeTextWidth())
     }
 
     init(rendering: Rendering,
@@ -181,7 +180,7 @@ class TileFontIconView: NSView {
     }
 
     private func anchoredBadgeRect() -> NSRect {
-        let size = badgeFrameSize(textWidth: cachedBadgeTextSize.width, text: text)
+        let size = badgeFrameSize(textWidth: cachedBadgeTextSize.width)
         return NSRect(x: (frame.width - size.width).rounded(), y: 0, width: size.width, height: size.height)
     }
 
@@ -189,13 +188,9 @@ class TileFontIconView: NSView {
         cachedSymbolAttributedString?.size() ?? .zero
     }
 
-    private func badgeFrameSize(textWidth: CGFloat, text: String) -> NSSize {
+    private func badgeFrameSize(textWidth: CGFloat) -> NSSize {
         let height = badgeContainerHeight
-        var width = max(height, textWidth + badgeHorizontalPadding * 2)
-        if Preferences.appearanceStyle == .appIcons, text.count > 1 {
-            let minRectWidth = (height * BadgeSizing.appIconsMinRectWidthRatio).rounded(.up)
-            width = max(width, minRectWidth)
-        }
+        let width = max(height, textWidth + badgeHorizontalPadding * 2)
         return NSSize(width: ceil(width), height: ceil(height))
     }
 

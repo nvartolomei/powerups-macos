@@ -21,7 +21,6 @@ class TilesView {
     static var noWindowLabel = NSTextField(labelWithString: NSLocalizedString("No Window", comment: ""))
     private(set) static var searchMode: SearchMode = .off
     static var rows = [[TileView]]()
-    private static var lastRowSignature = [Int]()
     static var recycledViews = [TileView]()
     static var thumbnailsWidth = CGFloat(0.0)
     static var thumbnailsHeight = CGFloat(0.0)
@@ -253,16 +252,13 @@ class TilesView {
         thumbnailUnderLayer = TileUnderLayer()
         thumbnailOverView = TileOverView()
         thumbnailOverView.scrollView = scrollView
-        lastRowSignature.removeAll()
         Self.updateCachedSizes()
     }
 
     static func highlight(_ indexInRecycledViews: Int) {
         guard indexInRecycledViews >= 0, indexInRecycledViews < recycledViews.count else { return }
         let view = recycledViews[indexInRecycledViews]
-        view.indexInRecycledViews = indexInRecycledViews
         guard view.frame != .zero else { return }
-        view.drawHighlight()
         let underLayer = TilesView.thumbnailUnderLayer
         guard Windows.selectedWindowIndex >= 0, Windows.selectedWindowIndex < recycledViews.count else { return }
         let focusedView = recycledViews[Windows.selectedWindowIndex]
@@ -324,22 +320,9 @@ class TilesView {
             Self.updateCachedSizes()
             widthMax = TilesPanel.maxThumbnailsWidth().rounded()
         }
-        if let (maxX, maxY, labelHeight, rowSignature) = layoutTileViews(widthMax) {
-            layoutParentViews(maxX, widthMax, maxY, labelHeight)
-            if Preferences.alignThumbnails == .center {
-                centerRows(TilesView.thumbnailsWidth)
-            }
-            if rowSignature != lastRowSignature {
-                for row in rows {
-                    for (j, view) in row.enumerated() {
-                        view.numberOfViewsInRow = row.count
-                        view.isFirstInRow = j == 0
-                        view.isLastInRow = j == row.count - 1
-                        view.indexInRow = j
-                    }
-                }
-                lastRowSignature = rowSignature
-            }
+        if let (maxX, maxY) = layoutTileViews(widthMax) {
+            layoutParentViews(maxX, widthMax, maxY)
+            centerRows(TilesView.thumbnailsWidth)
             highlightStartView()
             if let preservedScrollOrigin {
                 restoreScrollOrigin(preservedScrollOrigin)
@@ -404,9 +387,8 @@ class TilesView {
         return maxY
     }
 
-    private static func layoutTileViews(_ widthMax: CGFloat) -> (CGFloat, CGFloat, CGFloat, [Int])? {
-        let labelHeight = Self.layoutCache.labelHeight
-        let height = TileView.height(labelHeight)
+    private static func layoutTileViews(_ widthMax: CGFloat) -> (CGFloat, CGFloat)? {
+        let height = TileView.height(Self.layoutCache.labelHeight)
         let isLeftToRight = App.shared.userInterfaceLayoutDirection == .leftToRight
         let startingX = isLeftToRight ? Appearance.interCellPadding : widthMax - Appearance.interCellPadding
         var currentX = startingX
@@ -414,7 +396,6 @@ class TilesView {
         var maxX = CGFloat(0)
         var maxY = currentY + height + Appearance.interCellPadding
         var newViews = [TileView]()
-        var rowSignature = [Int]()
         rows.removeAll(keepingCapacity: true)
         rows.append([TileView]())
         var index = 0
@@ -445,7 +426,6 @@ class TilesView {
                 }
                 rows[rows.count - 1].append(view)
                 newViews.append(view)
-                rowSignature.append(index)
                 window.rowIndex = rows.count - 1
             } else {
                 // release images and stale window references from unused recycledViews; they take lots of RAM
@@ -460,7 +440,7 @@ class TilesView {
         if thumbnailUnderLayer.superlayer !== docLayer {
             docLayer.insertSublayer(thumbnailUnderLayer, at: 0)
         }
-        return (maxX, maxY, labelHeight, rowSignature)
+        return (maxX, maxY)
     }
 
     private static func needNewLine(_ projectedX: CGFloat, _ widthMax: CGFloat) -> Bool {
@@ -481,7 +461,7 @@ class TilesView {
         App.shared.userInterfaceLayoutDirection == .leftToRight ? currentX : currentX - width
     }
 
-    private static func layoutParentViews(_ maxX: CGFloat, _ widthMax: CGFloat, _ maxY: CGFloat, _ labelHeight: CGFloat) {
+    private static func layoutParentViews(_ maxX: CGFloat, _ widthMax: CGFloat, _ maxY: CGFloat) {
         let searchBarHeight = searchBarHeight()
         let searchBottomPadding = CGFloat(10)
         let searchReservedHeight = searchMode == .off ? 0 : searchBarHeight + searchBottomPadding
@@ -490,20 +470,13 @@ class TilesView {
         let minWidth = min(widthMax, 320)
         TilesView.thumbnailsWidth = max(min(maxX, widthMax), searchMode == .off ? (maxX == 0 ? minWidth : 0) : minWidth)
         TilesView.thumbnailsHeight = min(maxY, heightMax)
-        let appIconsBottomViewportPadding = appIconsBottomViewportPadding(maxY, heightMax, labelHeight)
         let frameWidth = TilesView.thumbnailsWidth + Appearance.windowPadding * 2
-        var frameHeight = TilesView.thumbnailsHeight + Appearance.windowPadding * 2 + searchReservedHeight
+        let frameHeight = TilesView.thumbnailsHeight + Appearance.windowPadding * 2 + searchReservedHeight
         let originX = Appearance.windowPadding
-        var originY = Appearance.windowPadding
-        if Preferences.appearanceStyle == .appIcons {
-            // If there is title under the icon on the last line, the height of the title needs to be subtracted.
-            frameHeight = frameHeight - Appearance.intraCellPadding - labelHeight
-            originY = originY - Appearance.intraCellPadding - labelHeight
-        }
+        let originY = Appearance.windowPadding
         contentView.frame.size = NSSize(width: frameWidth, height: frameHeight)
-        let scrollHeight = max(0, min(maxY, heightMax) - appIconsBottomViewportPadding * 2)
-        scrollView.frame.size = NSSize(width: TilesView.thumbnailsWidth, height: scrollHeight)
-        scrollView.frame.origin = CGPoint(x: originX, y: originY + appIconsBottomViewportPadding * 2)
+        scrollView.frame.size = NSSize(width: TilesView.thumbnailsWidth, height: TilesView.thumbnailsHeight)
+        scrollView.frame.origin = CGPoint(x: originX, y: originY)
         scrollView.contentView.frame.size = scrollView.frame.size
         searchField.isHidden = searchMode == .off
         if searchMode != .off {
@@ -536,11 +509,6 @@ class TilesView {
             return ceil(fitting)
         }
         return ceil(searchField.cell?.cellSize.height ?? 30)
-    }
-
-    private static func appIconsBottomViewportPadding(_ maxY: CGFloat, _ heightMax: CGFloat, _ labelHeight: CGFloat) -> CGFloat {
-        guard Preferences.appearanceStyle == .appIcons, maxY > heightMax else { return 0 }
-        return max(0, Appearance.windowPadding - labelHeight)
     }
 
     static func centerRows(_ maxX: CGFloat) {

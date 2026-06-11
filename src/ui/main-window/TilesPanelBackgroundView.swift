@@ -1,33 +1,12 @@
 @available(macOS 26.0, *)
 class LiquidGlassEffectView: NSGlassEffectView, EffectView {
-    private typealias SetVariantType = @convention(c) (AnyObject, Selector, Int) -> Void
-    private static let setVariantSelector = NSSelectorFromString("set_variant:")
-
-    static func canUsePrivateLiquidGlassLook() -> Bool {
-        let method = class_getInstanceMethod(object_getClass(NSGlassEffectView()), setVariantSelector)
-        return method != nil
-    }
-
-    convenience init(_ clear: Bool) {
+    convenience init(_: Int?) {
         self.init()
-        if clear {
-            style = .clear
-            safeSetVariant(3)
-        } else {
-            style = .regular
-        }
+        style = .regular
         updateAppearance()
         wantsLayer = true
         // without this, there are weird shadows around the corners
         layer!.masksToBounds = true
-    }
-
-    func safeSetVariant(_ value: Int) {
-        if let method = class_getInstanceMethod(object_getClass(self), LiquidGlassEffectView.setVariantSelector) {
-            let methodImplementation = method_getImplementation(method)
-            let f = unsafeBitCast(methodImplementation, to: SetVariantType.self)
-            f(self, LiquidGlassEffectView.setVariantSelector, value)
-        }
     }
 
     func updateAppearance() {
@@ -75,20 +54,9 @@ protocol EffectView: NSView {
 
 func makeAppropriateEffectView() -> EffectView {
     if #available(macOS 26.0, *) {
-        if Preferences.appearanceStyle == .appIcons {
-            if LiquidGlassEffectView.canUsePrivateLiquidGlassLook() {
-                Logger.debug { "Using LiquidGlassEffectView(true)" }
-                return LiquidGlassEffectView(true)
-            }
-            Logger.error {
-                let os = ProcessInfo.processInfo.operatingSystemVersion
-                let version = "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
-                return "Private API set_variant is no longer available. macOS version: \(version))"
-            }
-        }
-        Logger.debug { "Using LiquidGlassEffectView(false)" }
-        return LiquidGlassEffectView(false)
+        Logger.debug { "Using LiquidGlassEffectView" }
+        return LiquidGlassEffectView(nil)
     }
-    Logger.debug { "Using FrostedGlassEffectView(nil)" }
+    Logger.debug { "Using FrostedGlassEffectView" }
     return FrostedGlassEffectView(nil)
 }

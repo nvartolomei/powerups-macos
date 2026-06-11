@@ -92,8 +92,7 @@ class TilesPanel: NSPanel {
     }
 
     static func maxThumbnailsWidth(_ screen: NSScreen = NSScreen.preferred) -> CGFloat {
-        if Preferences.appearanceStyle == .titles,
-           let readableWidth = TilesView.layoutCache.comfortableReadabilityWidth {
+        if let readableWidth = TilesView.layoutCache.comfortableReadabilityWidth {
             return (
                 min(
                     screen.frame.width * Appearance.maxWidthOnScreen,
@@ -110,12 +109,9 @@ class TilesPanel: NSPanel {
     }
 
     static func updateMaxPossibleAppIconSize() {
-        let (w, h) = NSScreen.screens.reduce((CGFloat.zero, CGFloat.zero)) { acc, screen in
-            let size = TileView.iconSize(screen)
-            return (max(acc.0, size.width * screen.backingScaleFactor),
-                max(acc.1, size.height * screen.backingScaleFactor))
-        }
-        maxPossibleAppIconSize = NSSize(width: w.rounded(), height: h.rounded())
+        let size = TileView.iconSize()
+        let maxScaleFactor = NSScreen.screens.map { $0.backingScaleFactor }.max() ?? 1
+        maxPossibleAppIconSize = NSSize(width: (size.width * maxScaleFactor).rounded(), height: (size.height * maxScaleFactor).rounded())
     }
 }
 

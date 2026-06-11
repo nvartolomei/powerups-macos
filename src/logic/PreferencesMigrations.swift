@@ -21,8 +21,6 @@ class PreferencesMigrations {
     private static func updateToNewPreferences(_ versionInPlist: String) {
         Logger.debug { "App-version:\(App.version), Plist-version:\(versionInPlist)" }
         for (version, migration) in [
-            // the Thumbnails style was removed; appearanceStyle indexes shifted
-            ("10.12.0", migrateAppearanceStyleAfterThumbnailsRemoval),
             // all localizations except English were removed; clear any forced language
             ("10.12.0", removeForcedLanguage),
             ("10.2.0", migrateBlacklistToExceptions),
@@ -64,11 +62,6 @@ class PreferencesMigrations {
     private static func removeForcedLanguage() {
         UserDefaults.standard.removeObject(forKey: "AppleLanguages")
         UserDefaults.standard.removeObject(forKey: "language")
-    }
-
-    private static func migrateAppearanceStyleAfterThumbnailsRemoval() {
-        // 0=thumbnails falls back to the new default (appIcons); 1=appIcons and 2=titles shift down
-        migratePreferenceValue("appearanceStyle", ["1": "0", "2": "1"])
     }
 
     private static func migrateBlacklistToExceptions() {
@@ -289,7 +282,6 @@ class PreferencesMigrations {
         migratePreferenceValue("theme", [" macOS": "0", "❖ Windows 10": "1"])
         // "Main screen" was renamed to "Active screen"
         migratePreferenceValue("showOnScreen", ["Main screen": "0", "Active screen": "0", "Screen including mouse": "1"])
-        migratePreferenceValue("alignThumbnails", ["Left": "0", "Center": "1"])
         migratePreferenceValue("appsToShow", ["All apps": "0", "Active app": "1"])
         migratePreferenceValue("spacesToShow", ["All spaces": "0", "Active space": "1"])
         migratePreferenceValue("screensToShow", ["All screens": "0", "Screen showing AltTab": "1"])

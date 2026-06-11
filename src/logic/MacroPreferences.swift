@@ -199,46 +199,6 @@ enum ShowTitlesPreference: CaseIterable, MacroPreference {
     }
 }
 
-enum AlignThumbnailsPreference: CaseIterable, ImageMacroPreference {
-    case leading
-    case center
-
-    var localizedString: LocalizedString {
-        switch self {
-            case .leading: return NSLocalizedString("Leading", comment: "")
-            case .center: return NSLocalizedString("Center", comment: "")
-        }
-    }
-
-    var image: WidthHeightImage {
-        switch self {
-            case .leading: return WidthHeightImage(name: "align_thumbnails_leading")
-            case .center: return WidthHeightImage(name: "align_thumbnails_center")
-        }
-    }
-}
-
-enum AppearanceStylePreference: CaseIterable, ImageMacroPreference {
-    case appIcons
-    case titles
-
-    var localizedString: LocalizedString {
-        switch self {
-            case .appIcons: return NSLocalizedString("App Icons", comment: "")
-            case .titles: return NSLocalizedString("Titles", comment: "")
-        }
-    }
-
-    var image: WidthHeightImage {
-        let width = CGFloat(150)
-        let height = width / 1.6
-        switch self {
-            case .appIcons: return WidthHeightImage(width: width, height: height, name: "app_icons")
-            case .titles: return WidthHeightImage(width: width, height: height, name: "titles")
-        }
-    }
-}
-
 enum AppearanceSizePreference: CaseIterable, SfSymbolMacroPreference {
     case small
     case medium

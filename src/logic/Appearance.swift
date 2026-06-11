@@ -8,7 +8,6 @@ class Appearance {
     static var cellCornerRadius = CGFloat(1000)
     static var edgeInsetsSize = CGFloat(1000)
     static var maxWidthOnScreen = CGFloat(1000)
-    static var rowsCount = CGFloat(1000)
     static var iconSize = CGFloat(1000)
     static var fontHeight = CGFloat(3)
     static var font = NSFont.systemFont(ofSize: fontHeight)
@@ -25,10 +24,10 @@ class Appearance {
     static var fontColor = NSColor.red
     static var imagesShadowColor = NSColor.red // for icon, thumbnail and windowless images
     static var material = NSVisualEffectView.Material.ultraDark
-    static var highlightBorderWidth = CGFloat(3)
 
     // theme: constants
-    static var enablePanelShadow = true
+    static let highlightBorderWidth = CGFloat(2)
+    static let enablePanelShadow = true
     static var highlightFocusedBackgroundColor: NSColor { get { NSColor.systemAccentColor.withAlphaComponent(0.2) } }
     static var highlightHoveredBackgroundColor: NSColor { get { NSColor.systemAccentColor.withAlphaComponent(0.1) } }
     static var highlightFocusedBorderColor: NSColor { get { NSColor.systemAccentColor } }
@@ -36,7 +35,6 @@ class Appearance {
     static var searchMatchHighlightColor: NSColor { get { NSColor.systemYellow.withAlphaComponent(0.5) } }
     static var searchMatchForegroundColor: NSColor { get { NSColor(calibratedWhite: 0.12, alpha: 1) } }
 
-    private static var currentStyle: AppearanceStylePreference { Preferences.appearanceStyle }
     private static var currentSize: AppearanceSizePreference { Preferences.appearanceSize }
     static var currentTheme: AppearanceThemePreference {
         if Preferences.appearanceTheme == .system {
@@ -52,89 +50,31 @@ class Appearance {
     }
 
     private static func updateSize() {
-        let isHorizontalScreen = NSScreen.preferred.isHorizontal()
         maxWidthOnScreen = AppearanceTestable.comfortableWidth(NSScreen.preferred.physicalSize().map { $0.width })
-        let sizeToApply: AppearanceSizePreference = currentSize == .auto ? .large : currentSize
-        resolvedSize = sizeToApply
-        applyConcreteSize(sizeToApply, isHorizontalScreen)
-        updateFont()
+        applySize(currentSize == .auto ? .large : currentSize)
     }
 
     static func applySize(_ size: AppearanceSizePreference) {
-        let isHorizontalScreen = NSScreen.preferred.isHorizontal()
         resolvedSize = size
-        applyConcreteSize(size, isHorizontalScreen)
+        titlesSize(size)
         updateFont()
     }
 
-    private static func applyConcreteSize(_ size: AppearanceSizePreference, _ isHorizontalScreen: Bool) {
-        if currentStyle == .appIcons {
-            appIconsSize(size)
-        } else {
-            titlesSize(isHorizontalScreen, size)
-        }
-    }
-
     private static func updateTheme() {
-        highlightBorderWidth = currentStyle == .titles ? 2 : 3
         if currentTheme == .dark {
             darkTheme()
         } else {
             lightTheme()
         }
-        // for Liquid Glass, we don't want a shadow around the panel
-        if #available(macOS 26.0, *), currentStyle == .appIcons && LiquidGlassEffectView.canUsePrivateLiquidGlassLook() {
-            enablePanelShadow = false
-        } else {
-            enablePanelShadow = true
-        }
     }
 
-    private static func appIconsSize(_ size: AppearanceSizePreference) {
-        windowPadding = 25
-        windowCornerRadius = 23
-        cellCornerRadius = 10
-        edgeInsetsSize = 5
-        if #available(macOS 26.0, *) {
-            edgeInsetsSize = 6
-        }
-        windowMinWidthInRow = 0.04
-        windowMaxWidthInRow = 0.3
-        rowsCount = 1
-        switch size {
-            case .small:
-                iconSize = 70
-                fontHeight = 13
-                if #available(macOS 26.0, *) {
-                    windowCornerRadius = 50
-                    cellCornerRadius = 24
-                }
-            case .medium:
-                iconSize = 110
-                fontHeight = 14
-                if #available(macOS 26.0, *) {
-                    windowCornerRadius = 55
-                    cellCornerRadius = 35
-                }
-            case .large, .auto:
-                windowPadding = 28
-                iconSize = 150
-                fontHeight = 16
-                if #available(macOS 26.0, *) {
-                    windowCornerRadius = 75
-                    cellCornerRadius = 45
-                }
-        }
-    }
-
-    private static func titlesSize(_ isHorizontalScreen: Bool, _ size: AppearanceSizePreference) {
+    private static func titlesSize(_ size: AppearanceSizePreference) {
         windowPadding = 18
         windowCornerRadius = 23
         cellCornerRadius = 10
         edgeInsetsSize = 7
         windowMinWidthInRow = 0.6
         windowMaxWidthInRow = 0.9
-        rowsCount = 1
         switch size {
             case .small:
                 iconSize = 18
@@ -150,7 +90,7 @@ class Appearance {
 
     private static func updateFont() {
         if #available(macOS 26.0, *) {
-            font = NSFont.systemFont(ofSize: fontHeight, weight: currentStyle == .appIcons ? .semibold : .medium)
+            font = NSFont.systemFont(ofSize: fontHeight, weight: .medium)
         } else {
             font = NSFont.systemFont(ofSize: fontHeight)
         }

@@ -4,7 +4,6 @@ struct ShowHideRowInfo {
     var rowId: String!
     var uncheckedImage: String!
     var checkedImage: String!
-    var supportedStyles: [AppearanceStylePreference]!
     var subTitle: String?
     var leftViews = [NSView]()
     var rightViews = [NSView]()
@@ -13,16 +12,15 @@ struct ShowHideRowInfo {
 class IllustratedImageThemeView: ClickHoverImageView {
     override var acceptsFirstResponder: Bool { false }
     static let padding = CGFloat(4)
-    var style: AppearanceStylePreference!
     var theme: String!
     var imageName: String!
     var isFocused: Bool = false
 
-    init(_ style: AppearanceStylePreference, _ width: CGFloat) {
+    init(_ width: CGFloat) {
         // TODO: The appearance theme functionality has not been implemented yet.
         // We will implement it later; for now, use the light theme.
         let theme = "light"
-        let imageName = IllustratedImageThemeView.getConcatenatedImageName(style, theme)
+        let imageName = IllustratedImageThemeView.getConcatenatedImageName(theme)
         let imageView = NSImageView(image: NSImage(named: imageName)!)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.imageScaling = .scaleProportionallyUpOrDown
@@ -30,7 +28,6 @@ class IllustratedImageThemeView: ClickHoverImageView {
         imageView.layer!.masksToBounds = true
         imageView.layer!.cornerRadius = TableGroupView.cornerRadius
         super.init(infoCircle: imageView)
-        self.style = style
         self.theme = theme
         self.imageName = imageName
         translatesAutoresizingMaskIntoConstraints = false
@@ -82,19 +79,18 @@ class IllustratedImageThemeView: ClickHoverImageView {
         (infoCircle as! NSImageView).image = NSImage(named: getStyleThemeImageName(imageName))
     }
 
-    static func getConcatenatedImageName(_ style: AppearanceStylePreference,
-                                         _ theme: String,
+    static func getConcatenatedImageName(_ theme: String,
                                          _ imageName: String = "") -> String {
         if imageName.isEmpty {
-            // app_icons_light/titles_dark
-            return style.image.name + "_" + theme
+            // titles_light/titles_dark
+            return "titles_" + theme
         }
-        // app_icons_show_app_badges_light/titles_show_app_badges_light
-        return style.image.name + "_" + imageName + "_" + theme
+        // titles_show_app_badges_light
+        return "titles_" + imageName + "_" + theme
     }
 
     func getStyleThemeImageName(_ imageName: String = "") -> String {
-        return IllustratedImageThemeView.getConcatenatedImageName(style, theme, imageName)
+        return IllustratedImageThemeView.getConcatenatedImageName(theme, imageName)
     }
 
     static func resetImage(_ illustratedImageView: IllustratedImageThemeView, _ event: NSEvent, _ view: NSView) {
@@ -106,13 +102,11 @@ class IllustratedImageThemeView: ClickHoverImageView {
 }
 
 class ShowHideIllustratedView {
-    private let style: AppearanceStylePreference
     private var showHideRows = [ShowHideRowInfo]()
     var illustratedImageView: IllustratedImageThemeView!
     var table: TableGroupView!
 
-    init(_ style: AppearanceStylePreference, _ illustratedImageView: IllustratedImageThemeView) {
-        self.style = style
+    init(_ illustratedImageView: IllustratedImageThemeView) {
         self.illustratedImageView = illustratedImageView
         setupItems()
     }
@@ -121,16 +115,14 @@ class ShowHideIllustratedView {
         table = TableGroupView(width: CustomizeStyleSheet.width)
         for row in showHideRows {
             setStateOnApplications(row: row)
-            if row.supportedStyles.contains(style) {
-                table.addRow(leftViews: row.leftViews, rightViews: row.rightViews, onClick: { event, view in
-                    if !ShowHideIllustratedView.isDisabledOnApplications(row) {
-                        self.clickCheckbox(rowId: row.rowId)
-                        self.updateImageView(rowId: row.rowId)
-                    }
-                }, onMouseEntered: { event, view in
+            table.addRow(leftViews: row.leftViews, rightViews: row.rightViews, onClick: { event, view in
+                if !ShowHideIllustratedView.isDisabledOnApplications(row) {
+                    self.clickCheckbox(rowId: row.rowId)
                     self.updateImageView(rowId: row.rowId)
-                })
-            }
+                }
+            }, onMouseEntered: { event, view in
+                self.updateImageView(rowId: row.rowId)
+            })
         }
         table.onMouseExited = { event, view in
             IllustratedImageThemeView.resetImage(self.illustratedImageView, event, view)
@@ -144,7 +136,6 @@ class ShowHideIllustratedView {
         hideAppBadges.rowId = "hideAppBadges"
         hideAppBadges.uncheckedImage = "show_app_badges"
         hideAppBadges.checkedImage = "hide_app_badges"
-        hideAppBadges.supportedStyles = [.appIcons, .titles]
         hideAppBadges.leftViews = [TableGroupView.makeText(NSLocalizedString("Hide app badges", comment: ""))]
         hideAppBadges.rightViews.append(LabelAndControl.makeSwitch(hideAppBadges.rowId, extraAction: { sender in
             self.onCheckboxClicked(sender: sender, rowId: hideAppBadges.rowId)
@@ -154,7 +145,6 @@ class ShowHideIllustratedView {
         hideStatusIcons.rowId = "hideStatusIcons"
         hideStatusIcons.uncheckedImage = "show_status_icons"
         hideStatusIcons.checkedImage = "hide_status_icons"
-        hideStatusIcons.supportedStyles = [.titles]
         hideStatusIcons.leftViews = [TableGroupView.makeText(NSLocalizedString("Hide status icons", comment: ""))]
         hideStatusIcons.subTitle = NSLocalizedString("PowerUps will show if the window is currently minimized or fullscreen with a status icon.", comment: "")
         hideStatusIcons.rightViews.append(LabelAndControl.makeInfoButton(searchableTooltipTexts: [hideStatusIcons.subTitle!], onMouseEntered: { event, view in
@@ -170,7 +160,6 @@ class ShowHideIllustratedView {
         hideSpaceNumberLabels.rowId = "hideSpaceNumberLabels"
         hideSpaceNumberLabels.uncheckedImage = "show_space_number_labels"
         hideSpaceNumberLabels.checkedImage = "hide_space_number_labels"
-        hideSpaceNumberLabels.supportedStyles = [.titles]
         hideSpaceNumberLabels.leftViews = [TableGroupView.makeText(NSLocalizedString("Hide Space number labels", comment: ""))]
         hideSpaceNumberLabels.rightViews.append(LabelAndControl.makeSwitch(hideSpaceNumberLabels.rowId, extraAction: { sender in
             self.onCheckboxClicked(sender: sender, rowId: hideSpaceNumberLabels.rowId)
@@ -181,7 +170,6 @@ class ShowHideIllustratedView {
         showTabsAsWindows.rowId = "showTabsAsWindows"
         showTabsAsWindows.uncheckedImage = "hide_tabs_as_windows"
         showTabsAsWindows.checkedImage = "show_tabs_as_windows"
-        showTabsAsWindows.supportedStyles = [.appIcons, .titles]
         showTabsAsWindows.leftViews = [TableGroupView.makeText(NSLocalizedString("Show standard tabs as windows", comment: ""))]
         showTabsAsWindows.subTitle = NSLocalizedString("Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. PowerUps can't list those separately.", comment: "")
         showTabsAsWindows.rightViews.append(LabelAndControl.makeInfoButton(searchableTooltipTexts: [featureUnavailable, showTabsAsWindows.subTitle!], onMouseEntered: { event, view in
@@ -384,7 +372,7 @@ class AppearanceTab: NSObject {
     static var animationsSheet: AnimationsSheet!
 
     static func initTab() -> NSView {
-        customizeStyleButton = NSButton(title: getCustomizeStyleButtonTitle(), target: self, action: #selector(showCustomizeStyleSheet))
+        customizeStyleButton = NSButton(title: NSLocalizedString("Customize style…", comment: ""), target: self, action: #selector(showCustomizeStyleSheet))
         animationsButton = NSButton(title: NSLocalizedString("Animations…", comment: ""), target: self, action: #selector(showAnimationsSheet))
         customizeStyleSheet = CustomizeStyleSheet()
         animationsSheet = AnimationsSheet()
@@ -401,11 +389,7 @@ class AppearanceTab: NSObject {
     }
 
     private static func makeAppearanceView() -> NSView {
-        let table = TableGroupView(subTitle: NSLocalizedString("Switch between 2 different styles. You can customize them.", comment: ""),
-            width: SettingsWindow.contentWidth)
-        table.addRow(secondaryViews: [LabelAndControl.makeImageRadioButtons("appearanceStyle", AppearanceStylePreference.allCases, extraAction: { _ in
-            toggleCustomizeStyleButton()
-        }, buttonSpacing: 10)], secondaryViewsAlignment: .centerX)
+        let table = TableGroupView(width: SettingsWindow.contentWidth)
         table.addRow(leftText: NSLocalizedString("Size", comment: ""),
             rightViews: [LabelAndControl.makeSegmentedControl("appearanceSize", AppearanceSizePreference.allCases, segmentWidth: 100)])
         table.addRow(leftText: NSLocalizedString("Theme", comment: ""),
@@ -425,23 +409,6 @@ class AppearanceTab: NSObject {
         _ = table.addRow(leftText: NSLocalizedString("Show on", comment: ""),
             rightViews: LabelAndControl.makeDropdown("showOnScreen", ShowOnScreenPreference.allCases))
         return table
-    }
-
-    private static func getCustomizeStyleButtonTitle() -> String {
-        if Preferences.appearanceStyle == .appIcons {
-            return NSLocalizedString("Customize App Icons style…", comment: "")
-        }
-        return NSLocalizedString("Customize Titles style…", comment: "")
-    }
-
-    @objc static func toggleCustomizeStyleButton() {
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(handleToggleAdvancedButton), object: nil)
-        self.perform(#selector(handleToggleAdvancedButton), with: nil, afterDelay: 0.1)
-    }
-
-    @objc static func handleToggleAdvancedButton() {
-        customizeStyleButton.animator().title = getCustomizeStyleButtonTitle()
-        customizeStyleSheet = CustomizeStyleSheet()
     }
 
     @objc static func showCustomizeStyleSheet() {

@@ -3,11 +3,9 @@ import Cocoa
 class CustomizeStyleSheet: SheetWindow {
     static let illustratedImageWidth = width
 
-    let style = Preferences.appearanceStyle
     var illustratedImageView: IllustratedImageThemeView!
     var showHideIllustratedView: ShowHideIllustratedView!
 
-    var alignThumbnails: TableGroupView.Row!
     var titleTruncation: TableGroupView.Row!
     var showAppsOrWindows: TableGroupView.Row!
     var showTitles: TableGroupView.Row!
@@ -20,11 +18,7 @@ class CustomizeStyleSheet: SheetWindow {
     override func makeContentView() -> NSView {
         makeComponents()
         showHideView = showHideIllustratedView.makeView()
-        if style == .appIcons {
-            advancedView = makeAppIconsView()
-        } else {
-            advancedView = makeTitlesView()
-        }
+        advancedView = makeTitlesView()
         control = NSSegmentedControl(labels: [
             NSLocalizedString("Show & Hide", comment: ""),
             NSLocalizedString("Advanced", comment: "")
@@ -42,13 +36,8 @@ class CustomizeStyleSheet: SheetWindow {
     }
 
     private func makeComponents() {
-        illustratedImageView = IllustratedImageThemeView(style, CustomizeStyleSheet.illustratedImageWidth)
-        showHideIllustratedView = ShowHideIllustratedView(style, illustratedImageView)
-        alignThumbnails = TableGroupView.Row(leftTitle: NSLocalizedString("Align windows", comment: ""),
-            rightViews: LabelAndControl.makeRadioButtons(
-                "alignThumbnails", AlignThumbnailsPreference.allCases, extraAction: { _ in
-                self.showAlignThumbnailsIllustratedImage()
-            }))
+        illustratedImageView = IllustratedImageThemeView(CustomizeStyleSheet.illustratedImageWidth)
+        showHideIllustratedView = ShowHideIllustratedView(illustratedImageView)
         titleTruncation = TableGroupView.Row(leftTitle: NSLocalizedString("Title truncation", comment: ""),
             rightViews: LabelAndControl.makeRadioButtons("titleTruncation", TitleTruncationPreference.allCases))
         let showAppWindowsTooltip = NSLocalizedString("Show an item in the switcher for each window, or for each application. Windows will be focused, whereas applications will be activated.", comment: "")
@@ -69,20 +58,6 @@ class CustomizeStyleSheet: SheetWindow {
                 "showTitles", ShowTitlesPreference.allCases, extraAction: { _ in
                 self.showAppsOrWindowsIllustratedImage()
             })])
-    }
-
-    private func makeAppIconsView() -> TableGroupSetView {
-        let table = makeAppWindowTableGroupView()
-        table.addNewTable()
-        table.addRow(alignThumbnails, onMouseEntered: { event, view in
-            self.showAlignThumbnailsIllustratedImage()
-        })
-        table.onMouseExited = { event, view in
-            IllustratedImageThemeView.resetImage(self.illustratedImageView, event, view)
-        }
-        let view = TableGroupSetView(originalViews: [table], padding: 0)
-        toggleAppNamesWindowTitles()
-        return view
     }
 
     private func makeTitlesView() -> TableGroupSetView {
@@ -121,10 +96,6 @@ class CustomizeStyleSheet: SheetWindow {
                 view.isEnabled = isEnabled
             }
         }
-    }
-
-    private func showAlignThumbnailsIllustratedImage() {
-        illustratedImageView.highlight(true, Preferences.alignThumbnails.image.name)
     }
 
     private func showAppsOrWindowsIllustratedImage() {
