@@ -5,6 +5,7 @@ class KeyboardEventsTestable {
         var ids = [String: Int]()
         (0..<Preferences.maxShortcutCount).forEach { ids[Preferences.indexToName("nextWindowShortcut", $0)] = $0 }
         (0..<Preferences.maxShortcutCount).forEach { ids[Preferences.indexToName("holdShortcut", $0)] = Preferences.maxShortcutCount + $0 }
+        ids["launcherShortcut"] = Preferences.maxShortcutCount * 2
         return ids
     }
 }

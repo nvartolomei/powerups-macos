@@ -82,10 +82,7 @@ class AboutWindow: NSPanel {
         let aboutView = AboutTab.makeContentView(false, true)
         let columnWidth = frame.width - 2 * Self.contentPadding
         usageTextView = Self.makeUsageTextView(columnWidth)
-        let acknowledgmentsView = AcknowledgmentsTab.makeContentView(columnWidth: columnWidth, shouldFit: false, verticallyStacked: true)
-        acknowledgmentsView.translatesAutoresizingMaskIntoConstraints = false
         stack.addArrangedSubview(aboutView)
-        stack.addArrangedSubview(acknowledgmentsView)
         stack.addArrangedSubview(usageTextView)
         documentView.addSubview(stack)
         contentView = scrollView
@@ -99,8 +96,6 @@ class AboutWindow: NSPanel {
             aboutView.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
             usageTextView.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
             usageTextView.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
-            acknowledgmentsView.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
-            acknowledgmentsView.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
         ])
     }
 

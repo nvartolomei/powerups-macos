@@ -73,8 +73,12 @@ class App: NSApplication {
 
     /// we don't want another window to become key when the TilesPanel is hidden
     static func hideTilesPanelWithoutChangingKeyWindow() {
+        orderOutWithoutChangingKeyWindow(TilesPanel.shared)
+    }
+
+    static func orderOutWithoutChangingKeyWindow(_ window: NSWindow) {
         allSecondaryWindowsCanBecomeKey(false)
-        TilesPanel.shared.orderOut(nil)
+        window.orderOut(nil)
         allSecondaryWindowsCanBecomeKey(true)
     }
 
@@ -337,6 +341,7 @@ class App: NSApplication {
         Menubar.initialize()
         MainMenu.create()
         _ = TilesPanel()
+        Launcher.initialize()
         Spaces.refresh()
         Screens.refresh()
         SpacesEvents.observe()

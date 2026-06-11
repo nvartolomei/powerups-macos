@@ -139,6 +139,7 @@ enum CGSSymbolicHotKey: Int, CaseIterable {
     case commandTab = 1
     case commandShiftTab = 2
     case commandKeyAboveTab = 6 // see keyAboveTabDependingOnInputSource
+    case spotlight = 64 // "Show Spotlight search" (i.e. command+space)
 }
 
 /// enables/disables a symbolic hotkeys. These are system shortcuts such as command+tab or Spotlight

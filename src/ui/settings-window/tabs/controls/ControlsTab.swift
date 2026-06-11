@@ -134,6 +134,7 @@ class ControlsTab {
         "hideShowAppShortcut": { App.hideShowSelectedApp() },
         "searchShortcut": { App.toggleSearchMode() },
         "lockSearchShortcut": { App.lockSearchMode() },
+        "launcherShortcut": { Launcher.toggle() },
     ]
     static var arrowKeysCheckbox: Switch!
     static var vimKeysCheckbox: Switch!
@@ -152,6 +153,7 @@ class ControlsTab {
     private static let staticManagedShortcutPreferences = [
         "focusWindowShortcut", "previousWindowShortcut", "cancelShortcut", "searchShortcut", "lockSearchShortcut",
         "closeWindowShortcut", "minDeminWindowShortcut", "toggleFullscreenWindowShortcut", "quitAppShortcut", "hideShowAppShortcut",
+        "launcherShortcut",
     ]
     private static let removableShortcutPreferences = [
         "holdShortcut", "nextWindowShortcut",
@@ -705,6 +707,7 @@ class ControlsTab {
             .commandTab: { shortcut in shortcut.carbonModifierFlags == cmdKey && shortcut.carbonKeyCode == kVK_Tab },
             .commandShiftTab: { shortcut in CustomRecorderControlTestable.combinedModifiersMatch(shortcut.carbonModifierFlags, UInt32(cmdKey | shiftKey)) && shortcut.carbonKeyCode == kVK_Tab },
             .commandKeyAboveTab: { shortcut in shortcut.carbonModifierFlags == cmdKey && shortcut.carbonKeyCode == kVK_ANSI_Grave },
+            .spotlight: { shortcut in shortcut.carbonModifierFlags == cmdKey && shortcut.carbonKeyCode == kVK_Space },
         ]
         var overlappingHotkeys = shortcuts.values.compactMap { atShortcut in nativeHotkeys.first { $1(atShortcut.shortcut) }?.key }
         if overlappingHotkeys.contains(.commandTab) && !overlappingHotkeys.contains(.commandShiftTab) {
@@ -738,7 +741,7 @@ class ControlsTab {
                 restrictModifiersOfHoldShortcut(controlId, [])
                 (sender as! CustomRecorderControl).objectValue = nil
             } else {
-                addShortcut(.down, controlId.hasPrefix("nextWindowShortcut") ? .global : .local, newShortcut!, controlId, nil)
+                addShortcut(.down, shortcutScope(controlId), newShortcut!, controlId, nil)
                 restrictModifiersOfHoldShortcut(controlId, [(sender as! CustomRecorderControl).objectValue!.modifierFlags])
             }
         }
@@ -861,8 +864,12 @@ class ControlsTab {
             restrictModifiersOfHoldShortcut(controlId, [])
             return
         }
-        addShortcut(.down, controlId.hasPrefix("nextWindowShortcut") ? .global : .local, shortcut, controlId, nil)
+        addShortcut(.down, shortcutScope(controlId), shortcut, controlId, nil)
         restrictModifiersOfHoldShortcut(controlId, [shortcut.modifierFlags])
+    }
+
+    private static func shortcutScope(_ controlId: String) -> ShortcutScope {
+        controlId.hasPrefix("nextWindowShortcut") || controlId == "launcherShortcut" ? .global : .local
     }
 
     private static func applyHoldShortcutPreference(_ controlId: String) {
