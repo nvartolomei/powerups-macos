@@ -15,7 +15,6 @@ class App: NSApplication {
     static let website = "https://alt-tab.app"
     static let appIcon = CGImage.named("app.icns")
     override class var shared: App { super.shared as! App }
-    static var supportProjectAction: Selector { #selector(App.supportProject) }
     static var appIsBeingUsed = false
     static var shortcutIndex = 0
     static var forceDoNothingOnRelease = false
@@ -134,10 +133,6 @@ class App: NSApplication {
 
     @objc static func checkPermissions(_ sender: NSMenuItem) {
         showPermissionsWindow()
-    }
-
-    @objc static func supportProject() {
-        NSWorkspace.shared.open(URL(string: App.website + "/support")!)
     }
 
     @objc static func showDebugWindow() {
