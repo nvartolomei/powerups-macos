@@ -22,9 +22,8 @@ class Preferences {
             "mouseHoverEnabled": "false",
             "cursorFollowFocus": CursorFollowFocus.never.indexAsString,
             "showTabsAsWindows": "false",
-            "hideColoredCircles": "false",
             "windowDisplayDelay": "100",
-            "appearanceStyle": AppearanceStylePreference.thumbnails.indexAsString,
+            "appearanceStyle": AppearanceStylePreference.appIcons.indexAsString,
             "appearanceSize": AppearanceSizePreference.auto.indexAsString,
             "appearanceTheme": AppearanceThemePreference.system.indexAsString,
             "theme": ThemePreference.macOs.indexAsString,
@@ -34,19 +33,14 @@ class Preferences {
             "showAppsOrWindows": ShowAppsOrWindowsPreference.windows.indexAsString,
             "showTitles": ShowTitlesPreference.windowTitle.indexAsString,
             "fadeOutAnimation": "false",
-            "previewFadeInAnimation": "true",
             "startAtLogin": "true",
             "menubarIcon": MenubarIconPreference.outlined.indexAsString,
             "menubarIconShown": "true",
             "language": LanguagePreference.systemDefault.indexAsString,
             "exceptions": defaultExceptions(),
             "hideAppBadges": "false",
-            "hideThumbnails": "false",
             "hideSpaceNumberLabels": "false",
             "hideStatusIcons": "false",
-            "previewFocusedWindow": "false",
-            "captureWindowsInBackground": "true",
-            "screenRecordingPermissionSkipped": "false",
             "trackpadHapticFeedbackEnabled": "true",
             "settingsWindowShownOnFirstLaunch": "false",
         ]
@@ -103,19 +97,14 @@ class Preferences {
     static var cursorFollowFocus: CursorFollowFocus { CachedUserDefaults.macroPref("cursorFollowFocus", CursorFollowFocus.allCases) }
     static var trackpadHapticFeedbackEnabled: Bool { CachedUserDefaults.bool("trackpadHapticFeedbackEnabled") }
     static var showTabsAsWindows: Bool { CachedUserDefaults.bool("showTabsAsWindows") }
-    static var hideColoredCircles: Bool { CachedUserDefaults.bool("hideColoredCircles") }
     static var windowDisplayDelay: DispatchTimeInterval { DispatchTimeInterval.milliseconds(CachedUserDefaults.int("windowDisplayDelay")) }
     static var fadeOutAnimation: Bool { CachedUserDefaults.bool("fadeOutAnimation") }
-    static var previewFadeInAnimation: Bool { CachedUserDefaults.bool("previewFadeInAnimation") }
     static var hideSpaceNumberLabels: Bool { CachedUserDefaults.bool("hideSpaceNumberLabels") }
     static var hideStatusIcons: Bool { CachedUserDefaults.bool("hideStatusIcons") }
     static var hideAppBadges: Bool { CachedUserDefaults.bool("hideAppBadges") }
     // periphery:ignore
     static var startAtLogin: Bool { CachedUserDefaults.bool("startAtLogin") }
     static var exceptions: [ExceptionEntry] { CachedUserDefaults.json("exceptions", [ExceptionEntry].self) }
-    static var previewSelectedWindow: Bool { CachedUserDefaults.bool("previewFocusedWindow") }
-    static var captureWindowsInBackground: Bool { CachedUserDefaults.bool("captureWindowsInBackground") }
-    static var screenRecordingPermissionSkipped: Bool { CachedUserDefaults.bool("screenRecordingPermissionSkipped") }
     static var settingsWindowShownOnFirstLaunch: Bool { CachedUserDefaults.bool("settingsWindowShownOnFirstLaunch") }
 
     // macro values
@@ -211,7 +200,7 @@ class Preferences {
     static var all: [String: Any] { UserDefaults.standard.persistentDomain(forName: App.bundleIdentifier)! }
 
     static func onlyShowApplications() -> Bool {
-        return Preferences.showAppsOrWindows == .applications && Preferences.appearanceStyle != .thumbnails
+        return Preferences.showAppsOrWindows == .applications
     }
 
     /// key-above-tab is ` on US keyboard, but can be different on other keyboards

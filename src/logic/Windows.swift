@@ -73,21 +73,6 @@ class Windows {
         }
     }
 
-    static func previewSelectedWindowIfNeeded() {
-        if App.appIsBeingUsed && ScreenRecordingPermission.status == .granted
-               && Preferences.previewSelectedWindow && !Preferences.onlyShowApplications()
-               && TilesPanel.shared.isKeyWindow,
-           let window = selectedWindow(),
-           let id = window.cgWindowId,
-           let thumbnail = window.thumbnail,
-           let position = window.position,
-           let size = window.size {
-            PreviewPanel.show(id, thumbnail, position, size)
-        } else {
-            PreviewPanel.shared.orderOut(nil)
-        }
-    }
-
     static func updatesBeforeShowing() -> Bool {
         if MissionControl.state() == .showAllWindows || MissionControl.state() == .showFrontWindows { return false }
         if list.isEmpty { return true }
@@ -102,28 +87,6 @@ class Windows {
         refreshWhichWindowsToShowTheUser()
         sort()
         return true
-    }
-
-    // dispatch screenshot requests off the main-thread, then wait for completion
-    static func refreshThumbnailsAsync(_ windows: [Window], _ source: RefreshCausedBy, windowRemoved: Bool = false) {
-        guard (!windows.isEmpty || windowRemoved) && ScreenRecordingPermission.status == .granted
-               && !Preferences.onlyShowApplications()
-               && (!Appearance.hideThumbnails || Preferences.previewSelectedWindow)
-               && (Preferences.captureWindowsInBackground || App.appIsBeingUsed) else { return }
-        var eligibleWindows = [Window]()
-        for window in windows {
-            if !window.isWindowlessApp, let cgWindowId = window.cgWindowId, cgWindowId != CGWindowID(bitPattern: -1) {
-                eligibleWindows.append(window)
-            }
-        }
-        guard (!eligibleWindows.isEmpty || windowRemoved) else { return }
-        if #available(macOS 14.0, *),
-           // mitigate macOS 15 bugs with ScreenCapture Kit (see https://github.com/lwouis/alt-tab-macos/issues/5190)
-           ProcessInfo.processInfo.operatingSystemVersion.majorVersion != 15 {
-            WindowCaptureScreenshots.oneTimeScreenshots(eligibleWindows, source)
-        } else {
-            WindowCaptureScreenshotsPrivateApi.oneTimeScreenshots(eligibleWindows, source)
-        }
     }
 
     static func refreshWhichWindowsToShowTheUser() {
@@ -335,7 +298,6 @@ class Windows {
             selectedWindowIndex = newIndex
             selectedWindowTarget = list[newIndex].id
             TilesView.highlight(oldIndex)
-            previewSelectedWindowIfNeeded()
             index = selectedWindowIndex
             lastWindowActivityType = .focus
         }
@@ -527,7 +489,7 @@ class Windows {
             windows.forEach { $0.application.addWindowlessWindowIfNeeded() }
         }
         lastFocusedWindowTarget = getLastFocusedOrderWindowIndex().map { list[$0].id }
-        App.refreshOpenUiAfterExternalEvent([], windowRemoved: true)
+        App.refreshOpenUiAfterExternalEvent()
     }
 }
 

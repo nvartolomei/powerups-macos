@@ -16,7 +16,6 @@ class App: NSApplication {
     static let appIcon = CGImage.named("app.icns")
     override class var shared: App { super.shared as! App }
     static var supportProjectAction: Selector { #selector(App.supportProject) }
-    static var isTerminating = false
     static var appIsBeingUsed = false
     static var shortcutIndex = 0
     static var forceDoNothingOnRelease = false
@@ -49,7 +48,7 @@ class App: NSApplication {
         App.shared.terminate(nil)
     }
 
-    static func hideUi(_ keepPreview: Bool = false) {
+    static func hideUi() {
         Logger.info { "appIsBeingUsed:\(appIsBeingUsed)" }
         guard appIsBeingUsed else { return } // already hidden
         appIsBeingUsed = false
@@ -61,9 +60,6 @@ class App: NSApplication {
         CursorEvents.toggle(false)
         TrackpadEvents.reset()
         hideTilesPanelWithoutChangingKeyWindow()
-        if !keepPreview {
-            PreviewPanel.shared.orderOut(nil)
-        }
         hideAllTooltips()
         MainMenu.toggle(true)
     }
@@ -235,15 +231,13 @@ class App: NSApplication {
 
     static func focusSelectedWindow(_ selectedWindow: Window?) {
         guard appIsBeingUsed else { return } // already hidden
-        hideUi(true)
+        hideUi()
         if let window = selectedWindow, MissionControl.state() == .inactive || MissionControl.state() == .showDesktop {
             window.focus()
             if Preferences.cursorFollowFocus == .always || (
                 Preferences.cursorFollowFocus == .differentScreen && (Spaces.screenSpacesMap.first { $0.value.contains { space in window.spaceIds.contains(space) } })?.key != NSScreen.active()?.cachedUuid()) {
                 moveCursorToSelectedWindow(window)
             }
-        } else {
-            PreviewPanel.shared.orderOut(nil)
         }
     }
 
@@ -254,8 +248,7 @@ class App: NSApplication {
         CGWarpMouseCursorPosition(point)
     }
 
-    static func refreshOpenUiAfterExternalEvent(_ windowsToScreenshot: [Window], windowRemoved: Bool = false) {
-        Windows.refreshThumbnailsAsync(windowsToScreenshot, .refreshUiAfterExternalEvent, windowRemoved: windowRemoved)
+    static func refreshOpenUiAfterExternalEvent() {
         refreshOpenUiThrottler.throttleOrProceed {
             guard appIsBeingUsed else { return }
             if !Windows.updatesBeforeShowing() { hideUi(); return }
@@ -271,8 +264,6 @@ class App: NSApplication {
         TilesPanel.shared.updateContents(preservedScrollOrigin)
         guard appIsBeingUsed else { return }
         Windows.voiceOverWindow() // at this point TileViews are assigned to the window, and ready
-        guard appIsBeingUsed else { return }
-        Windows.previewSelectedWindowIfNeeded()
         guard appIsBeingUsed else { return }
         Applications.refreshBadgesAsync()
     }
@@ -321,12 +312,10 @@ class App: NSApplication {
         refreshUi()
         guard appIsBeingUsed else { return }
         TilesPanel.shared.show()
-        Windows.previewSelectedWindowIfNeeded()
         if TilesView.isSearchEditing {
             TilesView.enableSearchEditing()
         }
         KeyRepeatTimer.startRepeatingKeyNextWindow()
-        Windows.refreshThumbnailsAsync(Windows.list, .refreshOnlyThumbnailsAfterShowUi)
     }
 
     static func checkIfShortcutsShouldBeDisabled(_ activeWindow: Window?, _ activeApp: Application?) {
@@ -349,12 +338,10 @@ class App: NSApplication {
         BackgroundWork.start()
         NSScreen.updatePreferred()
         Appearance.update()
-        TilesPanel.updateMaxPossibleThumbnailSize()
         TilesPanel.updateMaxPossibleAppIconSize()
         Menubar.initialize()
         MainMenu.create()
         _ = TilesPanel()
-        _ = PreviewPanel()
         Spaces.refresh()
         Screens.refresh()
         SpacesEvents.observe()
@@ -408,12 +395,6 @@ extension App: NSApplicationDelegate {
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         Logger.info { "" }
-        makeSureAllCapturesAreFinished()
         return .terminateNow
     }
-}
-
-enum RefreshCausedBy {
-    case refreshOnlyThumbnailsAfterShowUi
-    case refreshUiAfterExternalEvent
 }

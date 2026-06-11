@@ -145,8 +145,8 @@ private final class QueueGraphView: NSView {
     private func drawLegend(in ctx: CGContext) {
         guard !orderedQueues.isEmpty, orderedQueues.count == legendLines.count else { return }
         let rowsPerColumn = Int(floor((DebugMenu.height - 2*padding) / legendRowHeight))
-        let columnWidth: CGFloat = (bounds.width - 2*padding) /
-            CGFloat(max(1, (orderedQueues.count + rowsPerColumn - 1) / rowsPerColumn))
+        let columnCount = max(1, (orderedQueues.count + rowsPerColumn - 1) / rowsPerColumn)
+        let columnWidth: CGFloat = (bounds.width - 2*padding) / CGFloat(columnCount)
         let legendBottom = padding
         for (i, _) in orderedQueues.enumerated() {
             let col = CGFloat(i / rowsPerColumn)

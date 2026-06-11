@@ -65,8 +65,8 @@ class AccessibilityEvents {
         } else {
             App.checkIfShortcutsShouldBeDisabled(nil, app)
             if let windowless = (Windows.list.first { $0.isWindowlessApp && $0.application.pid == pid }) {
-                if let windows = Windows.updateLastFocusOrder(windowless) {
-                    App.refreshOpenUiAfterExternalEvent(windows)
+                if Windows.updateLastFocusOrder(windowless) != nil {
+                    App.refreshOpenUiAfterExternalEvent()
                 }
             }
         }
@@ -74,13 +74,9 @@ class AccessibilityEvents {
 
     private static func applicationHiddenOrShown(_ app: Application, _ pid: pid_t, _ type: String) {
         app.isHidden = type == kAXApplicationHiddenNotification
-        let windows = Windows.list.filter {
-            // for AXUIElement of apps, CFEqual or == don't work; looks like a Cocoa bug
-            return $0.application.pid == pid
-        }
         // if we process the "shown" event too fast, UI may not be ready; we add a delay to work around this
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
-            App.refreshOpenUiAfterExternalEvent(windows)
+            App.refreshOpenUiAfterExternalEvent()
         }
     }
 
@@ -109,14 +105,14 @@ class AccessibilityEvents {
                     tabStateChanged = TabGroup.updateState(window, tabSiblingTitles)
                 }
                 if findOrCreate.1 || (tabStateChanged && App.appIsBeingUsed) {
-                    App.refreshOpenUiAfterExternalEvent([window])
+                    App.refreshOpenUiAfterExternalEvent()
                 }
                 if type == kAXMainWindowChangedNotification || type == kAXFocusedWindowChangedNotification {
                     focusedWindowChanged(window)
                 } else if type == kAXWindowResizedNotification || type == kAXWindowMovedNotification {
                     windowResizedOrMoved(window)
                 } else if !findOrCreate.1 {
-                    App.refreshOpenUiAfterExternalEvent([window])
+                    App.refreshOpenUiAfterExternalEvent()
                 }
             }
         }
@@ -136,13 +132,13 @@ class AccessibilityEvents {
         // this avoids issues with dialogs, quicklook, etc (see scenarios from #1044 and #2003)
         window.application.focusedWindow = window
         App.checkIfShortcutsShouldBeDisabled(window, nil)
-        if let windows = Windows.updateLastFocusOrder(window) {
-            App.refreshOpenUiAfterExternalEvent(windows)
+        if Windows.updateLastFocusOrder(window) != nil {
+            App.refreshOpenUiAfterExternalEvent()
         }
     }
 
     private static func windowResizedOrMoved(_ window: Window) {
         window.updateSpacesAndScreen()
-        App.refreshOpenUiAfterExternalEvent([window])
+        App.refreshOpenUiAfterExternalEvent()
     }
 }

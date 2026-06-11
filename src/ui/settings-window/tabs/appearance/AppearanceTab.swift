@@ -86,10 +86,10 @@ class IllustratedImageThemeView: ClickHoverImageView {
                                          _ theme: String,
                                          _ imageName: String = "") -> String {
         if imageName.isEmpty {
-            // thumbnails_light/app_icons_dark
+            // app_icons_light/titles_dark
             return style.image.name + "_" + theme
         }
-        // thumbnails_show_app_badges_light/app_icons_show_app_badges_light
+        // app_icons_show_app_badges_light/titles_show_app_badges_light
         return style.image.name + "_" + imageName + "_" + theme
     }
 
@@ -144,7 +144,7 @@ class ShowHideIllustratedView {
         hideAppBadges.rowId = "hideAppBadges"
         hideAppBadges.uncheckedImage = "show_app_badges"
         hideAppBadges.checkedImage = "hide_app_badges"
-        hideAppBadges.supportedStyles = [.thumbnails, .appIcons, .titles]
+        hideAppBadges.supportedStyles = [.appIcons, .titles]
         hideAppBadges.leftViews = [TableGroupView.makeText(NSLocalizedString("Hide app badges", comment: ""))]
         hideAppBadges.rightViews.append(LabelAndControl.makeSwitch(hideAppBadges.rowId, extraAction: { sender in
             self.onCheckboxClicked(sender: sender, rowId: hideAppBadges.rowId)
@@ -154,7 +154,7 @@ class ShowHideIllustratedView {
         hideStatusIcons.rowId = "hideStatusIcons"
         hideStatusIcons.uncheckedImage = "show_status_icons"
         hideStatusIcons.checkedImage = "hide_status_icons"
-        hideStatusIcons.supportedStyles = [.thumbnails, .titles]
+        hideStatusIcons.supportedStyles = [.titles]
         hideStatusIcons.leftViews = [TableGroupView.makeText(NSLocalizedString("Hide status icons", comment: ""))]
         hideStatusIcons.subTitle = NSLocalizedString("PowerUps will show if the window is currently minimized or fullscreen with a status icon.", comment: "")
         hideStatusIcons.rightViews.append(LabelAndControl.makeInfoButton(searchableTooltipTexts: [hideStatusIcons.subTitle!], onMouseEntered: { event, view in
@@ -170,28 +170,18 @@ class ShowHideIllustratedView {
         hideSpaceNumberLabels.rowId = "hideSpaceNumberLabels"
         hideSpaceNumberLabels.uncheckedImage = "show_space_number_labels"
         hideSpaceNumberLabels.checkedImage = "hide_space_number_labels"
-        hideSpaceNumberLabels.supportedStyles = [.thumbnails, .titles]
+        hideSpaceNumberLabels.supportedStyles = [.titles]
         hideSpaceNumberLabels.leftViews = [TableGroupView.makeText(NSLocalizedString("Hide Space number labels", comment: ""))]
         hideSpaceNumberLabels.rightViews.append(LabelAndControl.makeSwitch(hideSpaceNumberLabels.rowId, extraAction: { sender in
             self.onCheckboxClicked(sender: sender, rowId: hideSpaceNumberLabels.rowId)
         }))
         showHideRows.append(hideSpaceNumberLabels)
-        var hideColoredCircles = ShowHideRowInfo()
-        hideColoredCircles.rowId = "hideColoredCircles"
-        hideColoredCircles.uncheckedImage = "show_colored_circles"
-        hideColoredCircles.checkedImage = "hide_colored_circles"
-        hideColoredCircles.supportedStyles = [.thumbnails]
-        hideColoredCircles.leftViews = [TableGroupView.makeText(NSLocalizedString("Hide colored circles on mouse hover", comment: ""))]
-        hideColoredCircles.rightViews.append(LabelAndControl.makeSwitch(hideColoredCircles.rowId, extraAction: { sender in
-            self.onCheckboxClicked(sender: sender, rowId: hideColoredCircles.rowId)
-        }))
-        showHideRows.append(hideColoredCircles)
         let featureUnavailable = NSLocalizedString("PowerUps is currently set to show Applications. This setting is only available when PowerUps is set to show Windows.", comment: "")
         var showTabsAsWindows = ShowHideRowInfo()
         showTabsAsWindows.rowId = "showTabsAsWindows"
         showTabsAsWindows.uncheckedImage = "hide_tabs_as_windows"
         showTabsAsWindows.checkedImage = "show_tabs_as_windows"
-        showTabsAsWindows.supportedStyles = [.thumbnails, .appIcons, .titles]
+        showTabsAsWindows.supportedStyles = [.appIcons, .titles]
         showTabsAsWindows.leftViews = [TableGroupView.makeText(NSLocalizedString("Show standard tabs as windows", comment: ""))]
         showTabsAsWindows.subTitle = NSLocalizedString("Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. PowerUps can't list those separately.", comment: "")
         showTabsAsWindows.rightViews.append(LabelAndControl.makeInfoButton(searchableTooltipTexts: [featureUnavailable, showTabsAsWindows.subTitle!], onMouseEntered: { event, view in
@@ -392,7 +382,6 @@ class AppearanceTab: NSObject {
     static var animationsButton: NSButton!
     static var customizeStyleSheet: CustomizeStyleSheet!
     static var animationsSheet: AnimationsSheet!
-    static var previewSelectedWindowRowInfo: TableGroupView.RowInfo!
 
     static func initTab() -> NSView {
         customizeStyleButton = NSButton(title: getCustomizeStyleButtonTitle(), target: self, action: #selector(showCustomizeStyleSheet))
@@ -412,18 +401,16 @@ class AppearanceTab: NSObject {
     }
 
     private static func makeAppearanceView() -> NSView {
-        let table = TableGroupView(subTitle: NSLocalizedString("Switch between 3 different styles. You can customize them.", comment: ""),
+        let table = TableGroupView(subTitle: NSLocalizedString("Switch between 2 different styles. You can customize them.", comment: ""),
             width: SettingsWindow.contentWidth)
         table.addRow(secondaryViews: [LabelAndControl.makeImageRadioButtons("appearanceStyle", AppearanceStylePreference.allCases, extraAction: { _ in
             toggleCustomizeStyleButton()
-            updatePreviewSelectedWindowState()
         }, buttonSpacing: 10)], secondaryViewsAlignment: .centerX)
         table.addRow(leftText: NSLocalizedString("Size", comment: ""),
             rightViews: [LabelAndControl.makeSegmentedControl("appearanceSize", AppearanceSizePreference.allCases, segmentWidth: 100)])
         table.addRow(leftText: NSLocalizedString("Theme", comment: ""),
             rightViews: [LabelAndControl.makeSegmentedControl("appearanceTheme", AppearanceThemePreference.allCases, segmentWidth: 100)])
         addAfterKeysReleasedRow(table)
-        addPreviewSelectedWindowRow(table)
         table.addRow(rightViews: customizeStyleButton)
         return table
     }
@@ -431,31 +418,6 @@ class AppearanceTab: NSObject {
     private static func addAfterKeysReleasedRow(_ table: TableGroupView) {
         table.addRow(leftText: NSLocalizedString("After keys are released", comment: ""),
             rightViews: [LabelAndControl.makeDropdown("shortcutStyle", ShortcutStylePreference.allCases)])
-    }
-
-    private static func addPreviewSelectedWindowRow(_ table: TableGroupView) {
-        previewSelectedWindowRowInfo = table.addRow(leftText: NSLocalizedString("Preview selected window", comment: ""),
-            rightViews: [LabelAndControl.makeSwitch("previewFocusedWindow")])
-        updatePreviewSelectedWindowState()
-    }
-
-    static func updatePreviewSelectedWindowState() {
-        guard let rowInfo = previewSelectedWindowRowInfo else { return }
-        let isEnabled = !isPreviewSelectedWindowDisabled()
-        rowInfo.leftViews?.forEach { view in
-            if let textField = view as? NSTextField {
-                textField.textColor = isEnabled ? .textColor : .gray
-            }
-        }
-        rowInfo.rightViews?.forEach { view in
-            if let switchControl = view as? Switch {
-                switchControl.isEnabled = isEnabled
-            }
-        }
-    }
-
-    private static func isPreviewSelectedWindowDisabled() -> Bool {
-        return Preferences.onlyShowApplications()
     }
 
     private static func makeMultipleScreensView() -> NSView {
@@ -466,9 +428,7 @@ class AppearanceTab: NSObject {
     }
 
     private static func getCustomizeStyleButtonTitle() -> String {
-        if Preferences.appearanceStyle == .thumbnails {
-            return NSLocalizedString("Customize Thumbnails style…", comment: "")
-        } else if Preferences.appearanceStyle == .appIcons {
+        if Preferences.appearanceStyle == .appIcons {
             return NSLocalizedString("Customize App Icons style…", comment: "")
         }
         return NSLocalizedString("Customize Titles style…", comment: "")

@@ -245,32 +245,6 @@ extension CGImage {
     func size() -> NSSize {
         return NSSize(width: width, height: height)
     }
-
-    func isFullyTransparent() -> Bool {
-        guard ![.none, .noneSkipFirst, .noneSkipLast].contains(alphaInfo),
-              let provider = dataProvider, let data = provider.data, let ptr = CFDataGetBytePtr(data)
-        else { return false }
-        // Assumes: kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little
-        // Layout: [B, G, R, A]
-        let length = CFDataGetLength(data)
-        var i = 3
-        while i < length {
-            if ptr[i] != 0 {
-                return false
-            }
-            i += 4
-        }
-        return true
-    }
-}
-
-extension CVPixelBuffer {
-    func size() -> NSSize {
-        NSSize(
-            width: CVPixelBufferGetWidth(self),
-            height: CVPixelBufferGetHeight(self)
-        )
-    }
 }
 
 extension pid_t {

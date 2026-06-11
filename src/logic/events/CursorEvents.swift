@@ -74,7 +74,7 @@ class CursorEvents {
         }
         mouseDownInsideSearchField = false
         guard isPointerInsideUi() else { return nil }
-        mouseDownTarget = (findButtonUnderPointer() ?? findTileViewUnderPointer()) as AnyObject?
+        mouseDownTarget = findTileViewUnderPointer()
         return nil
     }
 
@@ -91,10 +91,6 @@ class CursorEvents {
         }
         let downTarget = mouseDownTarget
         mouseDownTarget = nil
-        if let button = findButtonUnderPointer(), button === downTarget {
-            button.onClick()
-            return nil
-        }
         if let target = findTileViewUnderPointer(), target === downTarget {
             target.mouseUpCallback()
             return nil
@@ -163,11 +159,6 @@ class CursorEvents {
     private static func pointerInOverlay() -> (TileOverView, NSPoint) {
         let overlay = TilesView.thumbnailOverView
         return (overlay, overlay.convert(pointerLocationInWindow(), from: nil))
-    }
-
-    private static func findButtonUnderPointer() -> TrafficLightButton? {
-        let (overlay, point) = pointerInOverlay()
-        return overlay.findButton(point)
     }
 
     private static func findTileViewUnderPointer() -> TileView? {

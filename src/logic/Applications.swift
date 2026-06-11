@@ -83,7 +83,7 @@ class Applications {
                     }
                     if findOrCreate.1 || (tabStateChanged && App.appIsBeingUsed) {
                         if findOrCreate.1 { Logger.info { "manuallyUpdateWindows found a new window:\(window.debugId)" } }
-                        App.refreshOpenUiAfterExternalEvent([window])
+                        App.refreshOpenUiAfterExternalEvent()
                     }
                 }
             }
@@ -160,7 +160,7 @@ class Applications {
             AXCallScheduler.shared.removeUnresponsivePid(pid)
             appListUpdateThrottler.removeEntry(withKey: "\(pid)")
         }
-        App.refreshOpenUiAfterExternalEvent([])
+        App.refreshOpenUiAfterExternalEvent()
     }
 
     static func refreshBadgesAsync() {
@@ -222,7 +222,7 @@ class Applications {
 
     static func updateAppIcons() {
         for app in list {
-            BackgroundWork.screenshotsQueue.addOperation { [weak app] in
+            BackgroundWork.appIconsQueue.addOperation { [weak app] in
                 guard let app else { return }
                 let r = Application.appIconWithoutPadding(app.runningApplication.icon)
                 DispatchQueue.main.async { [weak app] in

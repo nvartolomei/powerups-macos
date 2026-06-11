@@ -8,8 +8,8 @@ class LightImageView: NSView {
         fatalError("Class only supports programmatic initialization")
     }
 
-    init(frame frameRect: NSRect = .zero, withTransparencyChecks: Bool = false) {
-        imageLayer = LightImageLayer(withTransparencyChecks: withTransparencyChecks)
+    override init(frame frameRect: NSRect = .zero) {
+        imageLayer = LightImageLayer()
         super.init(frame: frameRect)
         wantsLayer = true
         layer!.addSublayer(imageLayer)
@@ -21,8 +21,8 @@ class LightImageView: NSView {
         imageLayer.frame = bounds
     }
 
-    func updateContents(_ caLayerContents: CALayerContents, _ size: NSSize) {
-        imageLayer.updateContents(caLayerContents, size)
+    func updateContents(_ image: CGImage?, _ size: NSSize) {
+        imageLayer.updateContents(image, size)
         if frame.size != size {
             frame.size = size
         }
@@ -30,19 +30,5 @@ class LightImageView: NSView {
 
     func releaseImage() {
         imageLayer.releaseImage()
-    }
-}
-
-enum CALayerContents {
-    case cgImage(CGImage?)
-    case pixelBuffer(CVPixelBuffer?)
-
-    func size() -> NSSize? {
-        switch self {
-        case .cgImage(let image):
-            return image?.size()
-        case .pixelBuffer(let pixelBuffer):
-            return pixelBuffer?.size()
-        }
     }
 }

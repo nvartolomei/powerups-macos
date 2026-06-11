@@ -12,8 +12,6 @@ class AnimationsSheet: SheetWindow {
             rightViews: [rule, indicator])
         table.addRow(leftText: NSLocalizedString("Fade out animation of Switcher", comment: ""),
             rightViews: LabelAndControl.makeSwitch("fadeOutAnimation"))
-        table.addRow(leftText: NSLocalizedString("Fade in animation of Preview", comment: ""),
-            rightViews: LabelAndControl.makeSwitch("previewFadeInAnimation"))
         return table
     }
 }

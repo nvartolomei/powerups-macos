@@ -42,7 +42,7 @@ class WindowlessAppIndicator: NSView {
     }
 
     static func getAppearanceParameter() -> AppearanceParameter {
-        if Preferences.appearanceStyle == .thumbnails || Preferences.appearanceStyle == .appIcons {
+        if Preferences.appearanceStyle == .appIcons {
             if Appearance.resolvedSize == .large {
                 return AppearanceParameter(width: 12, height: 5, cornerRadius: 2)
             }

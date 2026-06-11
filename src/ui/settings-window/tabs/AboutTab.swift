@@ -8,7 +8,7 @@ class AboutTab {
     static func makeContentView(_ fitToContent: Bool = true, _ showFeedbackButton: Bool = true, _ centerHero: Bool = false) -> NSView {
         let appIcon = LightImageView()
         appIcon.translatesAutoresizingMaskIntoConstraints = false
-        appIcon.updateContents(.cgImage(App.appIcon), NSSize(width: 128, height: 128))
+        appIcon.updateContents(App.appIcon, NSSize(width: 128, height: 128))
         appIcon.fit(128, 128)
         let appText = StackView([
             BoldLabel(App.name),

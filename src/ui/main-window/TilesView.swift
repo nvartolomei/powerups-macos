@@ -239,8 +239,6 @@ class TilesView {
         // Maybe in some Appkit willDraw() function that triggers before drawing it
         NSScreen.updatePreferred()
         Appearance.update()
-        // thumbnails are captured continuously. They will pick up the new size on the next cycle
-        TilesPanel.updateMaxPossibleThumbnailSize()
         // app icons are captured once at launch; we need to manually update them if needed
         let old = TilesPanel.maxPossibleAppIconSize.width
         TilesPanel.updateMaxPossibleAppIconSize()
@@ -451,7 +449,6 @@ class TilesView {
                 window.rowIndex = rows.count - 1
             } else {
                 // release images and stale window references from unused recycledViews; they take lots of RAM
-                view.thumbnail.releaseImage()
                 view.appIcon.releaseImage()
                 view.window_ = nil
             }
@@ -564,18 +561,12 @@ class TilesView {
             TilesView.highlight(Windows.selectedWindowIndex)
         } else {
             thumbnailUnderLayer.updateHighlight(focusedView: nil, hoveredView: nil)
-            thumbnailOverView.hideWindowControls()
         }
         if let hoveredWindowIndex = Windows.hoveredWindowIndex,
            hoveredWindowIndex >= 0,
            hoveredWindowIndex < Windows.list.count,
            Windows.shouldDisplay(Windows.list[hoveredWindowIndex]) {
             TilesView.highlight(hoveredWindowIndex)
-            if thumbnailOverView.isShowingWindowControls {
-                thumbnailOverView.showWindowControls(for: TilesView.recycledViews[hoveredWindowIndex])
-            }
-        } else {
-            thumbnailOverView.hideWindowControls()
         }
     }
 

@@ -11,10 +11,9 @@ class BackgroundWork {
 
     // we use an OperationQueue for most tasks, especially when we need to call blocking APIs in parallel
     static var repeatingKeyQueue: LabeledOperationQueue!
-    static var screenshotsQueue: LabeledOperationQueue!
+    static var appIconsQueue: LabeledOperationQueue!
     static var accessibilityCommandsQueue: LabeledOperationQueue!
     static var permissionsCheckOnTimerQueue: LabeledOperationQueue!
-    static var permissionsSystemCallsQueue: LabeledOperationQueue!
 
     private static var debugMenu: DebugMenu!
     private static var totalPotentialThreadCount = 0
@@ -22,10 +21,7 @@ class BackgroundWork {
     static func preStart() {
         // we make calls to the system permissions API to know if permissions are granted. We do this on a timer
         permissionsCheckOnTimerQueue = LabeledOperationQueue("permissionsCheckOnTimer", .userInteractive, 1)
-        // if macOS is overwhelmed, let's reduce the pressure on it by calling permission APIs one at a time
-        permissionsSystemCallsQueue = LabeledOperationQueue("permissionsSystemCalls", .userInteractive, 1)
-        // we update cachedSCWindows during the first permission check; so we need this queue early
-        screenshotsQueue = LabeledOperationQueue("screenshots", .userInteractive, 8)
+        appIconsQueue = LabeledOperationQueue("appIcons", .userInteractive, 8)
     }
 
     static func start() {
@@ -54,7 +50,7 @@ class BackgroundWork {
     // useful during development to inspect how many threads are used by AltTab
     private static func logThreadsAndQueuesOnRepeat() {
         // if Logger.decideLevel() == .debug {
-            debugMenu = DebugMenu([screenshotsQueue, accessibilityCommandsQueue, AXCallScheduler.shared.fastQueue, AXCallScheduler.shared.retryQueue])
+            debugMenu = DebugMenu([appIconsQueue, accessibilityCommandsQueue, AXCallScheduler.shared.fastQueue, AXCallScheduler.shared.retryQueue])
             debugMenu.orderFront(nil)
             debugMenu.start()
             // Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
@@ -65,7 +61,7 @@ class BackgroundWork {
     }
 
     private static func logQueues() -> Void {
-        let queues = [screenshotsQueue, accessibilityCommandsQueue, AXCallScheduler.shared.fastQueue, AXCallScheduler.shared.retryQueue].compactMap { $0 }
+        let queues = [appIconsQueue, accessibilityCommandsQueue, AXCallScheduler.shared.fastQueue, AXCallScheduler.shared.retryQueue].compactMap { $0 }
         var map = [String:Int]()
         for queue in queues {
             map[queue.underlyingQueue!.label] = queue.operations.reduce(0) { $1.isExecuting ? $0 + 1 : $0 }

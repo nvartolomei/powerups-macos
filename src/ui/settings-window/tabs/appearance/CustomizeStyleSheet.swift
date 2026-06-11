@@ -20,11 +20,9 @@ class CustomizeStyleSheet: SheetWindow {
     override func makeContentView() -> NSView {
         makeComponents()
         showHideView = showHideIllustratedView.makeView()
-        if style == .thumbnails {
-            advancedView = makeThumbnailsView()
-        } else if style == .appIcons {
+        if style == .appIcons {
             advancedView = makeAppIconsView()
-        } else if style == .titles {
+        } else {
             advancedView = makeTitlesView()
         }
         control = NSSegmentedControl(labels: [
@@ -63,7 +61,6 @@ class CustomizeStyleSheet: SheetWindow {
         showAppsOrWindows = TableGroupView.Row(leftTitle: NSLocalizedString("Show in switcher", comment: ""),
             rightViews: LabelAndControl.makeRadioButtons("showAppsOrWindows", ShowAppsOrWindowsPreference.allCases, extraAction: { _ in
                 self.showHideIllustratedView.setStateOnApplications()
-                AppearanceTab.updatePreviewSelectedWindowState()
                 self.toggleAppNamesWindowTitles()
                 self.showAppsOrWindowsIllustratedImage()
             }) + [showAppWindowsInfo])
@@ -72,25 +69,6 @@ class CustomizeStyleSheet: SheetWindow {
                 "showTitles", ShowTitlesPreference.allCases, extraAction: { _ in
                 self.showAppsOrWindowsIllustratedImage()
             })])
-    }
-
-    private func makeThumbnailsView() -> TableGroupSetView {
-        let table = TableGroupView(width: CustomizeStyleSheet.width)
-        showTitlesRowInfo = table.addRow(showTitles, onMouseEntered: { event, view in
-            self.showAppsOrWindowsIllustratedImage()
-        })
-        table.addNewTable()
-        table.addRow(alignThumbnails, onMouseEntered: { event, view in
-            self.showAlignThumbnailsIllustratedImage()
-        }, onMouseExited: { event, view in
-            IllustratedImageThemeView.resetImage(self.illustratedImageView, event, view)
-        })
-        table.addRow(titleTruncation)
-        table.onMouseExited = { event, view in
-            IllustratedImageThemeView.resetImage(self.illustratedImageView, event, view)
-        }
-        let view = TableGroupSetView(originalViews: [table], padding: 0)
-        return view
     }
 
     private func makeAppIconsView() -> TableGroupSetView {
@@ -132,10 +110,7 @@ class CustomizeStyleSheet: SheetWindow {
     }
 
     private func toggleAppNamesWindowTitles() {
-        var isEnabled = false
-        if Preferences.showAppsOrWindows == .windows || Preferences.appearanceStyle == .thumbnails {
-            isEnabled = true
-        }
+        let isEnabled = Preferences.showAppsOrWindows == .windows
         showTitlesRowInfo.leftViews?.forEach { view in
             if let view = view as? NSTextField {
                 view.textColor = isEnabled ? NSColor.textColor : NSColor.gray

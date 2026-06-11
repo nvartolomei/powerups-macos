@@ -2,7 +2,6 @@ import Cocoa
 
 class TilesPanel: NSPanel {
     override var canBecomeKey: Bool { true }
-    static var maxPossibleThumbnailSize = NSSize.zero
     static var maxPossibleAppIconSize = NSSize.zero
     static var shared: TilesPanel!
     private var frozenTopCenter: NSPoint?
@@ -110,25 +109,11 @@ class TilesPanel: NSPanel {
         return (screen.frame.height * Appearance.maxHeightOnScreen - Appearance.windowPadding * 2).rounded()
     }
 
-    static func updateMaxPossibleThumbnailSize() {
-        let (w, h) = NSScreen.screens.reduce((CGFloat.zero, CGFloat.zero)) { acc, screen in
-            (max(acc.0, TileView.maxThumbnailWidth(screen) * screen.backingScaleFactor),
-            max(acc.1, TileView.maxThumbnailHeight(screen) * screen.backingScaleFactor))
-        }
-        maxPossibleThumbnailSize = NSSize(width: w.rounded(), height: h.rounded())
-    }
-
     static func updateMaxPossibleAppIconSize() {
         let (w, h) = NSScreen.screens.reduce((CGFloat.zero, CGFloat.zero)) { acc, screen in
-            // in Thumbnails Appearance, AppIcons can be used for windowless apps, thus much bigger than the app icon near the title
-            if Preferences.appearanceStyle == .thumbnails {
-                return (max(acc.0, TileView.maxThumbnailWidth(screen) * screen.backingScaleFactor),
-                    max(acc.1, TileView.maxThumbnailHeight(screen) * screen.backingScaleFactor))
-            } else {
-                let size = TileView.iconSize(screen)
-                return (max(acc.0, size.width * screen.backingScaleFactor),
-                    max(acc.1, size.height * screen.backingScaleFactor))
-            }
+            let size = TileView.iconSize(screen)
+            return (max(acc.0, size.width * screen.backingScaleFactor),
+                max(acc.1, size.height * screen.backingScaleFactor))
         }
         maxPossibleAppIconSize = NSSize(width: w.rounded(), height: h.rounded())
     }

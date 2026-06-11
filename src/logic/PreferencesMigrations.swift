@@ -21,6 +21,8 @@ class PreferencesMigrations {
     private static func updateToNewPreferences(_ versionInPlist: String) {
         Logger.debug { "App-version:\(App.version), Plist-version:\(versionInPlist)" }
         for (version, migration) in [
+            // the Thumbnails style was removed; appearanceStyle indexes shifted
+            ("10.12.0", migrateAppearanceStyleAfterThumbnailsRemoval),
             ("10.2.0", migrateBlacklistToExceptions),
             ("9.0.0", migrateShortcutIndexes),
             ("7.27.0", migrateCursorFollowFocus),
@@ -55,6 +57,11 @@ class PreferencesMigrations {
     private static func shouldRun(_ versionInPlist: String, _ versionThreshold: String) -> Bool {
         // x.compare(y) is .orderedDescending if x > y
         versionInPlist.compare(versionThreshold, options: .numeric) != .orderedDescending
+    }
+
+    private static func migrateAppearanceStyleAfterThumbnailsRemoval() {
+        // 0=thumbnails falls back to the new default (appIcons); 1=appIcons and 2=titles shift down
+        migratePreferenceValue("appearanceStyle", ["1": "0", "2": "1"])
     }
 
     private static func migrateBlacklistToExceptions() {

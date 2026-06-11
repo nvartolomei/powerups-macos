@@ -1,19 +1,6 @@
 import XCTest
 
 final class AppearanceTests: XCTestCase {
-    // TODO add 6, 7, 8 rowsCount and reuse vertical screens data from bellow
-    func testGoodValuesForThumbnailsWidthMinMax() throws {
-        var actual: (CGFloat, CGFloat)
-        for (model, (pixelWidth, pixelHeight), _, (expectedHorizontal, _), expectedArray) in screens {
-            for (rowCount, expectedMin, expectedMax) in expectedArray {
-                actual = AppearanceTestable.goodValuesForThumbnailsWidthMinMax((pixelWidth * expectedHorizontal) / (pixelHeight * 0.8), CGFloat(rowCount))
-                XCTAssertEqual(actual.0, expectedMin, accuracy: 0.01, model)
-                XCTAssertEqual(actual.1, expectedMax, accuracy: 0.01, model)
-            }
-        }
-    }
-
-
     func testComfortableWidth() throws {
         var actual: Double
         for (model, _, (physicalWidth, physicalHeight), (expectedHorizontal, expectedVertical), _) in screens {
