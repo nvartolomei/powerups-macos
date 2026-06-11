@@ -250,7 +250,7 @@ enum ScreensToShowPreference: CaseIterable, MacroPreference {
     var localizedString: LocalizedString {
         switch self {
             case .all: return NSLocalizedString("All screens", comment: "")
-            case .showingAltTab: return NSLocalizedString("Screen showing AltTab", comment: "")
+            case .showingAltTab: return NSLocalizedString("Screen showing PowerUps", comment: "")
         }
     }
 }
@@ -444,34 +444,6 @@ enum AppearanceThemePreference: CaseIterable, SfSymbolMacroPreference {
             case .light: return "sun.max"
             case .dark: return "moon.fill"
             case .system: return "laptopcomputer"
-        }
-    }
-}
-
-enum UpdatePolicyPreference: CaseIterable, MacroPreference {
-    case manual
-    case autoCheck
-    case autoInstall
-
-    var localizedString: LocalizedString {
-        switch self {
-            case .manual: return NSLocalizedString("Don’t check for updates periodically", comment: "")
-            case .autoCheck: return NSLocalizedString("Check for updates periodically", comment: "")
-            case .autoInstall: return NSLocalizedString("Auto-install updates periodically", comment: "")
-        }
-    }
-}
-
-enum CrashPolicyPreference: CaseIterable, MacroPreference {
-    case never
-    case ask
-    case always
-
-    var localizedString: LocalizedString {
-        switch self {
-            case .never: return NSLocalizedString("Never send crash reports", comment: "")
-            case .ask: return NSLocalizedString("Ask whether to send crash reports", comment: "")
-            case .always: return NSLocalizedString("Always send crash reports", comment: "")
         }
     }
 }

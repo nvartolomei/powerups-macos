@@ -20,16 +20,13 @@ platform :osx, deployment_target
 
 target 'alt-tab-macos' do
   use_frameworks!
-  pod 'LetsMove', :git => 'https://github.com/lwouis/LetsMove.git', :commit => '7abf4daed1a25218f2b52f2dfd190aee5a50071c'
-  pod 'Sparkle', :podspec => 'https://raw.githubusercontent.com/lwouis/Sparkle/fix-iframe-popup-1.24/Sparkle.podspec'
-  pod 'ShortcutRecorder', :git => 'https://github.com/lwouis/ShortcutRecorder.git', :branch => 'alt-tab-current'
-  pod 'AppCenter/Crashes', '4.3.0'
+  pod 'ShortcutRecorder', :git => 'https://github.com/lwouis/ShortcutRecorder.git', :commit => '594b360e07a8a368ffec2567f77e465477b9994f'
   pod 'SwiftyBeaver', '1.9.0'
 end
 
 target 'unit-tests' do
   use_frameworks!
-  pod 'ShortcutRecorder', :git => 'https://github.com/lwouis/ShortcutRecorder.git', :branch => 'alt-tab-current'
+  pod 'ShortcutRecorder', :git => 'https://github.com/lwouis/ShortcutRecorder.git', :commit => '594b360e07a8a368ffec2567f77e465477b9994f'
 end
 
 post_install do |installer|

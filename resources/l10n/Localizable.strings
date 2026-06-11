@@ -47,9 +47,6 @@
 "All apps" = "All apps";
 
 /* No comment provided by engineer. */
-"All data from this form will be made public, as a ticket on github.com" = "All data from this form will be made public, as a ticket on github.com";
-
-/* No comment provided by engineer. */
 "All screens" = "All screens";
 
 /* No comment provided by engineer. */
@@ -62,25 +59,7 @@
 "Alphabetical Order" = "Alphabetical Order";
 
 /* No comment provided by engineer. */
-"AltTab crashed last time you used it. Sending a crash report will help get the issue fixed" = "AltTab crashed last time you used it. Sending a crash report will help get the issue fixed";
-
-/* No comment provided by engineer. */
-"AltTab is currently set to show Applications. This setting is only available when AltTab is set to show Windows." = "AltTab is currently set to show Applications. This setting is only available when AltTab is set to show Windows.";
-
-/* Menubar callout */
-"AltTab is running without Screen Recording permissions. Thumbnails won’t show." = "AltTab is running without Screen Recording permissions. Thumbnails won’t show.";
-
-/* No comment provided by engineer. */
-"AltTab needs some permissions" = "AltTab needs some permissions";
-
-/* No comment provided by engineer. */
-"AltTab will show if the window is currently minimized or fullscreen with a status icon." = "AltTab will show if the window is currently minimized or fullscreen with a status icon.";
-
-/* No comment provided by engineer. */
 "Always" = "Always";
-
-/* No comment provided by engineer. */
-"Always send crash reports" = "Always send crash reports";
 
 /* No comment provided by engineer. */
 "and press" = "and press";
@@ -122,13 +101,7 @@
 "Arrow keys" = "Arrow keys";
 
 /* No comment provided by engineer. */
-"Ask whether to send crash reports" = "Ask whether to send crash reports";
-
-/* No comment provided by engineer. */
 "Auto" = "Auto";
-
-/* No comment provided by engineer. */
-"Auto-install updates periodically" = "Auto-install updates periodically";
 
 /* No comment provided by engineer. */
 "Cancel" = "Cancel";
@@ -138,15 +111,6 @@
 
 /* No comment provided by engineer. */
 "Center" = "Center";
-
-/* No comment provided by engineer. */
-"Check for updates now…" = "Check for updates now…";
-
-/* No comment provided by engineer. */
-"Check for updates periodically" = "Check for updates periodically";
-
-/* Menubar option */
-"Check for updates…" = "Check for updates…";
 
 /* Menubar option */
 "Check permissions…" = "Check permissions…";
@@ -159,9 +123,6 @@
 
 /* No comment provided by engineer. */
 "Controls" = "Controls";
-
-/* No comment provided by engineer. */
-"Crash reports policy" = "Crash reports policy";
 
 /* No comment provided by engineer. */
 "Cursor follows focus" = "Cursor follows focus";
@@ -186,12 +147,6 @@
 
 /* No comment provided by engineer. */
 "Done" = "Done";
-
-/* No comment provided by engineer. */
-"Don’t check for updates periodically" = "Don’t check for updates periodically";
-
-/* No comment provided by engineer. */
-"Don’t send" = "Don’t send";
 
 /* No comment provided by engineer. */
 "End" = "End";
@@ -251,9 +206,6 @@
 "Hold" = "Hold";
 
 /* No comment provided by engineer. */
-"I think the app could be improved with…" = "I think the app could be improved with…";
-
-/* No comment provided by engineer. */
 "Ignore shortcuts when active" = "Ignore shortcuts when active";
 
 /* No comment provided by engineer. */
@@ -311,9 +263,6 @@
 "Never" = "Never";
 
 /* No comment provided by engineer. */
-"Never send crash reports" = "Never send crash reports";
-
-/* No comment provided by engineer. */
 "No Window" = "No Window";
 
 /* No comment provided by engineer. */
@@ -344,7 +293,16 @@
 "Order windows by" = "Order windows by";
 
 /* No comment provided by engineer. */
-"Please fill in the form" = "Please fill in the form";
+"PowerUps is currently set to show Applications. This setting is only available when PowerUps is set to show Windows." = "PowerUps is currently set to show Applications. This setting is only available when PowerUps is set to show Windows.";
+
+/* Menubar callout */
+"PowerUps is running without Screen Recording permissions. Thumbnails won’t show." = "PowerUps is running without Screen Recording permissions. Thumbnails won’t show.";
+
+/* No comment provided by engineer. */
+"PowerUps needs some permissions" = "PowerUps needs some permissions";
+
+/* No comment provided by engineer. */
+"PowerUps will show if the window is currently minimized or fullscreen with a status icon." = "PowerUps will show if the window is currently minimized or fullscreen with a status icon.";
 
 /* No comment provided by engineer. */
 "Preview selected window" = "Preview selected window";
@@ -361,9 +319,6 @@
 
 /* No comment provided by engineer. */
 "Recently Focused First" = "Recently Focused First";
-
-/* No comment provided by engineer. */
-"Remember my choice" = "Remember my choice";
 
 /* No comment provided by engineer. */
 "Reset settings and restart" = "Reset settings and restart";
@@ -384,7 +339,7 @@
 "Screen Recording" = "Screen Recording";
 
 /* No comment provided by engineer. */
-"Screen showing AltTab" = "Screen showing AltTab";
+"Screen showing PowerUps" = "Screen showing PowerUps";
 
 /* No comment provided by engineer. */
 "Search" = "Search";
@@ -405,28 +360,10 @@
 "Select windows using vim keys" = "Select windows using vim keys";
 
 /* No comment provided by engineer. */
-"Send" = "Send";
-
-/* No comment provided by engineer. */
-"Send a crash report?" = "Send a crash report?";
-
-/* No comment provided by engineer. */
-"Send debug profile (CPU, memory, etc)" = "Send debug profile (CPU, memory, etc)";
-
-/* No comment provided by engineer. */
-"Send feedback" = "Send feedback";
-
-/* Menubar option */
-"Send feedback…" = "Send feedback…";
-
-/* No comment provided by engineer. */
 "Settings imported" = "Settings imported";
 
 /* Menubar option */
 "Settings…" = "Settings…";
-
-/* No comment provided by engineer. */
-"Share improvement ideas, or report bugs" = "Share improvement ideas, or report bugs";
 
 /* No comment provided by engineer. */
 "Shortcut" = "Shortcut";
@@ -495,7 +432,7 @@
 "Small" = "Small";
 
 /* No comment provided by engineer. */
-"Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. AltTab can't list those separately." = "Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. AltTab can't list those separately.";
+"Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. PowerUps can't list those separately." = "Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. PowerUps can't list those separately.";
 
 /* No comment provided by engineer. */
 "Source code repository" = "Source code repository";
@@ -546,9 +483,6 @@
 "Thumbnails" = "Thumbnails";
 
 /* No comment provided by engineer. */
-"Title" = "Title";
-
-/* No comment provided by engineer. */
 "Title truncation" = "Title truncation";
 
 /* No comment provided by engineer. */
@@ -564,9 +498,6 @@
 "Unassign existing shortcut and continue" = "Unassign existing shortcut and continue";
 
 /* No comment provided by engineer. */
-"Updates policy" = "Updates policy";
-
-/* No comment provided by engineer. */
 "Usage" = "Usage";
 
 /* No comment provided by engineer. */
@@ -574,9 +505,6 @@
 
 /* No comment provided by engineer. */
 "Version" = "Version";
-
-/* No comment provided by engineer. */
-"View existing discussions" = "View existing discussions";
 
 /* No comment provided by engineer. */
 "Vim keys" = "Vim keys";

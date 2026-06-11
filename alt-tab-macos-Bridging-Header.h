@@ -1,1 +1,1 @@
-#import "AppCenterApplication.h"
+@import Cocoa;

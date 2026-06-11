@@ -1,10 +1,8 @@
 import Cocoa
 import Darwin
-import LetsMove
 import ShortcutRecorder
-import AppCenterCrashes
 
-class App: AppCenterApplication {
+class App: NSApplication {
     /// periphery:ignore
     static let activity = ProcessInfo.processInfo.beginActivity(options: .userInitiatedAllowingIdleSystemSleep,
         reason: "Prevent App Nap to preserve responsiveness")
@@ -25,8 +23,6 @@ class App: AppCenterApplication {
     private static var isFirstSummon = true
     private static var isVeryFirstSummon = true
     private static var pendingShowSettingsWindow = false
-    // periphery:ignore
-    private static var appCenterDelegate: AppCenterCrash?
     // don't queue multiple delayed rebuildUi() calls
     private static var delayedDisplayScheduled = 0
     private static let refreshOpenUiThrottler = Throttler(delayInMs: 200)
@@ -91,7 +87,6 @@ class App: AppCenterApplication {
         SettingsWindow.canBecomeKey_ = canBecomeKey_
         AboutWindow.canBecomeKey_ = canBecomeKey_
         PermissionsWindow.canBecomeKey_ = canBecomeKey_
-        FeedbackWindow.canBecomeKey_ = canBecomeKey_
         DebugWindow.canBecomeKey_ = canBecomeKey_
     }
 
@@ -141,21 +136,12 @@ class App: AppCenterApplication {
         focusSelectedWindow(selectedWindow)
     }
 
-    @objc static func checkForUpdatesNow(_ sender: NSMenuItem) {
-        GeneralTab.checkForUpdatesNow(sender)
-    }
-
     @objc static func checkPermissions(_ sender: NSMenuItem) {
         showPermissionsWindow()
     }
 
     @objc static func supportProject() {
         NSWorkspace.shared.open(URL(string: App.website + "/support")!)
-    }
-
-    @objc static func showFeedbackPanel() {
-        initializeFeedbackWindowIfNeeded()
-        showSecondaryWindow(FeedbackWindow.shared!)
     }
 
     @objc static func showDebugWindow() {
@@ -201,10 +187,6 @@ class App: AppCenterApplication {
 
     private static func initializeAboutWindowIfNeeded() {
         if AboutWindow.shared == nil { _ = AboutWindow() }
-    }
-
-    private static func initializeFeedbackWindowIfNeeded() {
-        if FeedbackWindow.shared == nil { _ = FeedbackWindow() }
     }
 
     private static func initializeDebugWindowIfNeeded() {
@@ -396,21 +378,17 @@ class App: AppCenterApplication {
 //            App.showSettingsWindow()
         #endif
         UsageStats.prune()
-        Logger.info { "Finished launching AltTab" }
+        Logger.info { "Finished launching \(App.name)" }
     }
 }
 
 extension App: NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        App.appCenterDelegate = AppCenterCrash()
         App.shared.disableRelaunchOnLogin()
         Logger.initialize()
-        Logger.info { "Launching AltTab \(App.version)" }
+        Logger.info { "Launching \(App.name) \(App.version)" }
         #if DEBUG
         UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
-        #endif
-        #if !DEBUG
-        PFMoveToApplicationsFolderIfNecessary()
         #endif
         AXUIElement.setGlobalTimeout()
         Preferences.initialize()

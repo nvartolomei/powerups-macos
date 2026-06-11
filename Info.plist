@@ -4,10 +4,6 @@
 <dict>
 	<key>ATSApplicationFontsPath</key>
 	<string></string>
-	<key>AppCenterApplicationForwarderEnabled</key>
-	<string>0</string>
-	<key>AppCenterSecret</key>
-	<string>#APPCENTER_SECRET#</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -26,8 +22,6 @@
 	<string>#VERSION#</string>
 	<key>CFBundleVersion</key>
 	<string>#VERSION#</string>
-	<key>FeedbackToken</key>
-	<string>#FEEDBACK_TOKEN#</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>LSMinimumSystemVersion</key>
@@ -37,20 +31,10 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>GPL-3.0 licence</string>
 	<key>NSPrincipalClass</key>
-	<string>AppCenterApplication</string>
+	<string>NSApplication</string>
 	<key>NSSupportsAutomaticTermination</key>
 	<string>false</string>
 	<key>NSSupportsSuddenTermination</key>
 	<string>false</string>
-	<key>SUEnableAutomaticChecks</key>
-	<string>true</string>
-	<key>SUEnableJavaScript</key>
-	<string>true</string>
-	<key>SUFeedURL</key>
-	<string>https://alt-tab.app/appcast.xml</string>
-	<key>SUPublicEDKey</key>
-	<string>2e9SQOBoaKElchSa/4QDli/nvYkyuDNfynfzBF6vJK4=</string>
-	<key>SUScheduledCheckInterval</key>
-	<string>604800</string>
 </dict>
 </plist>

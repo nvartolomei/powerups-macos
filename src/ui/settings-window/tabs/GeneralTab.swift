@@ -1,11 +1,7 @@
 import Cocoa
-import Sparkle
 
 class GeneralTab {
     static var menubarIconDropdown: NSPopUpButton?
-    static var updatesPolicyDropdown: NSPopUpButton?
-    static var crashPolicyDropdown: NSPopUpButton?
-    static var policyLock = false
     private static var menubarIsVisibleObserver: NSKeyValueObservation?
 
     static func initTab() -> NSView {
@@ -20,12 +16,6 @@ class GeneralTab {
             ])
         let language = TableGroupView.Row(leftTitle: NSLocalizedString("Language", comment: ""),
             rightViews: [LabelAndControl.makeDropdown("language", LanguagePreference.allCases, extraAction: setLanguageCallback)])
-        updatesPolicyDropdown = LabelAndControl.makeDropdown("updatePolicy", UpdatePolicyPreference.allCases)
-        let updatesPolicy = TableGroupView.Row(leftTitle: NSLocalizedString("Updates policy", comment: ""),
-            rightViews: [updatesPolicyDropdown!])
-        crashPolicyDropdown = LabelAndControl.makeDropdown("crashPolicy", CrashPolicyPreference.allCases)
-        let crashPolicy = TableGroupView.Row(leftTitle: NSLocalizedString("Crash reports policy", comment: ""),
-            rightViews: [crashPolicyDropdown!])
         for i in 0..<MenubarIconPreference.allCases.count {
             let image = NSImage.initCopy("menubar-\(i)")
             image.isTemplate = i < 2
@@ -45,16 +35,11 @@ class GeneralTab {
         table.addRow(captureWindowsInBackground)
         table.addNewTable()
         table.addRow(language)
-        table.addNewTable()
-        table.addRow(updatesPolicy)
-        table.addRow(crashPolicy)
         let exportButton = NSButton(title: NSLocalizedString("Export settings…", comment: ""), target: nil, action: nil)
         exportButton.onAction = { _ in exportSettings() }
         let importButton = NSButton(title: NSLocalizedString("Import settings…", comment: ""), target: nil, action: nil)
         importButton.onAction = { _ in importSettings() }
-        let checkForUpdates = NSButton(title: NSLocalizedString("Check for updates now…", comment: ""), target: nil, action: nil)
-        checkForUpdates.onAction = { control in checkForUpdatesNow(control) }
-        let tools = StackView([exportButton, importButton, checkForUpdates], .horizontal)
+        let tools = StackView([exportButton, importButton], .horizontal)
         let view = TableGroupSetView(originalViews: [table, tools], bottomPadding: 0)
         return view
     }
@@ -62,8 +47,6 @@ class GeneralTab {
     static func refreshControlsFromPreferences() {
         menubarIconDropdown?.selectItem(at: CachedUserDefaults.intFromMacroPref("menubarIcon", MenubarIconPreference.allCases))
         menubarIconDropdown?.isEnabled = Preferences.menubarIconShown
-        updatesPolicyDropdown?.selectItem(at: CachedUserDefaults.intFromMacroPref("updatePolicy", UpdatePolicyPreference.allCases))
-        crashPolicyDropdown?.selectItem(at: CachedUserDefaults.intFromMacroPref("crashPolicy", CrashPolicyPreference.allCases))
     }
 
     private static func enableDraggingOffMenubarIcon(_ menuIconShownToggle: Switch) {
@@ -89,10 +72,6 @@ class GeneralTab {
             Preferences.resetAll()
             App.restart()
         }
-    }
-
-    @objc static func checkForUpdatesNow(_ sender: Any?) {
-        SUUpdater.shared().checkForUpdates(sender)
     }
 
     private static func exportSettings() {

@@ -1,5 +1,4 @@
 import Cocoa
-import Sparkle
 
 class PreferencesEvents {
     private static var initialized = false
@@ -31,10 +30,8 @@ class PreferencesEvents {
     static func initialize() {
         guard !initialized else { return }
         initialized = true
-        UserDefaultsEvents.observe()
         ControlsTab.initializePreferencesDependentState()
         applyMenubarPreferencesIfReady()
-        applyUpdatePolicyPreference()
         TrackpadEvents.toggle(Preferences.nextWindowGesture != .disabled)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             applyStartAtLoginPreference()
@@ -55,7 +52,6 @@ class PreferencesEvents {
         case "menubarIcon", "menubarIconShown": applyMenubarPreferencesIfReady()
         case "nextWindowGesture": TrackpadEvents.toggle(Preferences.nextWindowGesture != .disabled)
         case "startAtLogin": applyStartAtLoginPreference()
-        case "updatePolicy": applyUpdatePolicyPreference()
         case let k where preferencesRequiringUiReset.contains(k) && TilesPanel.shared != nil: App.resetPreferencesDependentComponents()
         default: break
         }
@@ -64,14 +60,6 @@ class PreferencesEvents {
     private static func applyMenubarPreferencesIfReady() {
         guard Menubar.statusItem != nil else { return }
         Menubar.menubarIconCallback(nil)
-    }
-
-    private static func applyUpdatePolicyPreference() {
-        GeneralTab.policyLock = true
-        let policy = Preferences.updatePolicy
-        SUUpdater.shared().automaticallyDownloadsUpdates = policy == .autoInstall
-        SUUpdater.shared().automaticallyChecksForUpdates = policy == .autoInstall || policy == .autoCheck
-        GeneralTab.policyLock = false
     }
 
     private static func applyStartAtLoginPreference() {
@@ -94,7 +82,7 @@ class PreferencesEvents {
             try FileManager.default.createDirectory(at: launchAgentsPath, withIntermediateDirectories: false)
             Logger.debug { launchAgentsPath.absoluteString + " created" }
         }
-        launchAgentsPath.appendPathComponent("com.lwouis.alt-tab-macos.plist", isDirectory: false)
+        launchAgentsPath.appendPathComponent("\(App.bundleIdentifier).plist", isDirectory: false)
         if enabled {
             let data = try PropertyListSerialization.data(fromPropertyList: launchAgentPlist, format: .xml, options: 0)
             try data.write(to: launchAgentsPath, options: [.atomic])
