@@ -4,13 +4,12 @@ class LauncherPanel: NSPanel {
     static var shared: LauncherPanel!
     private static let panelWidth = CGFloat(580)
     private static let padding = CGFloat(15)
-    private static let rowHeight = CGFloat(44)
     private static let resultsSpacing = CGFloat(10)
     override var canBecomeKey: Bool { true }
     private var effectView: EffectView!
     private let searchField = NSSearchField(frame: .zero)
     private var rowViews = [LauncherRowView]()
-    private var results = [LauncherApp]()
+    private var results = [LauncherResult]()
     private var selectedIndex = 0
     private var topY = CGFloat(0)
     private var lastRenderedQuery: String?
@@ -104,7 +103,7 @@ class LauncherPanel: NSPanel {
         let query = searchField.stringValue
         if !force && query == lastRenderedQuery { return }
         lastRenderedQuery = query
-        results = Launcher.matchingApps(query)
+        results = Launcher.results(query)
         selectedIndex = 0
         caTransaction { layoutContents() }
     }
@@ -112,15 +111,20 @@ class LauncherPanel: NSPanel {
     private func layoutContents() {
         let fieldHeight = ceil(searchField.fittingSize.height)
         let rowWidth = Self.panelWidth - Self.padding * 2
-        let resultsHeight = results.isEmpty ? 0 : Self.resultsSpacing + CGFloat(results.count) * Self.rowHeight
-        let height = Self.padding * 2 + fieldHeight + resultsHeight
-        setContentSize(NSSize(width: Self.panelWidth, height: height))
-        searchField.frame = NSRect(x: Self.padding, y: height - Self.padding - fieldHeight, width: rowWidth, height: fieldHeight)
+        var rowHeights = [CGFloat]()
         for (i, row) in rowViews.enumerated() {
             row.isHidden = i >= results.count
             guard i < results.count else { continue }
-            row.frame = NSRect(x: Self.padding, y: height - Self.padding - fieldHeight - Self.resultsSpacing - CGFloat(i + 1) * Self.rowHeight, width: rowWidth, height: Self.rowHeight)
-            row.updateContent(results[i], i == selectedIndex)
+            rowHeights.append(row.updateContent(results[i], i == selectedIndex, rowWidth))
+        }
+        let resultsHeight = results.isEmpty ? 0 : Self.resultsSpacing + rowHeights.reduce(0, +)
+        let height = Self.padding * 2 + fieldHeight + resultsHeight
+        setContentSize(NSSize(width: Self.panelWidth, height: height))
+        searchField.frame = NSRect(x: Self.padding, y: height - Self.padding - fieldHeight, width: rowWidth, height: fieldHeight)
+        var rowTop = height - Self.padding - fieldHeight - Self.resultsSpacing
+        for (i, row) in rowViews.enumerated() where i < results.count {
+            row.frame = NSRect(x: Self.padding, y: rowTop - rowHeights[i], width: rowWidth, height: rowHeights[i])
+            rowTop -= rowHeights[i]
         }
         setFrameOrigin(NSPoint(x: frame.origin.x, y: topY - frame.height))
     }
@@ -139,9 +143,9 @@ class LauncherPanel: NSPanel {
         }
     }
 
-    func openResult(_ index: Int) {
-        guard let app = results[safe: index] else { return }
-        Launcher.open(app)
+    func activateResult(_ index: Int) {
+        guard let result = results[safe: index] else { return }
+        Launcher.activate(result)
     }
 }
 
@@ -153,7 +157,7 @@ extension LauncherPanel: NSSearchFieldDelegate {
     /// a coalesced render may still be pending; updateResults is deduplicated, so flushing it first is cheap
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         if commandSelector == #selector(NSResponder.cancelOperation(_:)) { Launcher.hide(); return true }
-        if commandSelector == #selector(NSResponder.insertNewline(_:)) { updateResults(); openResult(selectedIndex); return true }
+        if commandSelector == #selector(NSResponder.insertNewline(_:)) { updateResults(); activateResult(selectedIndex); return true }
         if commandSelector == #selector(NSResponder.moveUp(_:)) { updateResults(); cycleSelectedIndex(-1); return true }
         if commandSelector == #selector(NSResponder.moveDown(_:)) { updateResults(); cycleSelectedIndex(1); return true }
         return false
@@ -176,6 +180,8 @@ extension LauncherPanel: NSWindowDelegate {
 private class LauncherRowView: NSView {
     private static let iconSize = CGFloat(32)
     private static let horizontalPadding = CGFloat(10)
+    private static let verticalPadding = CGFloat(10)
+    private static let minHeight = CGFloat(44)
     private let indexInResults: Int
     private let icon = NSImageView(frame: .zero)
     private let label = NSTextField(labelWithString: "")
@@ -197,12 +203,24 @@ private class LauncherRowView: NSView {
         fatalError("Class only supports programmatic initialization")
     }
 
-    func updateContent(_ app: LauncherApp, _ selected: Bool) {
-        icon.image = app.icon
-        label.stringValue = app.name
+    func updateContent(_ result: LauncherResult, _ selected: Bool, _ width: CGFloat) -> CGFloat {
+        switch result {
+        case .app(let app):
+            icon.image = app.icon
+            label.stringValue = app.name
+            label.maximumNumberOfLines = 1
+            label.lineBreakMode = .byTruncatingTail
+        case .calculation(let calculation):
+            icon.image = LauncherCalculator.icon
+            label.stringValue = calculation.evaluatedExpression + " = " + calculation.display
+            // expressions have no spaces, so wrapping has to break within "words"
+            label.maximumNumberOfLines = 0
+            label.lineBreakMode = .byCharWrapping
+        }
         label.textColor = Appearance.fontColor
-        layoutRow()
+        let height = layoutRow(width)
         setSelected(selected)
+        return height
     }
 
     func setSelected(_ selected: Bool) {
@@ -210,13 +228,16 @@ private class LauncherRowView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
-        LauncherPanel.shared.openResult(indexInResults)
+        LauncherPanel.shared.activateResult(indexInResults)
     }
 
-    private func layoutRow() {
-        icon.frame = NSRect(x: Self.horizontalPadding, y: (bounds.height - Self.iconSize) * 0.5, width: Self.iconSize, height: Self.iconSize)
-        let labelHeight = ceil(label.cell!.cellSize.height)
+    private func layoutRow(_ width: CGFloat) -> CGFloat {
         let labelX = Self.horizontalPadding + Self.iconSize + 10
-        label.frame = NSRect(x: labelX, y: (bounds.height - labelHeight) * 0.5, width: bounds.width - labelX - Self.horizontalPadding, height: labelHeight)
+        let labelWidth = width - labelX - Self.horizontalPadding
+        let labelHeight = ceil(label.cell!.cellSize(forBounds: NSRect(x: 0, y: 0, width: labelWidth, height: CGFloat.greatestFiniteMagnitude)).height)
+        let height = max(Self.minHeight, labelHeight + Self.verticalPadding * 2)
+        icon.frame = NSRect(x: Self.horizontalPadding, y: (height - Self.iconSize) * 0.5, width: Self.iconSize, height: Self.iconSize)
+        label.frame = NSRect(x: labelX, y: (height - labelHeight) * 0.5, width: labelWidth, height: labelHeight)
+        return height
     }
 }

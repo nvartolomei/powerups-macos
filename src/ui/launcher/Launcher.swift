@@ -34,7 +34,19 @@ class Launcher {
         App.orderOutWithoutChangingKeyWindow(LauncherPanel.shared)
     }
 
-    static func matchingApps(_ query: String) -> [LauncherApp] {
+    static func results(_ query: String) -> [LauncherResult] {
+        if let calculation = LauncherCalculator.evaluate(query) { return [.calculation(calculation)] }
+        return matchingApps(query).map { LauncherResult.app($0) }
+    }
+
+    static func activate(_ result: LauncherResult) {
+        switch result {
+        case .app(let app): open(app)
+        case .calculation(let calculation): copyToClipboard(calculation.raw)
+        }
+    }
+
+    private static func matchingApps(_ query: String) -> [LauncherApp] {
         let normalized = LauncherSearch.normalizedQuery(query)
         guard !normalized.isEmpty else { return [] }
         var matches = [(rank: Int, app: LauncherApp)]()
@@ -47,7 +59,7 @@ class Launcher {
         return matches.prefix(maxResults).map { $0.app }
     }
 
-    static func open(_ app: LauncherApp) {
+    private static func open(_ app: LauncherApp) {
         Logger.info { app.url.path }
         hide()
         if #available(macOS 10.15, *) {
@@ -57,8 +69,16 @@ class Launcher {
         }
     }
 
+    private static func copyToClipboard(_ text: String) {
+        Logger.info { text }
+        hide()
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+    }
+
     private static func refreshAppsCacheAsync() {
         DispatchQueue.global(qos: .userInteractive).async {
+            _ = LauncherCalculator.icon
             let apps = scanApplicationsFolders()
             DispatchQueue.main.async {
                 appsCache = apps
@@ -88,6 +108,12 @@ class Launcher {
         }
         return apps.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
+}
+
+enum LauncherResult {
+    case app(LauncherApp)
+    /// the result of evaluating the query as an arithmetic expression; activating it copies the raw value to the clipboard
+    case calculation(LauncherCalculation)
 }
 
 struct LauncherApp {

@@ -12,6 +12,9 @@
 		BF0C8E10AB12CD34EF56000A /* LauncherSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560007 /* LauncherSearchTests.swift */; };
 		BF0C8E10AB12CD34EF560004 /* Launcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560002 /* Launcher.swift */; };
 		BF0C8E10AB12CD34EF560005 /* LauncherPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */; };
+		BF0C8E10AB12CD34EF56000D /* LauncherCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */; };
+		BF0C8E10AB12CD34EF56000E /* LauncherCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */; };
+		BF0C8E10AB12CD34EF56000F /* LauncherCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */; };
 		1C96101BC5817A7F85FA1F8D /* titles_show_running_applications_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961F57248D4E2377A9038E /* titles_show_running_applications_light@2x.jpg */; };
 		1C96108A0CB2565233FE100B /* TableGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C961FB3DCF4906FEEF4A23D /* TableGroupView.swift */; };
 		1C9610F8AF7AD8CA53B62913 /* titles_hide_status_icons_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961E64CF8FB6E3FDAA3DAA /* titles_hide_status_icons_light@2x.jpg */; };
@@ -277,6 +280,8 @@
 		BF0C8E10AB12CD34EF560007 /* LauncherSearchTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherSearchTests.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF560002 /* Launcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Launcher.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherPanel.swift; sourceTree = "<group>"; };
+		BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCalculator.swift; sourceTree = "<group>"; };
+		BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCalculatorTests.swift; sourceTree = "<group>"; };
 		1C9610B2E76F1E429C8D3660 /* titles_show_running_windows_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_running_windows_light@2x.jpg"; sourceTree = "<group>"; };
 		1C9611039BDBE0C84F349BA1 /* titles_show_status_icons_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_status_icons_light@2x.jpg"; sourceTree = "<group>"; };
 		1C9614A489E5D3C0D885F71D /* titles_show_space_number_labels_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_space_number_labels_light@2x.jpg"; sourceTree = "<group>"; };
@@ -740,6 +745,7 @@
 				BF0C899905524253DC170B56 /* KeyboardEventsTests.swift */,
 				BF0CAAAA0000000000000001 /* SearchAcronymTests.swift */,
 				BF0C8E10AB12CD34EF560007 /* LauncherSearchTests.swift */,
+				BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */,
 				BF0C829EAA93A4C4ADB42CF8 /* Mocks.swift */,
 				BF0C855CD9DBCAEFE48F9EA5 /* AXUIElementTests.swift */,
 				BF0C854910CCD4FB493C3A5D /* ImageScalingTests.swift */,
@@ -1057,6 +1063,7 @@
 			isa = PBXGroup;
 			children = (
 				BF0C8E10AB12CD34EF560002 /* Launcher.swift */,
+				BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */,
 				BF0C8E10AB12CD34EF560006 /* LauncherSearch.swift */,
 				BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */,
 			);
@@ -1603,6 +1610,8 @@
 				BF0C87B5EDCFC573CE220137 /* Helpers.swift in Sources */,
 				BF0C8E10AB12CD34EF560009 /* LauncherSearch.swift in Sources */,
 				BF0C8E10AB12CD34EF56000A /* LauncherSearchTests.swift in Sources */,
+				BF0C8E10AB12CD34EF56000E /* LauncherCalculator.swift in Sources */,
+				BF0C8E10AB12CD34EF56000F /* LauncherCalculatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1711,6 +1720,7 @@
 				BF0C8F8F1B7A3C4D5E6F7082 /* ContextMenuEvents.swift in Sources */,
 				BF0C8E10AB12CD34EF560004 /* Launcher.swift in Sources */,
 				BF0C8E10AB12CD34EF560005 /* LauncherPanel.swift in Sources */,
+				BF0C8E10AB12CD34EF56000D /* LauncherCalculator.swift in Sources */,
 				BF0C8E10AB12CD34EF560008 /* LauncherSearch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
