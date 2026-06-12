@@ -15,6 +15,7 @@
 		BF0C8E10AB12CD34EF56000D /* LauncherCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */; };
 		BF0C8E10AB12CD34EF56000E /* LauncherCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */; };
 		BF0C8E10AB12CD34EF56000F /* LauncherCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */; };
+		BF0C8E10AB12CD34EF560011 /* LauncherCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560010 /* LauncherCommands.swift */; };
 		1C96101BC5817A7F85FA1F8D /* titles_show_running_applications_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961F57248D4E2377A9038E /* titles_show_running_applications_light@2x.jpg */; };
 		1C96108A0CB2565233FE100B /* TableGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C961FB3DCF4906FEEF4A23D /* TableGroupView.swift */; };
 		1C9610F8AF7AD8CA53B62913 /* titles_hide_status_icons_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961E64CF8FB6E3FDAA3DAA /* titles_hide_status_icons_light@2x.jpg */; };
@@ -282,6 +283,7 @@
 		BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherPanel.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCalculator.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCalculatorTests.swift; sourceTree = "<group>"; };
+		BF0C8E10AB12CD34EF560010 /* LauncherCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCommands.swift; sourceTree = "<group>"; };
 		1C9610B2E76F1E429C8D3660 /* titles_show_running_windows_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_running_windows_light@2x.jpg"; sourceTree = "<group>"; };
 		1C9611039BDBE0C84F349BA1 /* titles_show_status_icons_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_status_icons_light@2x.jpg"; sourceTree = "<group>"; };
 		1C9614A489E5D3C0D885F71D /* titles_show_space_number_labels_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_space_number_labels_light@2x.jpg"; sourceTree = "<group>"; };
@@ -1064,6 +1066,7 @@
 			children = (
 				BF0C8E10AB12CD34EF560002 /* Launcher.swift */,
 				BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */,
+				BF0C8E10AB12CD34EF560010 /* LauncherCommands.swift */,
 				BF0C8E10AB12CD34EF560006 /* LauncherSearch.swift */,
 				BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */,
 			);
@@ -1721,6 +1724,7 @@
 				BF0C8E10AB12CD34EF560004 /* Launcher.swift in Sources */,
 				BF0C8E10AB12CD34EF560005 /* LauncherPanel.swift in Sources */,
 				BF0C8E10AB12CD34EF56000D /* LauncherCalculator.swift in Sources */,
+				BF0C8E10AB12CD34EF560011 /* LauncherCommands.swift in Sources */,
 				BF0C8E10AB12CD34EF560008 /* LauncherSearch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -204,18 +204,21 @@ private class LauncherRowView: NSView {
     }
 
     func updateContent(_ result: LauncherResult, _ selected: Bool, _ width: CGFloat) -> CGFloat {
+        label.maximumNumberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
         switch result {
         case .app(let app):
             icon.image = app.icon
             label.stringValue = app.name
-            label.maximumNumberOfLines = 1
-            label.lineBreakMode = .byTruncatingTail
         case .calculation(let calculation):
             icon.image = LauncherCalculator.icon
             label.stringValue = calculation.evaluatedExpression + " = " + calculation.display
             // expressions have no spaces, so wrapping has to break within "words"
             label.maximumNumberOfLines = 0
             label.lineBreakMode = .byCharWrapping
+        case .command(let command):
+            icon.image = LauncherCommand.icon
+            label.stringValue = command.name
         }
         label.textColor = Appearance.fontColor
         let height = layoutRow(width)

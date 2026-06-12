@@ -174,3 +174,13 @@ func _SLPSSetFrontProcessWithOptions(_ psn: UnsafeMutablePointer<ProcessSerialNu
 /// * macOS 10.12+
 @_silgen_name("SLPSPostEventRecordTo") @discardableResult
 func SLPSPostEventRecordTo(_ psn: UnsafeMutablePointer<ProcessSerialNumber>, _ bytes: UnsafeMutablePointer<UInt8>) -> CGError
+
+/// returns whether the system appearance is dark mode
+/// * macOS 10.14+
+@_silgen_name("SLSGetAppearanceThemeLegacy")
+func SLSGetAppearanceThemeLegacy() -> Bool
+
+/// sets the system appearance to dark or light mode, like System Settings > Appearance
+/// * macOS 10.14+
+@_silgen_name("SLSSetAppearanceThemeLegacy")
+func SLSSetAppearanceThemeLegacy(_ dark: Bool)

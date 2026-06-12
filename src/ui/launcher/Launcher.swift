@@ -36,13 +36,16 @@ class Launcher {
 
     static func results(_ query: String) -> [LauncherResult] {
         if let calculation = LauncherCalculator.evaluate(query) { return [.calculation(calculation)] }
-        return matchingApps(query).map { LauncherResult.app($0) }
+        let commands = LauncherCommands.matching(query).map { LauncherResult.command($0) }
+        let apps = matchingApps(query).prefix(maxResults - commands.count).map { LauncherResult.app($0) }
+        return apps + commands
     }
 
     static func activate(_ result: LauncherResult) {
         switch result {
         case .app(let app): open(app)
         case .calculation(let calculation): copyToClipboard(calculation.raw)
+        case .command(let command): run(command)
         }
     }
 
@@ -76,9 +79,16 @@ class Launcher {
         NSPasteboard.general.setString(text, forType: .string)
     }
 
+    private static func run(_ command: LauncherCommand) {
+        Logger.info { command.keyword }
+        hide()
+        command.action()
+    }
+
     private static func refreshAppsCacheAsync() {
         DispatchQueue.global(qos: .userInteractive).async {
             _ = LauncherCalculator.icon
+            _ = LauncherCommand.icon
             let apps = scanApplicationsFolders()
             DispatchQueue.main.async {
                 appsCache = apps
@@ -114,6 +124,8 @@ enum LauncherResult {
     case app(LauncherApp)
     /// the result of evaluating the query as an arithmetic expression; activating it copies the raw value to the clipboard
     case calculation(LauncherCalculation)
+    /// a built-in command matched by keyword; activating it runs its action
+    case command(LauncherCommand)
 }
 
 struct LauncherApp {
