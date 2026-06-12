@@ -7,6 +7,7 @@ class Launcher {
         URL(fileURLWithPath: "/Applications", isDirectory: true),
         URL(fileURLWithPath: "/System/Applications", isDirectory: true),
     ]
+    private static let settingsExtensionsFolder = URL(fileURLWithPath: "/System/Library/ExtensionKit/Extensions", isDirectory: true)
 
     static func initialize() {
         _ = LauncherPanel()
@@ -65,7 +66,9 @@ class Launcher {
     private static func open(_ app: LauncherApp) {
         Logger.info { app.url.path }
         hide()
-        if #available(macOS 10.15, *) {
+        if let paneId = app.paneId {
+            NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:" + paneId)!)
+        } else if #available(macOS 10.15, *) {
             NSWorkspace.shared.openApplication(at: app.url, configuration: NSWorkspace.OpenConfiguration())
         } else {
             NSWorkspace.shared.open(app.url)
@@ -89,7 +92,8 @@ class Launcher {
         DispatchQueue.global(qos: .userInteractive).async {
             _ = LauncherCalculator.icon
             _ = LauncherCommand.icon
-            let apps = scanApplicationsFolders()
+            let apps = (scanApplicationsFolders() + scanSettingsPanes())
+                .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
             DispatchQueue.main.async {
                 appsCache = apps
                 if LauncherPanel.shared.isVisible {
@@ -116,7 +120,30 @@ class Launcher {
                 }
             }
         }
-        return apps.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        return apps
+    }
+
+    /// System Settings panes are app extensions; they open via the x-apple.systempreferences URL scheme
+    private static func scanSettingsPanes() -> [LauncherApp] {
+        guard let urls = try? FileManager.default.contentsOfDirectory(at: settingsExtensionsFolder, includingPropertiesForKeys: nil) else { return [] }
+        var panes = [LauncherApp]()
+        for url in urls where url.pathExtension == "appex" {
+            guard let bundle = Bundle(url: url),
+                  let attributes = bundle.infoDictionary?["EXAppExtensionAttributes"] as? [String: Any],
+                  attributes["EXExtensionPointIdentifier"] as? String == "com.apple.Settings.extension.ui",
+                  let paneId = bundle.bundleIdentifier,
+                  let name = paneName(bundle, paneId) else { continue }
+            panes.append(LauncherApp(url, name, paneId))
+        }
+        return panes
+    }
+
+    private static func paneName(_ bundle: Bundle, _ paneId: String) -> String? {
+        // ships without a usable display name
+        if paneId == "com.apple.Battery-Settings.extension" { return NSLocalizedString("Battery", comment: "") }
+        // contextual pane: only shows in System Settings while headphones are connected
+        if paneId == "com.apple.HeadphoneSettings" { return nil }
+        return bundle.localizedInfoDictionary?["CFBundleDisplayName"] as? String ?? bundle.infoDictionary?["CFBundleDisplayName"] as? String
     }
 }
 
@@ -131,14 +158,17 @@ enum LauncherResult {
 struct LauncherApp {
     let url: URL
     let name: String
+    /// set for System Settings panes, which open via the x-apple.systempreferences URL scheme
+    let paneId: String?
     let lowercasedName: String
     let words: [[Character]]
     let icon: NSImage
 
     /// called on a background thread: cold icon loads hit the disk and would block the main thread on first render
-    init(_ url: URL, _ name: String) {
+    init(_ url: URL, _ name: String, _ paneId: String? = nil) {
         self.url = url
         self.name = name
+        self.paneId = paneId
         lowercasedName = name.lowercased()
         words = LauncherSearch.humpWords(name)
         icon = NSWorkspace.shared.icon(forFile: url.path)
