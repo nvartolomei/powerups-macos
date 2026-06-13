@@ -1,4 +1,4 @@
-project: alt-tab-macos.xcworkspace
+project: powerups-macos.xcworkspace
 schemes:
 - Release
 index_exclude:

@@ -128,7 +128,7 @@ class AccessibilityEvents {
         // photoshop will focus a window *after* you focus another app
         // we check that a focused window happens within an active app
         guard window.application.runningApplication.isActive else { return }
-        // if the window is shown by alt-tab, we mark it as focused for this app
+        // if the window is shown by PowerUps, we mark it as focused for this app
         // this avoids issues with dialogs, quicklook, etc (see scenarios from #1044 and #2003)
         window.application.focusedWindow = window
         App.checkIfShortcutsShouldBeDisabled(window, nil)

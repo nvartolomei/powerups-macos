@@ -5,7 +5,7 @@ class Windows {
     static var selectedWindowIndex = Int(0)
     static var selectedWindowTarget: String?
     static var hoveredWindowIndex: Int?
-    // we use this to track if the focused window changed while alt-tab was open
+    // we use this to track if the focused window changed while PowerUps was open
     private static var lastFocusedWindowTarget: String?
     private static var lastWindowActivityType = WindowActivityType.none
     static var searchQuery = ""

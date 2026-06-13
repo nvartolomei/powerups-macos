@@ -1,28 +1,14 @@
 import Cocoa
 
 class GeneralTab {
-    static var menubarIconDropdown: NSPopUpButton?
     private static var menubarIsVisibleObserver: NSKeyValueObservation?
 
     static func initTab() -> NSView {
         let startAtLogin = TableGroupView.Row(leftTitle: NSLocalizedString("Start at login", comment: ""),
             rightViews: [LabelAndControl.makeSwitch("startAtLogin")])
-        menubarIconDropdown = LabelAndControl.makeDropdown("menubarIcon", MenubarIconPreference.allCases)
         let menuIconShownToggle = LabelAndControl.makeSwitch("menubarIconShown")
         let menubarIcon = TableGroupView.Row(leftTitle: NSLocalizedString("Menubar icon", comment: ""),
-            rightViews: [
-                menubarIconDropdown!,
-                menuIconShownToggle,
-            ])
-        for i in 0..<MenubarIconPreference.allCases.count {
-            let image = NSImage.initCopy("menubar-\(i)")
-            image.isTemplate = i < 2
-            menubarIconDropdown!.item(at: i)!.image = image
-        }
-        let cell = menubarIconDropdown!.cell! as! NSPopUpButtonCell
-        cell.bezelStyle = .regularSquare
-        cell.arrowPosition = .arrowAtBottom
-        cell.imagePosition = .imageOverlaps
+            rightViews: [menuIconShownToggle])
         enableDraggingOffMenubarIcon(menuIconShownToggle)
         let table = TableGroupView(width: SettingsWindow.contentWidth)
         table.addRow(startAtLogin)
@@ -36,10 +22,7 @@ class GeneralTab {
         return view
     }
 
-    static func refreshControlsFromPreferences() {
-        menubarIconDropdown?.selectItem(at: CachedUserDefaults.intFromMacroPref("menubarIcon", MenubarIconPreference.allCases))
-        menubarIconDropdown?.isEnabled = Preferences.menubarIconShown
-    }
+    static func refreshControlsFromPreferences() {}
 
     private static func enableDraggingOffMenubarIcon(_ menuIconShownToggle: Switch) {
         Menubar.statusItem.behavior = .removalAllowed

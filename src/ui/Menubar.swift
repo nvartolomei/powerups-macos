@@ -23,10 +23,10 @@ class Menubar {
         addMenuItem(NSLocalizedString("Settings…", comment: "Menubar option"), #selector(App.showSettingsWindow), ",", "gear", nil, App.self)
         addMenuItem(NSLocalizedString("Check permissions…", comment: "Menubar option"), #selector(App.checkPermissions), "", "hand.raised", nil, App.self)
         menu.addItem(NSMenuItem.separator())
-        addMenuItem(String(format: NSLocalizedString("About %@", comment: "Menubar option. %@ is AltTab"), App.name), #selector(App.showAboutWindow), "", "info.circle", nil, App.self)
+        addMenuItem(String(format: NSLocalizedString("About %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(App.showAboutWindow), "", "info.circle", nil, App.self)
         addMenuItem(NSLocalizedString("Debug tools", comment: "Menubar option"), #selector(App.showDebugWindow), "", "scope", nil, App.self)
         menu.addItem(NSMenuItem.separator())
-        addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "Menubar option. %@ is AltTab"), App.name), #selector(NSApplication.terminate(_:)), "q", nil) // "xmark.rectangle" is not necessary; macos automatically recognizes Quit
+        addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(NSApplication.terminate(_:)), "q", nil) // "xmark.rectangle" is not necessary; macos automatically recognizes Quit
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.target = self
         statusItem.button!.action = #selector(statusItemOnClick)
@@ -43,22 +43,31 @@ class Menubar {
     }
 
     static func menubarIconCallback(_: NSControl?) {
-        if Preferences.menubarIconShown {
-            loadPreferredIcon()
-        } else {
+        guard Preferences.menubarIconShown else {
             statusItem.isVisible = false
+            return
         }
-        if let menubarIconDropdown = GeneralTab.menubarIconDropdown {
-            menubarIconDropdown.isEnabled = Preferences.menubarIconShown
-        }
+        loadIcon()
     }
 
-    static private func loadPreferredIcon() {
-        let i = Preferences.menubarIcon.indexAsString
-        let image = NSImage(named: "menubar-\(i)")!
-        image.isTemplate = i != "2"
+    static private func loadIcon() {
+        let image = boltImage()
+        image.isTemplate = true
         statusItem.button!.image = image
         statusItem.isVisible = true
         statusItem.button!.imageScaling = .scaleProportionallyUpOrDown
+    }
+
+    static private func boltImage() -> NSImage {
+        let points = [(13.6, 3.5), (6.6, 11.6), (10.4, 11.6), (8.4, 18.5), (15.4, 10.4), (11.6, 10.4)]
+        return NSImage(size: NSSize(width: 22, height: 22), flipped: true) { _ in
+            let path = NSBezierPath()
+            path.move(to: NSPoint(x: points[0].0, y: points[0].1))
+            points.dropFirst().forEach { path.line(to: NSPoint(x: $0.0, y: $0.1)) }
+            path.close()
+            NSColor.black.setFill()
+            path.fill()
+            return true
+        }
     }
 }

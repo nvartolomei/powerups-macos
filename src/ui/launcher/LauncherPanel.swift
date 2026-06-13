@@ -166,7 +166,7 @@ extension LauncherPanel: NSSearchFieldDelegate {
 
 extension LauncherPanel: NSWindowDelegate {
     func windowDidBecomeKey(_ notification: Notification) {
-        // avoids command+q from quitting AltTab itself, while keeping edit shortcuts for the search field
+        // avoids command+q from quitting PowerUps itself, while keeping edit shortcuts for the search field
         MainMenu.toggle(false)
         MainMenu.toggleEditMenu(true)
     }

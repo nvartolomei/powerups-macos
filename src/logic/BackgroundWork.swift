@@ -47,7 +47,7 @@ class BackgroundWork {
         assert(totalPotentialThreadCount <= 45)
     }
 
-    // useful during development to inspect how many threads are used by AltTab
+    // useful during development to inspect how many threads are used by PowerUps
     private static func logThreadsAndQueuesOnRepeat() {
         // if Logger.decideLevel() == .debug {
             debugMenu = DebugMenu([appIconsQueue, accessibilityCommandsQueue, AXCallScheduler.shared.fastQueue, AXCallScheduler.shared.retryQueue])

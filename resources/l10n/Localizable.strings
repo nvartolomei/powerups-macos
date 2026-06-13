@@ -10,7 +10,7 @@
 /* No comment provided by engineer. */
 "4-finger Vertical Swipe" = "4-finger Vertical Swipe";
 
-/* Menubar option. %@ is AltTab */
+/* Menubar option. %@ is PowerUps */
 "About %@" = "About %@";
 
 /* No comment provided by engineer. */
@@ -175,7 +175,7 @@
 /* No comment provided by engineer. */
 "Hide app badges" = "Hide app badges";
 
-/* %@ is AltTab */
+/* %@ is PowerUps */
 "Hide in %@" = "Hide in %@";
 
 /* No comment provided by engineer. */
@@ -207,9 +207,6 @@
 
 /* No comment provided by engineer. */
 "Later" = "Later";
-
-/* No comment provided by engineer. */
-"Latest releases" = "Latest releases";
 
 /* No comment provided by engineer. */
 "Leading" = "Leading";
@@ -277,8 +274,8 @@
 /* No comment provided by engineer. */
 "PowerUps will show if the window is currently minimized or fullscreen with a status icon." = "PowerUps will show if the window is currently minimized or fullscreen with a status icon.";
 
-/* %@ is AltTab
-   Menubar option. %@ is AltTab */
+/* %@ is PowerUps
+   Menubar option. %@ is PowerUps */
 "Quit %@" = "Quit %@";
 
 /* No comment provided by engineer. */
@@ -448,9 +445,6 @@
 
 /* No comment provided by engineer. */
 "Unassign existing shortcut and continue" = "Unassign existing shortcut and continue";
-
-/* No comment provided by engineer. */
-"Usage" = "Usage";
 
 /* No comment provided by engineer. */
 "Version" = "Version";

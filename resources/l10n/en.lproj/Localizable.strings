@@ -26,11 +26,9 @@
 "Alphabetical" = "Alphabetical";
 "Alphabetical Order" = "Alphabetical Order";
 "Also select windows using:" = "Also select windows using:";
-"AltTab crashed last time you used it. Sending a crash report will help get the issue fixed" = "AltTab crashed last time you used it. Sending a crash report will help get the issue fixed";
-"AltTab is currently set to show Applications. This setting is only available when AltTab is set to show Windows." = "AltTab is currently set to show Applications. This setting is only available when AltTab is set to show Windows.";
-"AltTab is running without Screen Recording permissions. Thumbnails won’t show." = "AltTab is running without Screen Recording permissions. Thumbnails won’t show.";
-"AltTab needs some permissions" = "AltTab needs some permissions";
-"AltTab will show if the window is currently minimized or fullscreen with a status icon." = "AltTab will show if the window is currently minimized or fullscreen with a status icon.";
+"PowerUps is currently set to show Applications. This setting is only available when PowerUps is set to show Windows." = "PowerUps is currently set to show Applications. This setting is only available when PowerUps is set to show Windows.";
+"PowerUps needs some permissions" = "PowerUps needs some permissions";
+"PowerUps will show if the window is currently minimized or fullscreen with a status icon." = "PowerUps will show if the window is currently minimized or fullscreen with a status icon.";
 "Always" = "Always";
 "Always send crash reports" = "Always send crash reports";
 "and press" = "and press";
@@ -126,7 +124,6 @@
 "Language Change" = "Language Change";
 "Large" = "Large";
 "Later" = "Later";
-"Latest releases" = "Latest releases";
 "Leading" = "Leading";
 "Left" = "Left";
 "Light" = "Light";
@@ -185,7 +182,7 @@
 "Screen including menu bar" = "Screen including menu bar";
 "Screen including mouse" = "Screen including mouse";
 "Screen Recording" = "Screen Recording";
-"Screen showing AltTab" = "Screen showing AltTab";
+"Screen showing PowerUps" = "Screen showing PowerUps";
 "Search" = "Search";
 "Select next window" = "Select next window";
 "Select previous window" = "Select previous window";
@@ -231,7 +228,7 @@
 "Size" = "Size";
 "Skipped" = "Skipped";
 "Small" = "Small";
-"Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. AltTab can't list those separately." = "Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. AltTab can't list those separately.";
+"Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. PowerUps can't list those separately." = "Some apps like Finder or Preview use standard tabs which act like independent windows. Some other apps like web browsers use custom tabs which act in unique ways and are not actual windows. PowerUps can't list those separately.";
 "Source code repository" = "Source code repository";
 "Space" = "Space";
 "Space Order" = "Space Order";

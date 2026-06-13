@@ -11,8 +11,8 @@ class App: NSApplication {
     static let name = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
     static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
     static let licence = Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as! String
-    static let repository = "https://github.com/lwouis/alt-tab-macos"
-    static let website = "https://alt-tab.app"
+    static let repository = "https://github.com/nvartolomei/powerups-macos"
+    static let upstreamRepository = "https://github.com/lwouis/alt-tab-macos"
     static let appIcon = CGImage.named("app.icns")
     override class var shared: App { super.shared as! App }
     static var appIsBeingUsed = false
@@ -41,7 +41,7 @@ class App: NSApplication {
 
     static func restart() {
         // we use -n to open a new instance, to avoid calling applicationShouldHandleReopen
-        // we use Bundle.main.bundlePath in case of multiple AltTab versions on the machine
+        // we use Bundle.main.bundlePath in case of multiple PowerUps versions on the machine
         printStackTrace()
         Process.launchedProcess(launchPath: "/usr/bin/open", arguments: ["-n", Bundle.main.bundlePath])
         App.shared.terminate(nil)
@@ -53,7 +53,6 @@ class App: NSApplication {
         appIsBeingUsed = false
         isFirstSummon = true
         forceDoNothingOnRelease = false
-        UsageStats.resetSession()
         TilesView.endSearchSession()
         ContextMenuEvents.toggle(false)
         CursorEvents.toggle(false)
@@ -271,7 +270,6 @@ class App: NSApplication {
         forceDoNothingOnRelease = forceDoNothingOnRelease_
         Logger.debug { "isFirstSummon:\(isFirstSummon) shortcutIndex:\(shortcutIndex)" }
         appIsBeingUsed = true
-        UsageStats.recordTrigger(shortcutIndex)
         if isFirstSummon || shortcutIndex != App.shortcutIndex {
             NSScreen.updatePreferred()
             if isVeryFirstSummon {
@@ -364,7 +362,6 @@ class App: NSApplication {
         #if DEBUG
 //            App.showSettingsWindow()
         #endif
-        UsageStats.prune()
         Logger.info { "Finished launching \(App.name)" }
     }
 }

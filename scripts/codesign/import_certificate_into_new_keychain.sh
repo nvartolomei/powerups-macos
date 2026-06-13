@@ -5,7 +5,7 @@ set -exu
 certificateFile="$1"
 certificatePassword="$2"
 
-keychain="alt-tab-macos.keychain"
+keychain="powerups-macos.keychain"
 keychainPassword="password"
 
 # create a keychain

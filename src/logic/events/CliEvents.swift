@@ -9,7 +9,7 @@ class CliEvents {
         } else {
             Logger.error { "Can't listen on message port. Is another \(App.name) already running?" }
             // TODO: should we quit or restart here?
-            // It's complex since AltTab can be restarted sometimes,
+            // It's complex since PowerUps can be restarted sometimes,
             // and the new instance may coexist with the old for some duration
             // There is also the case of multiple instances at login
         }

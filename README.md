@@ -13,7 +13,7 @@ pod install
 ### Debug build
 
 ```sh
-xcodebuild -workspace alt-tab-macos.xcworkspace -scheme Debug -configuration Debug -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO build
+xcodebuild -workspace powerups-macos.xcworkspace -scheme Debug -configuration Debug -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO build
 ```
 
 ### Release build (local install)
@@ -36,7 +36,7 @@ rm -rf "$CERTDIR"
 
 ```sh
 sed -i '' -e "s/#VERSION#/$(git describe --tags --abbrev=0 | tr -d v)/" Info.plist
-xcodebuild -workspace alt-tab-macos.xcworkspace -scheme Release -derivedDataPath DerivedData CODE_SIGN_IDENTITY="Local Self-Signed" OTHER_CODE_SIGN_FLAGS="--timestamp=none --deep --options runtime" build
+xcodebuild -workspace powerups-macos.xcworkspace -scheme Release -derivedDataPath DerivedData CODE_SIGN_IDENTITY="Local Self-Signed" OTHER_CODE_SIGN_FLAGS="--timestamp=none --deep --options runtime" build
 git checkout -- Info.plist
 ```
 
@@ -49,4 +49,12 @@ cp -R DerivedData/Build/Products/Release/PowerUps.app /Applications/
 open /Applications/PowerUps.app
 ```
 
-Permissions only need to be granted once: subsequent builds carry the same signature and bundle id (`me.nvartolomei.powerups`), so macOS keeps the grants.
+Permissions only need to be granted once: subsequent builds carry the same signature and bundle id (`com.nvartolomei.powerups`), so macOS keeps the grants.
+
+## License
+
+PowerUps is a fork of [AltTab](https://github.com/lwouis/alt-tab-macos) and, like the original, is licensed under the [GNU General Public License v3.0](LICENCE.md).
+
+- Original work — AltTab, © Louis Pontoise ([lwouis](https://github.com/lwouis)) and the AltTab contributors.
+
+This is a modified version of AltTab; see the commit history for the changes made.

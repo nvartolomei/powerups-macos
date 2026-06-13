@@ -1,9 +1,9 @@
 {
   "private": true,
-  "name": "alt-tab-macos",
+  "name": "powerups-macos",
   "version": "1.0.0",
-  "author": "",
-  "license": "MIT",
+  "author": "Nicolae Vartolomei",
+  "license": "GPL-3.0-only",
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",

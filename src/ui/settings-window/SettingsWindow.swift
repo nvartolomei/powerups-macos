@@ -508,7 +508,7 @@ class SettingsWindow: NSWindow {
     private let sectionsDocumentView = SettingsFlippedView(frame: .zero)
     private let sectionsStack = NSStackView()
     private let resetButton = NSButton(title: NSLocalizedString("Reset settings and restart…", comment: ""), target: nil, action: nil)
-    private let quitButton = NSButton(title: String(format: NSLocalizedString("Quit %@", comment: "%@ is AltTab"), App.name), target: nil, action: #selector(NSApplication.terminate(_:)))
+    private let quitButton = NSButton(title: String(format: NSLocalizedString("Quit %@", comment: "%@ is PowerUps"), App.name), target: nil, action: #selector(NSApplication.terminate(_:)))
     private var sections = [SettingsSection]()
     private var visibleSections = [SettingsSection]()
     private var selectedSectionId: String?
