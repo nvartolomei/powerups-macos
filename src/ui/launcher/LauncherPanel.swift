@@ -42,13 +42,23 @@ class LauncherPanel: NSPanel {
         searchField.placeholderString = NSLocalizedString("Open application", comment: "")
         searchField.sendsSearchStringImmediately = true
         searchField.sendsWholeSearchString = true
-        searchField.bezelStyle = .roundedBezel
         if #available(macOS 26.0, *) {
             searchField.controlSize = .extraLarge
         } else if #available(macOS 13.0, *) {
             searchField.controlSize = .large
         } else {
             searchField.controlSize = .regular
+        }
+        // blend into the glass panel like Spotlight: no bezel, no background, no focus ring
+        searchField.isBezeled = false
+        searchField.isBordered = false
+        searchField.drawsBackground = false
+        searchField.backgroundColor = .clear
+        searchField.focusRingType = .none
+        searchField.font = .systemFont(ofSize: 22, weight: .regular)
+        if let cell = searchField.cell as? NSSearchFieldCell {
+            cell.searchButtonCell = nil
+            cell.cancelButtonCell = nil
         }
         searchField.usesSingleLineMode = true
         searchField.delegate = self
