@@ -1,6 +1,6 @@
 # [PowerUps](https://github.com/nvartolomei/powerups-macos)
 
-macOS productivity toolkit.
+A macOS productivity toolkit built for one person. Fork it, point an AI agent at it, make it yours.
 
 ## Features
 
