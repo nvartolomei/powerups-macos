@@ -3,30 +3,59 @@ import Cocoa
 class Menubar {
     static var statusItem: NSStatusItem!
     static var menu: NSMenu!
+    private static let menuDelegate = MenubarMenuDelegate()
 
-    static func addMenuItem(_ title: String, _ action: Selector, _ keyEquivalent: String, _ symbolName: String?, _ color: NSColor? = nil, _ target: AnyObject? = nil) {
+    // transparent stand-in so icon-less items keep their text aligned with the items that have an icon
+    private static let blankIcon = NSImage(size: NSSize(width: 18, height: 18), flipped: false) { rect in
+        NSColor.clear.set()
+        rect.fill()
+        return true
+    }
+
+    @discardableResult
+    static func addMenuItem(_ title: String, _ action: Selector, _ keyEquivalent: String, _ symbolName: String?, _ color: NSColor? = nil, _ target: AnyObject? = nil) -> NSMenuItem {
         let item = menu.addItem(withTitle: title, action: action, keyEquivalent: keyEquivalent)
         item.target = target
-        if #available(macOS 26.0, *), let symbolName {
-            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
-            if let color {
-                item.image = item.image?.withSymbolConfiguration(.init(paletteColors: [color]))
+        if #available(macOS 26.0, *) {
+            if let symbolName {
+                item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
+                if let color {
+                    item.image = item.image?.withSymbolConfiguration(.init(paletteColors: [color]))
+                }
+            } else {
+                item.image = blankIcon
             }
         }
+        return item
+    }
+
+    // shows the configured global shortcut next to a menu item, and lets the open menu match it to
+    // close and run the action (see MenubarMenuDelegate, which disables the global hotkey while open).
+    static func showShortcut(_ item: NSMenuItem, _ keyId: String, _ holdId: String? = nil) {
+        guard let shortcut = Preferences.shortcut(keyId), shortcut.keyCode != .none,
+              let characters = shortcut.charactersIgnoringModifiers ?? shortcut.characters, !characters.isEmpty else { return }
+        item.keyEquivalent = characters
+        var modifiers = shortcut.modifierFlags
+        if let holdId, let hold = Preferences.shortcut(holdId) {
+            modifiers.formUnion(hold.modifierFlags)
+        }
+        item.keyEquivalentModifierMask = modifiers
     }
 
     static func initialize() {
         menu = NSMenu()
+        menu.delegate = menuDelegate
         menu.title = App.name // perf: prevent going through expensive code-path within appkit
-        addMenuItem(NSLocalizedString("Show", comment: "Menubar option"), #selector(App.showUiFromShortcut0), "", "eye", nil, App.self)
-        menu.addItem(NSMenuItem.separator())
         addMenuItem(NSLocalizedString("Settings…", comment: "Menubar option"), #selector(App.showSettingsWindow), ",", "gear", nil, App.self)
-        addMenuItem(NSLocalizedString("Check permissions…", comment: "Menubar option"), #selector(App.checkPermissions), "", "hand.raised", nil, App.self)
+        menu.addItem(NSMenuItem.separator())
+        showShortcut(addMenuItem(NSLocalizedString("Show switcher", comment: "Menubar option"), #selector(App.showUiFromShortcut0), "", nil, nil, App.self), "nextWindowShortcut", "holdShortcut")
+        showShortcut(addMenuItem(NSLocalizedString("Show launcher", comment: "Menubar option"), #selector(Launcher.toggle), "", nil, nil, Launcher.self), "launcherShortcut")
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("About %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(App.showAboutWindow), "", "info.circle", nil, App.self)
-        addMenuItem(NSLocalizedString("Debug tools", comment: "Menubar option"), #selector(App.showDebugWindow), "", "scope", nil, App.self)
+        addMenuItem(NSLocalizedString("Check permissions…", comment: "Menubar option"), #selector(App.checkPermissions), "", nil, nil, App.self)
+        addMenuItem(NSLocalizedString("Debug tools", comment: "Menubar option"), #selector(App.showDebugWindow), "", nil, nil, App.self)
         menu.addItem(NSMenuItem.separator())
-        addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(NSApplication.terminate(_:)), "q", nil) // "xmark.rectangle" is not necessary; macos automatically recognizes Quit
+        addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(NSApplication.terminate(_:)), "q", "power")
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.target = self
         statusItem.button!.action = #selector(statusItemOnClick)
@@ -69,5 +98,24 @@ class Menubar {
             path.fill()
             return true
         }
+    }
+}
+
+private class MenubarMenuDelegate: NSObject, NSMenuDelegate {
+    private var didDisableGlobalShortcuts = false
+
+    // while the menu's modal tracking loop is open, a registered global hotkey is intercepted at the
+    // system level and its action is deferred until the menu closes. disabling the global hotkeys lets
+    // the menu's own key equivalents handle the keystroke instead: it closes and runs the action at once.
+    func menuWillOpen(_ menu: NSMenu) {
+        guard !KeyboardEvents.globalShortcutsAreDisabled else { return }
+        didDisableGlobalShortcuts = true
+        KeyboardEvents.toggleGlobalShortcuts(true)
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        guard didDisableGlobalShortcuts else { return }
+        didDisableGlobalShortcuts = false
+        KeyboardEvents.toggleGlobalShortcuts(false)
     }
 }

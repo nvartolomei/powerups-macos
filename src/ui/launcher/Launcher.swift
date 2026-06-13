@@ -14,7 +14,7 @@ class Launcher {
         refreshAppsCacheAsync()
     }
 
-    static func toggle() {
+    @objc static func toggle() {
         if LauncherPanel.shared.isVisible {
             hide()
         } else {

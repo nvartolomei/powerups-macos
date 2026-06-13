@@ -8,7 +8,7 @@ class KeyboardEvents {
     private static var eventHotKeyRefs = [String: EventHotKeyRef?]()
     private static var hotKeyPressedEventHandler: EventHandlerRef?
     private static var hotKeyReleasedEventHandler: EventHandlerRef?
-    private static var globalShortcutsAreDisabled = false
+    static private(set) var globalShortcutsAreDisabled = false
     private static var eventTap: CFMachPort?
 
     private static let cgEventFlagsChangedHandler: CGEventTapCallBack = { _, type, cgEvent, _ in
