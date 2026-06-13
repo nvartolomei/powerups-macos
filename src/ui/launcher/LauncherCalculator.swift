@@ -20,7 +20,7 @@ class LauncherCalculator {
             let completed = chars + [Character](repeating: ")", count: unclosedParens(chars))
             var parser = Parser(completed)
             if let value = parser.parseToEnd() {
-                return LauncherCalculation(evaluatedExpression: String(completed), display: displayFormat(value), raw: rawFormat(value))
+                return LauncherCalculation(evaluatedExpression: formatExpression(completed), display: displayFormat(value), raw: rawFormat(value))
             }
             guard trimIncompleteTail(&chars) else { return nil }
         }
@@ -52,6 +52,64 @@ class LauncherCalculator {
         guard start < chars.count, functions.keys.contains(where: { $0.hasPrefix(String(chars[start...])) }) else { return false }
         chars.removeSubrange(start...)
         return true
+    }
+
+    /// formats the evaluated expression for the results row: single spaces around binary operators,
+    /// none inside parentheses, after a function name, or after a unary sign
+    /// e.g. "((42*5)/8+26-sqrt(42*2))" → "((42 * 5) / 8 + 26 - sqrt(42 * 2))"
+    private static func formatExpression(_ chars: [Character]) -> String {
+        enum Token { case number(String), name(String), binary(String), unary(String), open, close }
+        var tokens: [Token] = []
+        var i = 0
+        while i < chars.count {
+            let c = chars[i]
+            if c.isNumber || c == "." {
+                let start = i
+                while i < chars.count, chars[i].isNumber || chars[i] == "." { i += 1 }
+                tokens.append(.number(String(chars[start..<i])))
+            } else if c.isLetter {
+                let start = i
+                while i < chars.count, chars[i].isLetter || chars[i].isNumber { i += 1 }
+                tokens.append(.name(String(chars[start..<i])))
+            } else if c == "(" {
+                tokens.append(.open); i += 1
+            } else if c == ")" {
+                tokens.append(.close); i += 1
+            } else if c == "*", i + 1 < chars.count, chars[i + 1] == "*" {
+                tokens.append(.binary("**")); i += 2
+            } else if c == "+" || c == "-" {
+                // a sign is binary only when it follows an operand; otherwise it's a unary that binds to the next operand
+                let followsOperand: Bool
+                switch tokens.last {
+                case .number, .name, .close: followsOperand = true
+                default: followsOperand = false
+                }
+                tokens.append(followsOperand ? .binary(String(c)) : .unary(String(c))); i += 1
+            } else {
+                tokens.append(.binary(String(c))); i += 1
+            }
+        }
+        func text(_ token: Token) -> String {
+            switch token {
+            case .number(let s), .name(let s), .binary(let s), .unary(let s): return s
+            case .open: return "("
+            case .close: return ")"
+            }
+        }
+        var result = ""
+        for (index, token) in tokens.enumerated() {
+            if index > 0 {
+                let spaced: Bool
+                switch (tokens[index - 1], token) {
+                case (.open, _), (_, .close), (.unary, _): spaced = false
+                case (.name, .open): spaced = false
+                default: spaced = true
+                }
+                if spaced { result += " " }
+            }
+            result += text(token)
+        }
+        return result
     }
 
     /// raw is what gets copied: machine-formatted, locale-independent

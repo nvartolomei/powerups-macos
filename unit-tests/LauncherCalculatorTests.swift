@@ -71,12 +71,19 @@ final class LauncherCalculatorTests: XCTestCase {
     }
 
     func testEvaluatedExpressionIsTheCompletePart() throws {
-        XCTAssertEqual(LauncherCalculator.evaluate("2+2")?.evaluatedExpression, "2+2")
-        XCTAssertEqual(LauncherCalculator.evaluate("2 + 2")?.evaluatedExpression, "2+2")
+        XCTAssertEqual(LauncherCalculator.evaluate("2+2")?.evaluatedExpression, "2 + 2")
+        XCTAssertEqual(LauncherCalculator.evaluate("2 + 2")?.evaluatedExpression, "2 + 2")
         XCTAssertEqual(LauncherCalculator.evaluate("sin(42)*")?.evaluatedExpression, "sin(42)")
         XCTAssertEqual(LauncherCalculator.evaluate("sqrt(16")?.evaluatedExpression, "sqrt(16)")
-        XCTAssertEqual(LauncherCalculator.evaluate("2+3*")?.evaluatedExpression, "2+3")
+        XCTAssertEqual(LauncherCalculator.evaluate("2+3*")?.evaluatedExpression, "2 + 3")
         XCTAssertEqual(LauncherCalculator.evaluate("sqrt(16)+sq")?.evaluatedExpression, "sqrt(16)")
+    }
+
+    func testEvaluatedExpressionSpacesOperators() throws {
+        XCTAssertEqual(LauncherCalculator.evaluate("((42*5)/8+26-sqrt(42*2))")?.evaluatedExpression, "((42 * 5) / 8 + 26 - sqrt(42 * 2))")
+        XCTAssertEqual(LauncherCalculator.evaluate("-2^2")?.evaluatedExpression, "-2 ^ 2")
+        XCTAssertEqual(LauncherCalculator.evaluate("2*-3")?.evaluatedExpression, "2 * -3")
+        XCTAssertEqual(LauncherCalculator.evaluate("2**10")?.evaluatedExpression, "2 ** 10")
     }
 
     func testDisplayIsLocalized() throws {
