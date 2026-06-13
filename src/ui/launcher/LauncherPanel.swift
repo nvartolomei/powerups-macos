@@ -200,6 +200,9 @@ private class LauncherRowView: NSView {
     private static let verticalPadding = CGFloat(10)
     private static let minHeight = CGFloat(44)
     private static let typeLabelSpacing = CGFloat(10)
+    private static let labelFontSize = CGFloat(16)
+    /// x where the label starts: past the icon and the gap after it
+    private static let labelLeading = horizontalPadding + iconSize + 10
     private let indexInResults: Int
     private let icon = NSImageView(frame: .zero)
     private let label = NSTextField(labelWithString: "")
@@ -213,7 +216,7 @@ private class LauncherRowView: NSView {
         wantsLayer = true
         layer!.cornerRadius = 8
         icon.imageScaling = .scaleProportionallyUpOrDown
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: Self.labelFontSize)
         label.lineBreakMode = .byTruncatingTail
         typeLabel.font = .systemFont(ofSize: 13)
         typeLabel.textColor = .secondaryLabelColor
@@ -231,24 +234,26 @@ private class LauncherRowView: NSView {
     func updateContent(_ result: LauncherResult, _ selected: Bool, _ width: CGFloat) -> CGFloat {
         label.maximumNumberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
+        // set first: the calculation branch needs the type label sized to know how much width the label has
+        typeLabel.stringValue = result.typeLabel ?? ""
+        typeLabel.isHidden = result.typeLabel == nil
         switch result {
         case .app(let app):
             icon.image = app.icon
             label.stringValue = app.name
         case .calculation(let calculation):
             icon.image = LauncherCalculator.icon
-            label.stringValue = calculation.evaluatedExpression + " = " + calculation.display
-            // expressions have no spaces, so wrapping has to break within "words"
+            label.attributedStringValue = calculationLabel(calculation, availableLabelWidth(width))
+            // expressions have no spaces, so a line too long to fit wraps within "words"
             label.maximumNumberOfLines = 0
             label.lineBreakMode = .byCharWrapping
         case .command(let command):
             icon.image = LauncherCommand.icon
             label.stringValue = command.name
         }
-        // semantic color so it follows the appearance AppKit gives the glass' contentView for legibility
+        // semantic color so it follows the appearance AppKit gives the glass' contentView for legibility;
+        // the calculation label carries the same color in its attributes
         label.textColor = .labelColor
-        typeLabel.stringValue = result.typeLabel ?? ""
-        typeLabel.isHidden = result.typeLabel == nil
         let height = layoutRow(width)
         setSelected(selected)
         return height
@@ -263,17 +268,35 @@ private class LauncherRowView: NSView {
     }
 
     private func layoutRow(_ width: CGFloat) -> CGFloat {
-        let labelX = Self.horizontalPadding + Self.iconSize + 10
         let typeSize = typeLabel.isHidden ? .zero : typeLabel.cell!.cellSize
         let typeWidth = ceil(typeSize.width)
-        let reservedRight = typeLabel.isHidden ? 0 : typeWidth + Self.typeLabelSpacing
-        let labelWidth = width - labelX - Self.horizontalPadding - reservedRight
+        let labelWidth = availableLabelWidth(width)
         let labelHeight = ceil(label.cell!.cellSize(forBounds: NSRect(x: 0, y: 0, width: labelWidth, height: CGFloat.greatestFiniteMagnitude)).height)
         let height = max(Self.minHeight, labelHeight + Self.verticalPadding * 2)
         icon.frame = NSRect(x: Self.horizontalPadding, y: (height - Self.iconSize) * 0.5, width: Self.iconSize, height: Self.iconSize)
-        label.frame = NSRect(x: labelX, y: (height - labelHeight) * 0.5, width: labelWidth, height: labelHeight)
+        label.frame = NSRect(x: Self.labelLeading, y: (height - labelHeight) * 0.5, width: labelWidth, height: labelHeight)
         let typeHeight = ceil(typeSize.height)
         typeLabel.frame = NSRect(x: width - Self.horizontalPadding - typeWidth, y: (height - typeHeight) * 0.5, width: typeWidth, height: typeHeight)
         return height
+    }
+
+    /// width left for the label after the icon, paddings, and (when shown) the right-aligned type label
+    private func availableLabelWidth(_ width: CGFloat) -> CGFloat {
+        let reservedRight = typeLabel.isHidden ? 0 : ceil(typeLabel.cell!.cellSize.width) + Self.typeLabelSpacing
+        return width - Self.labelLeading - Self.horizontalPadding - reservedRight
+    }
+
+    /// the emphasized "= result" sits inline after the expression while the row fits; once it would overflow
+    /// it drops to its own line, so a long answer stays readable instead of wrapping in the middle of a number
+    private func calculationLabel(_ calculation: LauncherCalculation, _ labelWidth: CGFloat) -> NSAttributedString {
+        let regular = NSFont.systemFont(ofSize: Self.labelFontSize)
+        let color = NSColor.labelColor
+        let result = NSAttributedString(string: "= " + calculation.display, attributes: [.font: NSFont.systemFont(ofSize: Self.labelFontSize, weight: .semibold), .foregroundColor: color])
+        let inline = NSMutableAttributedString(string: calculation.evaluatedExpression + " ", attributes: [.font: regular, .foregroundColor: color])
+        inline.append(result)
+        guard ceil(inline.size().width) > labelWidth else { return inline }
+        let wrapped = NSMutableAttributedString(string: calculation.evaluatedExpression + "\n", attributes: [.font: regular, .foregroundColor: color])
+        wrapped.append(result)
+        return wrapped
     }
 }
