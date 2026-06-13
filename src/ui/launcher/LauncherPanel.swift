@@ -234,16 +234,18 @@ private class LauncherRowView: NSView {
     func updateContent(_ result: LauncherResult, _ selected: Bool, _ width: CGFloat) -> CGFloat {
         label.maximumNumberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
-        // set first: the calculation branch needs the type label sized to know how much width the label has
+        // size the type label first: the label's available width depends on how much room it reserves
         typeLabel.stringValue = result.typeLabel ?? ""
         typeLabel.isHidden = result.typeLabel == nil
+        let typeSize = typeLabel.isHidden ? .zero : typeLabel.cell!.cellSize
+        let labelWidth = availableLabelWidth(width, ceil(typeSize.width))
         switch result {
         case .app(let app):
             icon.image = app.icon
             label.stringValue = app.name
         case .calculation(let calculation):
             icon.image = LauncherCalculator.icon
-            label.attributedStringValue = calculationLabel(calculation, availableLabelWidth(width))
+            label.attributedStringValue = calculationLabel(calculation, labelWidth)
             // expressions have no spaces, so a line too long to fit wraps within "words"
             label.maximumNumberOfLines = 0
             label.lineBreakMode = .byCharWrapping
@@ -254,7 +256,7 @@ private class LauncherRowView: NSView {
         // semantic color so it follows the appearance AppKit gives the glass' contentView for legibility;
         // the calculation label carries the same color in its attributes
         label.textColor = .labelColor
-        let height = layoutRow(width)
+        let height = layoutRow(width, typeSize, labelWidth)
         setSelected(selected)
         return height
     }
@@ -267,10 +269,8 @@ private class LauncherRowView: NSView {
         LauncherPanel.shared.activateResult(indexInResults)
     }
 
-    private func layoutRow(_ width: CGFloat) -> CGFloat {
-        let typeSize = typeLabel.isHidden ? .zero : typeLabel.cell!.cellSize
+    private func layoutRow(_ width: CGFloat, _ typeSize: NSSize, _ labelWidth: CGFloat) -> CGFloat {
         let typeWidth = ceil(typeSize.width)
-        let labelWidth = availableLabelWidth(width)
         let labelHeight = ceil(label.cell!.cellSize(forBounds: NSRect(x: 0, y: 0, width: labelWidth, height: CGFloat.greatestFiniteMagnitude)).height)
         let height = max(Self.minHeight, labelHeight + Self.verticalPadding * 2)
         icon.frame = NSRect(x: Self.horizontalPadding, y: (height - Self.iconSize) * 0.5, width: Self.iconSize, height: Self.iconSize)
@@ -281,8 +281,8 @@ private class LauncherRowView: NSView {
     }
 
     /// width left for the label after the icon, paddings, and (when shown) the right-aligned type label
-    private func availableLabelWidth(_ width: CGFloat) -> CGFloat {
-        let reservedRight = typeLabel.isHidden ? 0 : ceil(typeLabel.cell!.cellSize.width) + Self.typeLabelSpacing
+    private func availableLabelWidth(_ width: CGFloat, _ typeWidth: CGFloat) -> CGFloat {
+        let reservedRight = typeWidth == 0 ? 0 : typeWidth + Self.typeLabelSpacing
         return width - Self.labelLeading - Self.horizontalPadding - reservedRight
     }
 
@@ -292,11 +292,13 @@ private class LauncherRowView: NSView {
         let regular = NSFont.systemFont(ofSize: Self.labelFontSize)
         let color = NSColor.labelColor
         let result = NSAttributedString(string: "= " + calculation.display, attributes: [.font: NSFont.systemFont(ofSize: Self.labelFontSize, weight: .semibold), .foregroundColor: color])
-        let inline = NSMutableAttributedString(string: calculation.evaluatedExpression + " ", attributes: [.font: regular, .foregroundColor: color])
-        inline.append(result)
+        func labeled(_ separator: String) -> NSAttributedString {
+            let attributed = NSMutableAttributedString(string: calculation.evaluatedExpression + separator, attributes: [.font: regular, .foregroundColor: color])
+            attributed.append(result)
+            return attributed
+        }
+        let inline = labeled(" ")
         guard ceil(inline.size().width) > labelWidth else { return inline }
-        let wrapped = NSMutableAttributedString(string: calculation.evaluatedExpression + "\n", attributes: [.font: regular, .foregroundColor: color])
-        wrapped.append(result)
-        return wrapped
+        return labeled("\n")
     }
 }
