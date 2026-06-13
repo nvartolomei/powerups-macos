@@ -5,6 +5,8 @@ xcuserdata/
 WorkspaceSettings.xcsettings
 IDEWorkspaceChecks.plist
 /node_modules/
+/src/quicklook-markdown/web/node_modules/
+/src/quicklook-markdown/web/dist/
 /DerivedData/
 /build/
 .DS_Store

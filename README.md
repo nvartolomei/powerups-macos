@@ -1,26 +1,20 @@
-# PowerUps
+# [PowerUps](https://github.com/nvartolomei/powerups-macos)
 
-macOS window switcher, forked from [AltTab](https://github.com/lwouis/alt-tab-macos).
+macOS productivity toolkit.
 
-## Building
+## Features
 
-Prerequisites: Xcode, CocoaPods (`brew install cocoapods`), then:
+- **App switcher** — switch between open windows and apps, à la `⌘`+`Tab`.
+- **App & action launcher** — Spotlight-style search to launch apps and run actions.
+- **Markdown Quick Look** — a Quick Look extension that renders Markdown files with a proper preview.
 
-```sh
-pod install
-```
+## Building & installing
 
-### Debug build
+Prerequisites: Xcode and Node.js (Node builds the Quick Look Markdown preview bundle).
 
-```sh
-xcodebuild -workspace powerups-macos.xcworkspace -scheme Debug -configuration Debug -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO build
-```
+### One-time certificate setup
 
-### Release build (local install)
-
-The Release config signs with a Developer ID certificate in CI; for local builds, use a self-signed "Local Self-Signed" certificate instead. Signing every local build with the same certificate keeps the app's code signature stable, so macOS permissions (Accessibility, Screen Recording) survive rebuilds.
-
-One-time certificate setup:
+Local builds sign with a self-signed "Local Self-Signed" certificate. Signing every build with the same certificate keeps the app's code signature stable, so macOS permissions (Accessibility, Screen Recording) survive rebuilds.
 
 ```sh
 CERTDIR=$(mktemp -d)
@@ -32,22 +26,13 @@ security add-trusted-cert -p codeSign -k ~/Library/Keychains/login.keychain-db "
 rm -rf "$CERTDIR"
 ```
 
-`Info.plist` contains a `#VERSION#` placeholder normally substituted by CI, so fill it in for the build and restore it after:
+### Build & install
 
 ```sh
-sed -i '' -e "s/#VERSION#/$(git describe --tags --abbrev=0 | tr -d v)/" Info.plist
-xcodebuild -workspace powerups-macos.xcworkspace -scheme Release -derivedDataPath DerivedData CODE_SIGN_IDENTITY="Local Self-Signed" OTHER_CODE_SIGN_FLAGS="--timestamp=none --deep --options runtime" build
-git checkout -- Info.plist
+./yolo.sh
 ```
 
-### Install
-
-```sh
-osascript -e 'quit app "PowerUps"' 2>/dev/null
-rm -rf /Applications/PowerUps.app
-cp -R DerivedData/Build/Products/Release/PowerUps.app /Applications/
-open /Applications/PowerUps.app
-```
+`yolo.sh` builds the app and its Quick Look Markdown extension, signs them with the local certificate, installs to `/Applications`, and launches.
 
 Permissions only need to be granted once: subsequent builds carry the same signature and bundle id (`com.nvartolomei.powerups`), so macOS keeps the grants.
 

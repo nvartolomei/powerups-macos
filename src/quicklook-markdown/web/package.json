@@ -1,0 +1,23 @@
+{
+  "name": "quicklook-markdown-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Markdown → HTML renderer bundled into a single self-contained preview.html for the Quick Look extension",
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "github-markdown-css": "^5.8.1",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.1",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11",
+    "vite-plugin-singlefile": "^2.0.3"
+  }
+}

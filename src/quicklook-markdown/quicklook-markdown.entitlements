@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.files.user-selected.read-only</key>
+	<true/>
+	<!-- WKWebView cannot bring up its content process inside the sandbox without this,
+	     even for local content; the load hangs otherwise. Network egress from the
+	     rendered page is still blocked by the CSP in preview.html (connect-src 'none',
+	     no remote img-src), so this grants capability the content never exercises. -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+</dict>
+</plist>

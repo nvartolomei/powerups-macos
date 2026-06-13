@@ -366,9 +366,25 @@ class App: NSApplication {
     }
 }
 
+extension App {
+    static let quickLookOpenURLNotification = Notification.Name("com.nvartolomei.powerups.quicklook-markdown.openURL")
+
+    /// The Quick Look Markdown extension is sandboxed and cannot open URLs
+    /// (Launch Services' lsopen is denied in that sandbox), so it posts the
+    /// clicked link here and this unsandboxed app opens it in the default browser.
+    static func observeQuickLookLinkRequests() {
+        DistributedNotificationCenter.default().addObserver(forName: quickLookOpenURLNotification, object: nil, queue: .main) { notification in
+            guard let string = notification.object as? String, let url = URL(string: string),
+                  let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else { return }
+            NSWorkspace.shared.open(url)
+        }
+    }
+}
+
 extension App: NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         App.shared.disableRelaunchOnLogin()
+        App.observeQuickLookLinkRequests()
         Logger.initialize()
         Logger.info { "Launching \(App.name) \(App.version)" }
         #if DEBUG
