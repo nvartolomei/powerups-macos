@@ -196,9 +196,12 @@ private class LauncherRowView: NSView {
     private static let horizontalPadding = CGFloat(10)
     private static let verticalPadding = CGFloat(10)
     private static let minHeight = CGFloat(44)
+    private static let typeLabelSpacing = CGFloat(10)
     private let indexInResults: Int
     private let icon = NSImageView(frame: .zero)
     private let label = NSTextField(labelWithString: "")
+    /// faint right-aligned hint naming a result's provenance, e.g. "System Settings"; hidden for plain apps
+    private let typeLabel = NSTextField(labelWithString: "")
 
     init(_ indexInResults: Int) {
         self.indexInResults = indexInResults
@@ -209,8 +212,13 @@ private class LauncherRowView: NSView {
         icon.imageScaling = .scaleProportionallyUpOrDown
         label.font = .systemFont(ofSize: 16)
         label.lineBreakMode = .byTruncatingTail
+        typeLabel.font = .systemFont(ofSize: 13)
+        typeLabel.textColor = .secondaryLabelColor
+        typeLabel.alignment = .right
+        typeLabel.lineBreakMode = .byTruncatingTail
         addSubview(icon)
         addSubview(label)
+        addSubview(typeLabel)
     }
 
     required init?(coder: NSCoder) {
@@ -236,6 +244,8 @@ private class LauncherRowView: NSView {
         }
         // semantic color so it follows the appearance AppKit gives the glass' contentView for legibility
         label.textColor = .labelColor
+        typeLabel.stringValue = result.typeLabel ?? ""
+        typeLabel.isHidden = result.typeLabel == nil
         let height = layoutRow(width)
         setSelected(selected)
         return height
@@ -251,11 +261,16 @@ private class LauncherRowView: NSView {
 
     private func layoutRow(_ width: CGFloat) -> CGFloat {
         let labelX = Self.horizontalPadding + Self.iconSize + 10
-        let labelWidth = width - labelX - Self.horizontalPadding
+        let typeSize = typeLabel.isHidden ? .zero : typeLabel.cell!.cellSize
+        let typeWidth = ceil(typeSize.width)
+        let reservedRight = typeLabel.isHidden ? 0 : typeWidth + Self.typeLabelSpacing
+        let labelWidth = width - labelX - Self.horizontalPadding - reservedRight
         let labelHeight = ceil(label.cell!.cellSize(forBounds: NSRect(x: 0, y: 0, width: labelWidth, height: CGFloat.greatestFiniteMagnitude)).height)
         let height = max(Self.minHeight, labelHeight + Self.verticalPadding * 2)
         icon.frame = NSRect(x: Self.horizontalPadding, y: (height - Self.iconSize) * 0.5, width: Self.iconSize, height: Self.iconSize)
         label.frame = NSRect(x: labelX, y: (height - labelHeight) * 0.5, width: labelWidth, height: labelHeight)
+        let typeHeight = ceil(typeSize.height)
+        typeLabel.frame = NSRect(x: width - Self.horizontalPadding - typeWidth, y: (height - typeHeight) * 0.5, width: typeWidth, height: typeHeight)
         return height
     }
 }

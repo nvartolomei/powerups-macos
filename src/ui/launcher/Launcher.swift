@@ -153,6 +153,15 @@ enum LauncherResult {
     case calculation(LauncherCalculation)
     /// a built-in command matched by keyword; activating it runs its action
     case command(LauncherCommand)
+
+    /// faint right-side label naming where a result comes from; nil for plain apps, the common case that needs no hint
+    var typeLabel: String? {
+        switch self {
+        case .app(let app): return app.paneId == nil ? nil : NSLocalizedString("System Settings", comment: "")
+        case .calculation: return NSLocalizedString("Calculator", comment: "")
+        case .command: return NSLocalizedString("Command", comment: "")
+        }
+    }
 }
 
 struct LauncherApp {
