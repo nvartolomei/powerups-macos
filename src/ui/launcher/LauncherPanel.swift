@@ -58,11 +58,14 @@ class LauncherPanel: NSPanel {
         searchField.backgroundColor = .clear
         searchField.focusRingType = .none
         searchField.font = .systemFont(ofSize: 22, weight: .regular)
+        searchField.usesSingleLineMode = true
         if let cell = searchField.cell as? NSSearchFieldCell {
             cell.searchButtonCell = nil
             cell.cancelButtonCell = nil
+            // a long query should scroll horizontally to follow the caret, not clip past the field's right edge
+            cell.wraps = false
+            cell.isScrollable = true
         }
-        searchField.usesSingleLineMode = true
         searchField.delegate = self
         searchField.target = self
         searchField.action = #selector(searchFieldChanged)
