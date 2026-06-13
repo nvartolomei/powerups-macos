@@ -12,6 +12,12 @@ class LiquidGlassEffectView: NSGlassEffectView, EffectView {
     func updateAppearance() {
         cornerRadius = Appearance.windowCornerRadius
     }
+
+    /// hosting content in the glass' contentView (instead of as sibling subviews) lets AppKit keep it
+    /// legible as the glass tints itself light or dark to match whatever is behind the panel
+    func setContent(_ view: NSView) {
+        contentView = view
+    }
 }
 
 class FrostedGlassEffectView: NSVisualEffectView, EffectView {
@@ -26,6 +32,12 @@ class FrostedGlassEffectView: NSVisualEffectView, EffectView {
     func updateAppearance() {
         material = Appearance.material
         updateRoundedCorners(Appearance.windowCornerRadius)
+    }
+
+    func setContent(_ view: NSView) {
+        view.frame = bounds
+        view.autoresizingMask = [.width, .height]
+        addSubview(view)
     }
 
     /// using layer!.cornerRadius works but the corners are aliased; this custom approach gives smooth rounded corners
@@ -50,6 +62,7 @@ class FrostedGlassEffectView: NSVisualEffectView, EffectView {
 
 protocol EffectView: NSView {
     func updateAppearance()
+    func setContent(_ view: NSView)
 }
 
 func makeAppropriateEffectView() -> EffectView {

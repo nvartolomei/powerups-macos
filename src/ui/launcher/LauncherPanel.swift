@@ -7,6 +7,7 @@ class LauncherPanel: NSPanel {
     private static let resultsSpacing = CGFloat(10)
     override var canBecomeKey: Bool { true }
     private var effectView: EffectView!
+    private let contentContainer = NSView(frame: .zero)
     private let searchField = NSSearchField(frame: .zero)
     private var rowViews = [LauncherRowView]()
     private var results = [LauncherResult]()
@@ -31,9 +32,10 @@ class LauncherPanel: NSPanel {
         setAccessibilityLabel(NSLocalizedString("Open application", comment: ""))
         configureSearchField()
         effectView = makeAppropriateEffectView()
-        effectView.addSubview(searchField)
+        contentContainer.addSubview(searchField)
         rowViews = (0..<Launcher.maxResults).map { LauncherRowView($0) }
-        rowViews.forEach { effectView.addSubview($0) }
+        rowViews.forEach { contentContainer.addSubview($0) }
+        effectView.setContent(contentContainer)
         contentView = effectView
         Self.shared = self
     }
@@ -95,7 +97,8 @@ class LauncherPanel: NSPanel {
 
     private func updateAppearance() {
         hasShadow = Appearance.enablePanelShadow
-        appearance = NSAppearance(named: Appearance.currentTheme == .dark ? .vibrantDark : .vibrantLight)
+        // don't pin a dark/light appearance: the liquid glass tints itself to match whatever is behind
+        // the panel, and AppKit keeps the contentView legible against that tint on its own
         effectView.updateAppearance()
         // Appearance.windowCornerRadius can be larger than half this panel's height; we cap it
         if #available(macOS 26.0, *), let glassView = effectView as? LiquidGlassEffectView {
@@ -130,6 +133,7 @@ class LauncherPanel: NSPanel {
         let resultsHeight = results.isEmpty ? 0 : Self.resultsSpacing + rowHeights.reduce(0, +)
         let height = Self.padding * 2 + fieldHeight + resultsHeight
         setContentSize(NSSize(width: Self.panelWidth, height: height))
+        contentContainer.frame = NSRect(x: 0, y: 0, width: Self.panelWidth, height: height)
         searchField.frame = NSRect(x: Self.padding, y: height - Self.padding - fieldHeight, width: rowWidth, height: fieldHeight)
         var rowTop = height - Self.padding - fieldHeight - Self.resultsSpacing
         for (i, row) in rowViews.enumerated() where i < results.count {
@@ -230,7 +234,8 @@ private class LauncherRowView: NSView {
             icon.image = LauncherCommand.icon
             label.stringValue = command.name
         }
-        label.textColor = Appearance.fontColor
+        // semantic color so it follows the appearance AppKit gives the glass' contentView for legibility
+        label.textColor = .labelColor
         let height = layoutRow(width)
         setSelected(selected)
         return height
