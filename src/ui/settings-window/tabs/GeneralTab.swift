@@ -1,4 +1,5 @@
 import Cocoa
+import UniformTypeIdentifiers
 
 class GeneralTab {
     private static var menubarIsVisibleObserver: NSKeyValueObservation?
@@ -52,14 +53,14 @@ class GeneralTab {
     private static func exportSettings() {
         let panel = NSSavePanel()
         panel.nameFieldStringValue = "\(App.bundleIdentifier).plist"
-        panel.allowedFileTypes = ["plist"]
+        panel.allowedContentTypes = [.propertyList]
         guard panel.runModal() == .OK, let url = panel.url else { return }
         NSDictionary(dictionary: Preferences.all).write(to: url, atomically: true)
     }
 
     private static func importSettings() {
         let panel = NSOpenPanel()
-        panel.allowedFileTypes = ["plist"]
+        panel.allowedContentTypes = [.propertyList]
         panel.allowsMultipleSelection = false
         guard panel.runModal() == .OK, let url = panel.url else { return }
         guard let dict = NSDictionary(contentsOf: url) as? [String: Any] else {

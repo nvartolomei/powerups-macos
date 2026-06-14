@@ -67,10 +67,6 @@ final class CustomRecorderControlTests: XCTestCase {
     }
 
     func testIsShortcutAcceptable_usedByGameOverlay() {
-        if #available(macOS 26.0, *) {
-            XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("holdShortcut", Shortcut(keyEquivalent: "⌘")!), .usedByGameOverlay(shortcutUsingGameOverlay: "cancelShortcut"))
-        } else {
-            XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("holdShortcut", Shortcut(keyEquivalent: "⌘")!), .accepted)
-        }
+        XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("holdShortcut", Shortcut(keyEquivalent: "⌘")!), .usedByGameOverlay(shortcutUsingGameOverlay: "cancelShortcut"))
     }
 }

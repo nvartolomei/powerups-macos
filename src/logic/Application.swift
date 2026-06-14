@@ -30,17 +30,8 @@ class Application: NSObject {
         kAXApplicationShownNotification,
     ]
 
-    private static let appIconPadding: CGFloat = {
-        // Tahoe redesigned app icons. Keeping their rounded look, and reducing their size; we trim that padding
-        if #available(macOS 26.0, *) {
-            return 84
-        }
-        // Big Sur redesigned app icons. A big change from square icons to rounded icons, and reducing their size; we trim that padding
-        if #available(macOS 11.0, *) {
-            return 24
-        }
-        return 0
-    }()
+    // Tahoe redesigned app icons. Keeping their rounded look, and reducing their size; we trim that padding
+    private static let appIconPadding: CGFloat = 84
 
     /// Converting NSImage to CGImage may seem simple, but it's actually very tricky. Lots of time has been put to make it work robustly
     /// The RunningApplication.icon can have store bitmaps or vectors. We have to rasterize into pixels. This is not easy as there are many APIs:

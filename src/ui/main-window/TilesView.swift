@@ -1,6 +1,7 @@
 import Cocoa
 import Carbon.HIToolbox.Events
 import ShortcutRecorder
+import UniformTypeIdentifiers
 
 enum SearchMode {
     case off
@@ -135,13 +136,7 @@ class TilesView {
         searchField.sendsSearchStringImmediately = true
         searchField.sendsWholeSearchString = true
         searchField.bezelStyle = .roundedBezel
-        if #available(macOS 26.0, *) {
-            searchField.controlSize = .extraLarge
-        } else if #available(macOS 13.0, *) {
-            searchField.controlSize = .large
-        } else {
-            searchField.controlSize = .regular
-        }
+        searchField.controlSize = .extraLarge
         searchField.usesSingleLineMode = true
         searchField.target = Self.self
         searchField.action = #selector(Self.searchFieldChanged(_:))
@@ -620,7 +615,7 @@ class TilesDocumentView: FlippedView {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         // we only handle URLs (i.e. not text, image, or other draggable things)
-        registerForDraggedTypes([NSPasteboard.PasteboardType(kUTTypeURL as String)])
+        registerForDraggedTypes([NSPasteboard.PasteboardType(UTType.url.identifier)])
     }
 
     required init?(coder: NSCoder) {
@@ -650,9 +645,10 @@ class TilesDocumentView: FlippedView {
               let appUrl = window.application.bundleURL else { return false }
         guard let urls = sender.draggingPasteboard.readObjects(forClasses: [NSURL.self]) as? [URL],
               !urls.isEmpty else { return false }
-        let open = try? NSWorkspace.shared.open(urls, withApplicationAt: appUrl, options: [], configuration: [:])
-        if open != nil { App.hideUi() }
-        return open != nil
+        NSWorkspace.shared.open(urls, withApplicationAt: appUrl, configuration: NSWorkspace.OpenConfiguration()) { app, _ in
+            if app != nil { DispatchQueue.main.async { App.hideUi() } }
+        }
+        return true
     }
 
     override func concludeDragOperation(_ sender: NSDraggingInfo?) {

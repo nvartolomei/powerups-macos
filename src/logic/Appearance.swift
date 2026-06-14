@@ -23,7 +23,6 @@ class Appearance {
     // theme
     static var fontColor = NSColor.red
     static var imagesShadowColor = NSColor.red // for icon, thumbnail and windowless images
-    static var material = NSVisualEffectView.Material.ultraDark
 
     // theme: constants
     static let highlightBorderWidth = CGFloat(2)
@@ -38,7 +37,7 @@ class Appearance {
     private static var currentSize: AppearanceSizePreference { Preferences.appearanceSize }
     static var currentTheme: AppearanceThemePreference {
         if Preferences.appearanceTheme == .system {
-            return NSAppearance.current.getThemeName()
+            return NSApp.effectiveAppearance.getThemeName()
         } else {
             return Preferences.appearanceTheme
         }
@@ -89,22 +88,16 @@ class Appearance {
     }
 
     private static func updateFont() {
-        if #available(macOS 26.0, *) {
-            font = NSFont.systemFont(ofSize: fontHeight, weight: .medium)
-        } else {
-            font = NSFont.systemFont(ofSize: fontHeight)
-        }
+        font = NSFont.systemFont(ofSize: fontHeight, weight: .medium)
     }
 
     private static func lightTheme() {
         fontColor = .black.withAlphaComponent(0.8)
         imagesShadowColor = .gray.withAlphaComponent(0.8)
-        material = .mediumLight
     }
 
     private static func darkTheme() {
         fontColor = .white.withAlphaComponent(0.85)
         imagesShadowColor = .gray.withAlphaComponent(0.8)
-        material = .dark
     }
 }

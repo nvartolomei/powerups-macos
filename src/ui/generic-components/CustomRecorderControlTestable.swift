@@ -81,12 +81,10 @@ class CustomRecorderControlTestable {
     }
 
     static func isUsedByGameOverlay(_ newCombinationsFromCandidate: [(String, Shortcut)] ) -> String? {
-        if #available(macOS 26.0, *) {
-            let go = MacOsShortcuts.gameOverlay
-            for c in newCombinationsFromCandidate {
-                if c.1.carbonKeyCode == go.carbonKeyCode && c.1.carbonModifierFlags == go.carbonModifierFlags {
-                    return c.0
-                }
+        let go = MacOsShortcuts.gameOverlay
+        for c in newCombinationsFromCandidate {
+            if c.1.carbonKeyCode == go.carbonKeyCode && c.1.carbonModifierFlags == go.carbonModifierFlags {
+                return c.0
             }
         }
         return nil

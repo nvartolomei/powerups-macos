@@ -44,13 +44,7 @@ class LauncherPanel: NSPanel {
         searchField.placeholderString = NSLocalizedString("Open application", comment: "")
         searchField.sendsSearchStringImmediately = true
         searchField.sendsWholeSearchString = true
-        if #available(macOS 26.0, *) {
-            searchField.controlSize = .extraLarge
-        } else if #available(macOS 13.0, *) {
-            searchField.controlSize = .large
-        } else {
-            searchField.controlSize = .regular
-        }
+        searchField.controlSize = .extraLarge
         // blend into the glass panel like Spotlight: no bezel, no background, no focus ring
         searchField.isBezeled = false
         searchField.isBordered = false
@@ -104,7 +98,7 @@ class LauncherPanel: NSPanel {
         // the panel, and AppKit keeps the contentView legible against that tint on its own
         effectView.updateAppearance()
         // Appearance.windowCornerRadius can be larger than half this panel's height; we cap it
-        if #available(macOS 26.0, *), let glassView = effectView as? LiquidGlassEffectView {
+        if let glassView = effectView as? LiquidGlassEffectView {
             glassView.cornerRadius = min(Appearance.windowCornerRadius, 26)
         }
     }

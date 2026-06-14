@@ -16,15 +16,13 @@ class Menubar {
     static func addMenuItem(_ title: String, _ action: Selector, _ keyEquivalent: String, _ symbolName: String?, _ color: NSColor? = nil, _ target: AnyObject? = nil) -> NSMenuItem {
         let item = menu.addItem(withTitle: title, action: action, keyEquivalent: keyEquivalent)
         item.target = target
-        if #available(macOS 26.0, *) {
-            if let symbolName {
-                item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
-                if let color {
-                    item.image = item.image?.withSymbolConfiguration(.init(paletteColors: [color]))
-                }
-            } else {
-                item.image = blankIcon
+        if let symbolName {
+            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
+            if let color {
+                item.image = item.image?.withSymbolConfiguration(.init(paletteColors: [color]))
             }
+        } else {
+            item.image = blankIcon
         }
         return item
     }
@@ -57,7 +55,7 @@ class Menubar {
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(NSApplication.terminate(_:)), "q", "power")
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.target = self
+        statusItem.button!.target = self
         statusItem.button!.action = #selector(statusItemOnClick)
         statusItem.button!.sendAction(on: [.leftMouseDown, .rightMouseDown])
     }
@@ -66,8 +64,8 @@ class Menubar {
         // NSApp.currentEvent == nil if the icon is "clicked" through VoiceOver
         if let type = NSApp.currentEvent?.type, type != .leftMouseDown {
             App.showUiFromShortcut0()
-        } else {
-            statusItem.popUpMenu(Menubar.menu)
+        } else if let button = statusItem.button {
+            Menubar.menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 5), in: button)
         }
     }
 
