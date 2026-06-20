@@ -55,18 +55,7 @@ class Menubar {
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(NSApplication.terminate(_:)), "q", "power")
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.button!.target = self
-        statusItem.button!.action = #selector(statusItemOnClick)
-        statusItem.button!.sendAction(on: [.leftMouseDown, .rightMouseDown])
-    }
-
-    @objc static func statusItemOnClick() {
-        // NSApp.currentEvent == nil if the icon is "clicked" through VoiceOver
-        if let type = NSApp.currentEvent?.type, type != .leftMouseDown {
-            App.showUiFromShortcut0()
-        } else if let button = statusItem.button {
-            Menubar.menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 5), in: button)
-        }
+        statusItem.menu = menu
     }
 
     static func menubarIconCallback(_: NSControl?) {
