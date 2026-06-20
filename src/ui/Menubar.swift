@@ -46,8 +46,8 @@ class Menubar {
         menu.title = App.name // perf: prevent going through expensive code-path within appkit
         addMenuItem(NSLocalizedString("Settings…", comment: "Menubar option"), #selector(App.showSettingsWindow), ",", "gear", nil, App.self)
         menu.addItem(NSMenuItem.separator())
-        showShortcut(addMenuItem(NSLocalizedString("Show switcher", comment: "Menubar option"), #selector(App.showUiFromShortcut0), "", nil, nil, App.self), "nextWindowShortcut", "holdShortcut")
         showShortcut(addMenuItem(NSLocalizedString("Show launcher", comment: "Menubar option"), #selector(Launcher.toggle), "", nil, nil, Launcher.self), "launcherShortcut")
+        showShortcut(addMenuItem(NSLocalizedString("Show switcher", comment: "Menubar option"), #selector(App.showUiFromShortcut0), "", nil, nil, App.self), "nextWindowShortcut", "holdShortcut")
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("About %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(App.showAboutWindow), "", "info.circle", nil, App.self)
         addMenuItem(NSLocalizedString("Check permissions…", comment: "Menubar option"), #selector(App.checkPermissions), "", nil, nil, App.self)
