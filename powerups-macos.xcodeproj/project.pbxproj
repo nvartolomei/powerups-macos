@@ -17,6 +17,7 @@
 		1C96149CFE6DB491DCAEA943 /* titles_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961B26B70C826BBD762AC5 /* titles_light@2x.jpg */; };
 		1C9614F589E212F9A768D936 /* titles_show_status_icons_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C9611039BDBE0C84F349BA1 /* titles_show_status_icons_light@2x.jpg */; };
 		1C9618872DD3863A8EFE8414 /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C961AC3633CD0C62CCE050E /* Appearance.swift */; };
+		AA0C8A000000000000004001 /* AudioOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8A000000000000004000 /* AudioOutput.swift */; };
 		1C9618DF753B19DB0A1255E4 /* titles_hide_app_badges_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961E051A3A4E4A174BB7C7 /* titles_hide_app_badges_light@2x.jpg */; };
 		1C96198B593CD55629ACE974 /* titles_show_app_badges_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961B4DFAF687EFF3D12959 /* titles_show_app_badges_light@2x.jpg */; };
 		1C9619D3A3ACDBA31235409D /* titles_show_space_number_labels_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C9614A489E5D3C0D885F71D /* titles_show_space_number_labels_light@2x.jpg */; };
@@ -312,6 +313,7 @@
 		1C96189273B7482124C36F4C /* Switch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Switch.swift; sourceTree = "<group>"; };
 		1C9619DEB8B7905DBF9A6030 /* titles_hide_tabs_as_windows_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_hide_tabs_as_windows_light@2x.jpg"; sourceTree = "<group>"; };
 		1C961AC3633CD0C62CCE050E /* Appearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
+		AA0C8A000000000000004000 /* AudioOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioOutput.swift; sourceTree = "<group>"; };
 		1C961B26B70C826BBD762AC5 /* titles_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_light@2x.jpg"; sourceTree = "<group>"; };
 		1C961B4DFAF687EFF3D12959 /* titles_show_app_badges_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_app_badges_light@2x.jpg"; sourceTree = "<group>"; };
 		1C961E051A3A4E4A174BB7C7 /* titles_hide_app_badges_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_hide_app_badges_light@2x.jpg"; sourceTree = "<group>"; };
@@ -900,6 +902,7 @@
 				F00DCAFE0000000000002000 /* search */,
 				BF0C8BA452332236D972C60E /* ATShortcut.swift */,
 				1C961AC3633CD0C62CCE050E /* Appearance.swift */,
+				AA0C8A000000000000004000 /* AudioOutput.swift */,
 				BF0C8D606B53D315F2D9927B /* KeyRepeatTimer.swift */,
 				BF0C8D57C86AF492D43A576D /* AppearanceTestable.swift */,
 				BF0C8998862E0E04D60CACBC /* MacroPreferences.swift */,
@@ -1655,6 +1658,7 @@
 				BF0C832C5BF4C8E9C95F7767 /* MissionControl.swift in Sources */,
 				1C96108A0CB2565233FE100B /* TableGroupView.swift in Sources */,
 				1C9618872DD3863A8EFE8414 /* Appearance.swift in Sources */,
+				AA0C8A000000000000004001 /* AudioOutput.swift in Sources */,
 				BF0C83578F7292F307E30751 /* PopupButtonLikeSystemSettings.swift in Sources */,
 				1C961F9CF4F1BEDF04ACAEE0 /* Switch.swift in Sources */,
 				BF0C860F1779DDE8C0171EA0 /* WindowlessAppIndicator.swift in Sources */,

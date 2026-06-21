@@ -6,6 +6,9 @@ class LauncherCommands {
     private static let all = [
         LauncherCommand("dark", NSLocalizedString("Switch to Dark Mode", comment: ""), { SLSSetAppearanceThemeLegacy(true) }),
         LauncherCommand("light", NSLocalizedString("Switch to Light Mode", comment: ""), { SLSSetAppearanceThemeLegacy(false) }),
+        LauncherCommand("lsx", NSLocalizedString("Output: LSX", comment: ""), { AudioOutput.route(to: "LSX") }),
+        LauncherCommand("airpods", NSLocalizedString("Output: AirPods", comment: ""), { AudioOutput.route(to: "AirPods") }),
+        LauncherCommand("speakers", NSLocalizedString("Output: MacBook Speakers", comment: ""), { AudioOutput.route(to: "MacBook") }),
     ]
 
     static func matching(_ query: String) -> [LauncherCommand] {
