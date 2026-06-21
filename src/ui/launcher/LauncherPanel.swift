@@ -244,9 +244,11 @@ private class LauncherRowView: NSView {
             label.maximumNumberOfLines = 0
             label.lineBreakMode = .byCharWrapping
         case .command(let command):
-            icon.image = LauncherCommand.icon
+            icon.image = command.icon
             label.stringValue = command.name
         }
+        // template symbols (e.g. audio output commands) tint to the appearance-following label color; full-colour app icons stay as-is
+        icon.contentTintColor = (icon.image?.isTemplate ?? false) ? .labelColor : nil
         // semantic color so it follows the appearance AppKit gives the glass' contentView for legibility;
         // the calculation label carries the same color in its attributes
         label.textColor = .labelColor
