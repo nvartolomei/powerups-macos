@@ -54,7 +54,7 @@
 		5FBB24D32F389A0400BF7E14 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FBB24D22F389A0400BF7E14 /* Benchmark.swift */; };
 		5FEFDF2F2F181E120065BAA3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5FEFDF2D2F181E120065BAA3 /* Localizable.strings */; };
 		5FEFDF322F181E250065BAA3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5FEFDF312F181E250065BAA3 /* InfoPlist.strings */; };
-		76D02BB22BFE7C9E0056008D /* Pods_alt_tab_macos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0712B3BEA2B3780398C0999 /* Pods_alt_tab_macos.framework */; };
+		76D02BB22BFE7C9E0056008D /* Pods_powerups_macos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0712B3BEA2B3780398C0999 /* Pods_powerups_macos.framework */; };
 		7993278360AE4E20DD346325 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E64504D6A1393CD671AC44 /* Cocoa.framework */; };
 		AA0C8A100000000000000001 /* AXCallScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8A000000000000000001 /* AXCallScheduler.swift */; };
 		BB0000000000000000000002 /* TabGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000001 /* TabGroup.swift */; };
@@ -325,7 +325,7 @@
 		481FE54624D2D387001032F1 /* powerups-macos-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "powerups-macos-Bridging-Header.h"; sourceTree = "<group>"; };
 		50E64504D6A1393CD671AC44 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		5883F0A729A5182C0071DB65 /* TrackpadEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadEvents.swift; sourceTree = "<group>"; };
-		59DD4BE63D42EEFF1182BA7F /* Pods-alt-tab-macos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alt-tab-macos.release.xcconfig"; path = "Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos.release.xcconfig"; sourceTree = "<group>"; };
+		59DD4BE63D42EEFF1182BA7F /* Pods-powerups-macos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-powerups-macos.release.xcconfig"; path = "Target Support Files/Pods-powerups-macos/Pods-powerups-macos.release.xcconfig"; sourceTree = "<group>"; };
 		5F05D0E62F31441A004A95F9 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		5F05D0E72F31441A004A95F9 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 		5F084EAF2EF15E6B00CD212A /* TabbedWindowDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbedWindowDetection.swift; sourceTree = "<group>"; };
@@ -342,7 +342,7 @@
 		5FA1E0B12F50000100A1A1A1 /* PreferencesEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesEvents.swift; sourceTree = "<group>"; };
 		5FBB24D22F389A0400BF7E14 /* Benchmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
 		5FE2AF752EAE849F004A4AC5 /* xcbeautify */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = xcbeautify; sourceTree = "<group>"; };
-		672F94799CC7C90282AEB3EA /* Pods-alt-tab-macos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alt-tab-macos.debug.xcconfig"; path = "Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos.debug.xcconfig"; sourceTree = "<group>"; };
+		672F94799CC7C90282AEB3EA /* Pods-powerups-macos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-powerups-macos.debug.xcconfig"; path = "Target Support Files/Pods-powerups-macos/Pods-powerups-macos.debug.xcconfig"; sourceTree = "<group>"; };
 		7451B8433E47C444A6F489FF /* Pods-unit-tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-unit-tests.debug.xcconfig"; path = "Target Support Files/Pods-unit-tests/Pods-unit-tests.debug.xcconfig"; sourceTree = "<group>"; };
 		81B0FB66A88DD12C313A2A92 /* QuickLookMarkdown.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = QuickLookMarkdown.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0C8A000000000000000001 /* AXCallScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXCallScheduler.swift; sourceTree = "<group>"; };
@@ -433,7 +433,7 @@
 		BF0C8FAF34022E23582797F3 /* ScrollwheelEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollwheelEvents.swift; sourceTree = "<group>"; };
 		BF0CAAAA0000000000000001 /* SearchAcronymTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAcronymTests.swift; sourceTree = "<group>"; };
 		BF0CB07B07B07B07B07B07B0 /* menubar-bolt.svg */ = {isa = PBXFileReference; lastKnownFileType = file.svg; path = "menubar-bolt.svg"; sourceTree = "<group>"; };
-		C0712B3BEA2B3780398C0999 /* Pods_alt_tab_macos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_alt_tab_macos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0712B3BEA2B3780398C0999 /* Pods_powerups_macos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_powerups_macos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7E6F409CA442F83B7BE71AD /* Pods_unit_tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_unit_tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D04BA015A45DE7AFDC9794FE /* Window.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.swift; sourceTree = "<group>"; };
 		D04BA03200F5A8FC0CD03607 /* CGWindowID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGWindowID.swift; sourceTree = "<group>"; };
@@ -538,7 +538,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4807A6C623A9CD190052A53E /* SkyLight.framework in Frameworks */,
-				76D02BB22BFE7C9E0056008D /* Pods_alt_tab_macos.framework in Frameworks */,
+				76D02BB22BFE7C9E0056008D /* Pods_powerups_macos.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,7 +580,7 @@
 			isa = PBXGroup;
 			children = (
 				4807A6C523A9CD190052A53E /* SkyLight.framework */,
-				C0712B3BEA2B3780398C0999 /* Pods_alt_tab_macos.framework */,
+				C0712B3BEA2B3780398C0999 /* Pods_powerups_macos.framework */,
 				C7E6F409CA442F83B7BE71AD /* Pods_unit_tests.framework */,
 				7C59273C256BC924D4886156 /* OS X */,
 			);
@@ -618,8 +618,8 @@
 		A638921971E99EC1D9EC383D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				672F94799CC7C90282AEB3EA /* Pods-alt-tab-macos.debug.xcconfig */,
-				59DD4BE63D42EEFF1182BA7F /* Pods-alt-tab-macos.release.xcconfig */,
+				672F94799CC7C90282AEB3EA /* Pods-powerups-macos.debug.xcconfig */,
+				59DD4BE63D42EEFF1182BA7F /* Pods-powerups-macos.release.xcconfig */,
 				7451B8433E47C444A6F489FF /* Pods-unit-tests.debug.xcconfig */,
 				E20104DD2C3DE10E7CCC5B5A /* Pods-unit-tests.release.xcconfig */,
 			);
@@ -1248,9 +1248,9 @@
 			productReference = BF0C832DEED422648209CCD2 /* unit-tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D04BA5E73DAF232ADE11C97A /* alt-tab-macos */ = {
+		D04BA5E73DAF232ADE11C97A /* powerups-macos */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D04BA4D71CBB2FA4B9947B10 /* Build configuration list for PBXNativeTarget "alt-tab-macos" */;
+			buildConfigurationList = D04BA4D71CBB2FA4B9947B10 /* Build configuration list for PBXNativeTarget "powerups-macos" */;
 			buildPhases = (
 				5968B81A43F20B6ECD92C7F7 /* [CP] Check Pods Manifest.lock */,
 				D04BAD01F4BCEDF8B539AFD2 /* Sources */,
@@ -1264,8 +1264,8 @@
 			dependencies = (
 				F8B16D99E325AF90DC4C930B /* PBXTargetDependency */,
 			);
-			name = "alt-tab-macos";
-			productName = "alt-tab-macos";
+			name = "powerups-macos";
+			productName = "powerups-macos";
 			productReference = D04BA82F792DF53958D92572 /* PowerUps.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -1295,7 +1295,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D04BA5E73DAF232ADE11C97A /* alt-tab-macos */,
+				D04BA5E73DAF232ADE11C97A /* powerups-macos */,
 				BF0C873EC188A7EBBCF4310D /* unit-tests */,
 				40A0B835DEC287860A820DA5 /* QuickLookMarkdown */,
 			);
@@ -1482,7 +1482,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-alt-tab-macos-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-powerups-macos-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1495,7 +1495,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-powerups-macos/Pods-powerups-macos-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ShortcutRecorder/ShortcutRecorder.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyBeaver/SwiftyBeaver.framework",
 			);
@@ -1506,7 +1506,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-powerups-macos/Pods-powerups-macos-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		88258612CCB7F87294BEB475 /* [CP] Check Pods Manifest.lock */ = {
@@ -2857,7 +2857,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D04BA4D71CBB2FA4B9947B10 /* Build configuration list for PBXNativeTarget "alt-tab-macos" */ = {
+		D04BA4D71CBB2FA4B9947B10 /* Build configuration list for PBXNativeTarget "powerups-macos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D04BA6FB4EC72C6A126E86D7 /* Debug */,

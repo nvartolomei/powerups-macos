@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D04BA5E73DAF232ADE11C97A"
                BuildableName = "PowerUps.app"
-               BlueprintName = "alt-tab-macos"
+               BlueprintName = "powerups-macos"
                ReferencedContainer = "container:powerups-macos.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D04BA5E73DAF232ADE11C97A"
             BuildableName = "PowerUps.app"
-            BlueprintName = "alt-tab-macos"
+            BlueprintName = "powerups-macos"
             ReferencedContainer = "container:powerups-macos.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

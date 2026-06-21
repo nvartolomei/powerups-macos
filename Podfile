@@ -18,7 +18,7 @@ deployment_target = deployment_target_from_xcconfig()
 
 platform :osx, deployment_target
 
-target 'alt-tab-macos' do
+target 'powerups-macos' do
   use_frameworks!
   pod 'ShortcutRecorder', :git => 'https://github.com/lwouis/ShortcutRecorder.git', :commit => '594b360e07a8a368ffec2567f77e465477b9994f'
   pod 'SwiftyBeaver', '1.9.0'

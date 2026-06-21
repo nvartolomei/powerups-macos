@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_alt_tab_macosVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_alt_tab_macosVersionString[];
+FOUNDATION_EXPORT double Pods_powerups_macosVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_powerups_macosVersionString[];
 

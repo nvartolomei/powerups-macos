@@ -15,7 +15,7 @@
 		19141E2D6ADC5ECB21C8117627E8996F /* sv.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 8FF6CD02CDE1D9A7C886BBF7D3439608 /* sv.lproj */; };
 		1AFBAB297C62C0075822E90ABF72C2FB /* es.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 480B748C583F5CB7CADEEFE7D66A7EA6 /* es.lproj */; };
 		1AFCEC66ACC98F5DBE56CC5EF1D977EE /* SRCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = DBC544DE4D26CE5D5E2BD7B769ADAD9B /* SRCommon.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BAA367459B5DBE70F69EB3A869A9180 /* Pods-alt-tab-macos-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 616E070B17DAA048BA8AC1C696E23614 /* Pods-alt-tab-macos-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1BAA367459B5DBE70F69EB3A869A9180 /* Pods-powerups-macos-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 616E070B17DAA048BA8AC1C696E23614 /* Pods-powerups-macos-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1D60678C50E742175FCDD7932A31EEDB /* AES256CBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5610AD6D2F793C892AF3AFA72B3D8588 /* AES256CBC.swift */; };
 		1DD93AEF2D487A349DB2564E5C7DEB0F /* sk.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 615DF25C516CFEAF4D718C3DEC89FB91 /* sk.lproj */; };
 		24B9F193FBF42D709E80CEEC2C57038E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A409172D9CD4282BE01CBDFD3663A35A /* Extensions.swift */; };
@@ -69,7 +69,7 @@
 		D837B3034B324427E867B12A52843A34 /* SRCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = B19417888A61F4B35C7BD347C7B10BA4 /* SRCommon.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		D9FDDFBDA583D8A2618B67A54667322C /* SRShortcutController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C038E695ED6C849E9F63D19379350A4 /* SRShortcutController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DAC7D497B1BB4561414F87631FE581D2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DD19A603B8D40AD0303E92242062883 /* Images.xcassets */; };
-		DD533D65334C70773CD8386C36B3AD1F /* Pods-alt-tab-macos-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A96DE61E902885AB0F28DD9789DF0B /* Pods-alt-tab-macos-dummy.m */; };
+		DD533D65334C70773CD8386C36B3AD1F /* Pods-powerups-macos-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A96DE61E902885AB0F28DD9789DF0B /* Pods-powerups-macos-dummy.m */; };
 		E123BC90074F47220454CAE5500627BF /* SRShortcutFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5243E2F690C8758DD7054D20BB0E9459 /* SRShortcutFormatter.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		E73C5479E237E5996D71307E266ECA9A /* pt-BR.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 1E4FD26E0A1F662387EE1FC9472E1CB3 /* pt-BR.lproj */; };
 		EC4AB36F93A3DABDBDAA6EF533FEA96F /* BaseDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BD14E481A4EAD8C567F03D5A72FC51 /* BaseDestination.swift */; };
@@ -120,7 +120,7 @@
 		1E4FD26E0A1F662387EE1FC9472E1CB3 /* pt-BR.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = "pt-BR.lproj"; path = "Resources/pt-BR.lproj"; sourceTree = "<group>"; };
 		1FDC31C80E1DF113D22C0452B4361053 /* SwiftyBeaver-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SwiftyBeaver-dummy.m"; sourceTree = "<group>"; };
 		22BD2A75202BB7FCE8257E8FA38C1776 /* nl.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = nl.lproj; path = Resources/nl.lproj; sourceTree = "<group>"; };
-		25071237EE84E6AFD3B12FE9A0664CB9 /* Pods-alt-tab-macos */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-alt-tab-macos"; path = Pods_alt_tab_macos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		25071237EE84E6AFD3B12FE9A0664CB9 /* Pods-powerups-macos */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-powerups-macos"; path = Pods_powerups_macos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2585FE82466B2C8210839CE261077D5D /* th.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = th.lproj; path = Resources/th.lproj; sourceTree = "<group>"; };
 		282E333523F0225A4C12E212CF76A625 /* en.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = en.lproj; path = Resources/en.lproj; sourceTree = "<group>"; };
 		290BEAF77546074DC9EC9DD245FB6325 /* SRShortcut.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRShortcut.h; path = Library/SRShortcut.h; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 		30C8F24C8CB39D43FB35BD742199C674 /* Pods-unit-tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-unit-tests-dummy.m"; sourceTree = "<group>"; };
 		34F38470D7148741213714EAF323F61B /* Pods-unit-tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-unit-tests-umbrella.h"; sourceTree = "<group>"; };
 		355098A8484E62D8018B98F3F3C23A1A /* SRKeyBindingTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKeyBindingTransformer.m; path = Library/SRKeyBindingTransformer.m; sourceTree = "<group>"; };
-		398343D3BD6C4C2CAC6ACD4CCD1E8C48 /* Pods-alt-tab-macos-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-alt-tab-macos-Info.plist"; sourceTree = "<group>"; };
+		398343D3BD6C4C2CAC6ACD4CCD1E8C48 /* Pods-powerups-macos-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-powerups-macos-Info.plist"; sourceTree = "<group>"; };
 		3DD19A603B8D40AD0303E92242062883 /* Images.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Resources/Images.xcassets; sourceTree = "<group>"; };
 		46D5BE035F0ABA1DC114CF2B9C7CE0F8 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		480B748C583F5CB7CADEEFE7D66A7EA6 /* es.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = es.lproj; path = Resources/es.lproj; sourceTree = "<group>"; };
@@ -147,7 +147,7 @@
 		60607FBE783BB4E096BE9A6E2437DB7D /* SwiftyBeaver-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SwiftyBeaver-Info.plist"; sourceTree = "<group>"; };
 		6108F8364295B12345ADC3671C5E4870 /* SRRecorderControlStyle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRRecorderControlStyle.m; path = Library/SRRecorderControlStyle.m; sourceTree = "<group>"; };
 		615DF25C516CFEAF4D718C3DEC89FB91 /* sk.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = sk.lproj; path = Resources/sk.lproj; sourceTree = "<group>"; };
-		616E070B17DAA048BA8AC1C696E23614 /* Pods-alt-tab-macos-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-alt-tab-macos-umbrella.h"; sourceTree = "<group>"; };
+		616E070B17DAA048BA8AC1C696E23614 /* Pods-powerups-macos-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-powerups-macos-umbrella.h"; sourceTree = "<group>"; };
 		63048D63ACA6077711E4895B8175BA8A /* Filter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = Sources/Filter.swift; sourceTree = "<group>"; };
 		69F28C5ECCEC05829635C411C11CBC05 /* nb.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = nb.lproj; path = Resources/nb.lproj; sourceTree = "<group>"; };
 		6FB2468B9C340C0A0194E9213C76C93F /* SwiftyBeaver-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftyBeaver-umbrella.h"; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 		7C761E2623E097F3E5FC0B3AABC68E0A /* fr.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = fr.lproj; path = Resources/fr.lproj; sourceTree = "<group>"; };
 		7CBC6BE817B502D6709512A75673878A /* SRShortcutController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRShortcutController.m; path = Library/SRShortcutController.m; sourceTree = "<group>"; };
 		8538139B0C00E1DEAF51E434EFD94491 /* SRModifierFlagsTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRModifierFlagsTransformer.m; path = Library/SRModifierFlagsTransformer.m; sourceTree = "<group>"; };
-		87838399744BD730735B3CC29EF28850 /* Pods-alt-tab-macos-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-alt-tab-macos-frameworks.sh"; sourceTree = "<group>"; };
+		87838399744BD730735B3CC29EF28850 /* Pods-powerups-macos-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-powerups-macos-frameworks.sh"; sourceTree = "<group>"; };
 		87A2C96F48C87A6D3112AB0E223E2EE7 /* SRKeyEquivalentTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKeyEquivalentTransformer.m; path = Library/SRKeyEquivalentTransformer.m; sourceTree = "<group>"; };
 		8991BE0A5EA0345F4C84F29232E1EFF4 /* pl.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = pl.lproj; path = Resources/pl.lproj; sourceTree = "<group>"; };
 		8A0523BA1AB23D96D25E8CCDB473A3FE /* FilterValidator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FilterValidator.swift; path = Sources/FilterValidator.swift; sourceTree = "<group>"; };
@@ -168,7 +168,7 @@
 		8FF6CD02CDE1D9A7C886BBF7D3439608 /* sv.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = sv.lproj; path = Resources/sv.lproj; sourceTree = "<group>"; };
 		905BEA420E467440C7A01D5FF6CED3E1 /* SwiftyBeaver.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SwiftyBeaver.release.xcconfig; sourceTree = "<group>"; };
 		91B84E995CDE6998DE0BAE090A97E756 /* ShortcutRecorder.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = ShortcutRecorder.release.xcconfig; sourceTree = "<group>"; };
-		9362A6EDF7223250AD5AC5203C9AA2B2 /* Pods-alt-tab-macos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-alt-tab-macos.release.xcconfig"; sourceTree = "<group>"; };
+		9362A6EDF7223250AD5AC5203C9AA2B2 /* Pods-powerups-macos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-powerups-macos.release.xcconfig"; sourceTree = "<group>"; };
 		942C40E935B7945B3552E08F16F4CEFE /* ja.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = ja.lproj; path = Resources/ja.lproj; sourceTree = "<group>"; };
 		99BA381848934C6B26C9C19B848DEA35 /* GoogleCloudDestination.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GoogleCloudDestination.swift; path = Sources/GoogleCloudDestination.swift; sourceTree = "<group>"; };
 		9BA604A31A1DD4CA42C4B531C2266FC9 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -176,12 +176,12 @@
 		A2DE8D2A81AFAAEBC5CA767031D0DF2E /* zh-Hans.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = "zh-Hans.lproj"; path = "Resources/zh-Hans.lproj"; sourceTree = "<group>"; };
 		A36C444DD9316FF12843067F43B94AED /* SwiftyBeaver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SwiftyBeaver.swift; path = Sources/SwiftyBeaver.swift; sourceTree = "<group>"; };
 		A409172D9CD4282BE01CBDFD3663A35A /* Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Sources/Extensions.swift; sourceTree = "<group>"; };
-		A92F189045C5FD082F243910D733D351 /* Pods-alt-tab-macos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-alt-tab-macos.debug.xcconfig"; sourceTree = "<group>"; };
+		A92F189045C5FD082F243910D733D351 /* Pods-powerups-macos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-powerups-macos.debug.xcconfig"; sourceTree = "<group>"; };
 		AB86134A5E7ADE28C001165A91595337 /* Base64.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Base64.swift; path = Sources/Base64.swift; sourceTree = "<group>"; };
 		ACD1B80641E55997AFB9ED2FCA4B4B8F /* SRRecorderControl.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRRecorderControl.m; path = Library/SRRecorderControl.m; sourceTree = "<group>"; };
 		B19417888A61F4B35C7BD347C7B10BA4 /* SRCommon.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRCommon.m; path = Library/SRCommon.m; sourceTree = "<group>"; };
-		B1A96DE61E902885AB0F28DD9789DF0B /* Pods-alt-tab-macos-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-alt-tab-macos-dummy.m"; sourceTree = "<group>"; };
-		B3E91CE1607D3F2180B436B09F5EB6E8 /* Pods-alt-tab-macos.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-alt-tab-macos.modulemap"; sourceTree = "<group>"; };
+		B1A96DE61E902885AB0F28DD9789DF0B /* Pods-powerups-macos-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-powerups-macos-dummy.m"; sourceTree = "<group>"; };
+		B3E91CE1607D3F2180B436B09F5EB6E8 /* Pods-powerups-macos.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-powerups-macos.modulemap"; sourceTree = "<group>"; };
 		B646142886642623EEA181C09AD0F9FA /* SwiftyBeaver-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftyBeaver-prefix.pch"; sourceTree = "<group>"; };
 		BDDEE488BCC7D8DC266C6AF9265A7F9A /* ShortcutRecorder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ShortcutRecorder.h; path = Library/ShortcutRecorder.h; sourceTree = "<group>"; };
 		BDFEA6F7DEA20DFE761982443BF1E893 /* ro.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = ro.lproj; path = Resources/ro.lproj; sourceTree = "<group>"; };
@@ -190,7 +190,7 @@
 		C3ED0F79B8EF34B704EB0F8B9F8B2AD4 /* FileDestination.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FileDestination.swift; path = Sources/FileDestination.swift; sourceTree = "<group>"; };
 		C4BF143E553EAD81A2A5A1A0FC5E5DEA /* el.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = el.lproj; path = Resources/el.lproj; sourceTree = "<group>"; };
 		C6EAE013BBC4EEF2FDF33E495E586314 /* ShortcutRecorder-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ShortcutRecorder-umbrella.h"; sourceTree = "<group>"; };
-		CB77B12FE48580EACF5AE66FD0F2CEF9 /* Pods-alt-tab-macos-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-alt-tab-macos-acknowledgements.plist"; sourceTree = "<group>"; };
+		CB77B12FE48580EACF5AE66FD0F2CEF9 /* Pods-powerups-macos-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-powerups-macos-acknowledgements.plist"; sourceTree = "<group>"; };
 		D81E2AFA0A681EDB5F65047BD15645F2 /* SRKeyCodeTransformer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKeyCodeTransformer.h; path = Library/SRKeyCodeTransformer.h; sourceTree = "<group>"; };
 		DBC544DE4D26CE5D5E2BD7B769ADAD9B /* SRCommon.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRCommon.h; path = Library/SRCommon.h; sourceTree = "<group>"; };
 		DF2CA4F3269BDAE5B880C66715DC61FB /* SRRecorderControlStyle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRRecorderControlStyle.h; path = Library/SRRecorderControlStyle.h; sourceTree = "<group>"; };
@@ -202,7 +202,7 @@
 		F2459288E49845011C28E4E1C34FE2F2 /* it.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = it.lproj; path = Resources/it.lproj; sourceTree = "<group>"; };
 		F4A419A458F613713C66D3D554EB3E53 /* SRKeyBindingTransformer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKeyBindingTransformer.h; path = Library/SRKeyBindingTransformer.h; sourceTree = "<group>"; };
 		F66D5FEA6450C3788D26D52F42DEEB44 /* Pods-unit-tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-unit-tests-Info.plist"; sourceTree = "<group>"; };
-		F6D8EB220A269F22E17AE4D8C3773E82 /* Pods-alt-tab-macos-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-alt-tab-macos-acknowledgements.markdown"; sourceTree = "<group>"; };
+		F6D8EB220A269F22E17AE4D8C3773E82 /* Pods-powerups-macos-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-powerups-macos-acknowledgements.markdown"; sourceTree = "<group>"; };
 		F7361113395D3CFBB6527DBCD3191086 /* ru.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = ru.lproj; path = Resources/ru.lproj; sourceTree = "<group>"; };
 		F81D641E8D069CDB2D0E7D70A3C3F8F5 /* Pods-unit-tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-unit-tests.release.xcconfig"; sourceTree = "<group>"; };
 		F9A304D970B4C847899F636744F9514B /* SwiftyBeaver.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SwiftyBeaver.debug.xcconfig; sourceTree = "<group>"; };
@@ -313,21 +313,21 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		2AD5B56D68542BDA21829347359569FC /* Pods-alt-tab-macos */ = {
+		2AD5B56D68542BDA21829347359569FC /* Pods-powerups-macos */ = {
 			isa = PBXGroup;
 			children = (
-				B3E91CE1607D3F2180B436B09F5EB6E8 /* Pods-alt-tab-macos.modulemap */,
-				F6D8EB220A269F22E17AE4D8C3773E82 /* Pods-alt-tab-macos-acknowledgements.markdown */,
-				CB77B12FE48580EACF5AE66FD0F2CEF9 /* Pods-alt-tab-macos-acknowledgements.plist */,
-				B1A96DE61E902885AB0F28DD9789DF0B /* Pods-alt-tab-macos-dummy.m */,
-				87838399744BD730735B3CC29EF28850 /* Pods-alt-tab-macos-frameworks.sh */,
-				398343D3BD6C4C2CAC6ACD4CCD1E8C48 /* Pods-alt-tab-macos-Info.plist */,
-				616E070B17DAA048BA8AC1C696E23614 /* Pods-alt-tab-macos-umbrella.h */,
-				A92F189045C5FD082F243910D733D351 /* Pods-alt-tab-macos.debug.xcconfig */,
-				9362A6EDF7223250AD5AC5203C9AA2B2 /* Pods-alt-tab-macos.release.xcconfig */,
+				B3E91CE1607D3F2180B436B09F5EB6E8 /* Pods-powerups-macos.modulemap */,
+				F6D8EB220A269F22E17AE4D8C3773E82 /* Pods-powerups-macos-acknowledgements.markdown */,
+				CB77B12FE48580EACF5AE66FD0F2CEF9 /* Pods-powerups-macos-acknowledgements.plist */,
+				B1A96DE61E902885AB0F28DD9789DF0B /* Pods-powerups-macos-dummy.m */,
+				87838399744BD730735B3CC29EF28850 /* Pods-powerups-macos-frameworks.sh */,
+				398343D3BD6C4C2CAC6ACD4CCD1E8C48 /* Pods-powerups-macos-Info.plist */,
+				616E070B17DAA048BA8AC1C696E23614 /* Pods-powerups-macos-umbrella.h */,
+				A92F189045C5FD082F243910D733D351 /* Pods-powerups-macos.debug.xcconfig */,
+				9362A6EDF7223250AD5AC5203C9AA2B2 /* Pods-powerups-macos.release.xcconfig */,
 			);
-			name = "Pods-alt-tab-macos";
-			path = "Target Support Files/Pods-alt-tab-macos";
+			name = "Pods-powerups-macos";
+			path = "Target Support Files/Pods-powerups-macos";
 			sourceTree = "<group>";
 		};
 		2C81B4452E591ECFF8015EB99EF40AAF /* Resources */ = {
@@ -363,7 +363,7 @@
 		7380D1D47A3D26CB6BAF92627BD446FA /* Targets Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				2AD5B56D68542BDA21829347359569FC /* Pods-alt-tab-macos */,
+				2AD5B56D68542BDA21829347359569FC /* Pods-powerups-macos */,
 				91CC478979C8123343A0B3BE66656006 /* Pods-unit-tests */,
 			);
 			name = "Targets Support Files";
@@ -372,7 +372,7 @@
 		75E1C9B752352A7DB43C930D0F4C283C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				25071237EE84E6AFD3B12FE9A0664CB9 /* Pods-alt-tab-macos */,
+				25071237EE84E6AFD3B12FE9A0664CB9 /* Pods-powerups-macos */,
 				03BB9BBC01CD12075A095BF21211AAB8 /* Pods-unit-tests */,
 				7A3DD740894FE73E66768ABB17B36265 /* ShortcutRecorder */,
 				7A5F7001277980B8F3EEA75BCD346E53 /* SwiftyBeaver */,
@@ -462,7 +462,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BAA367459B5DBE70F69EB3A869A9180 /* Pods-alt-tab-macos-umbrella.h in Headers */,
+				1BAA367459B5DBE70F69EB3A869A9180 /* Pods-powerups-macos-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,9 +543,9 @@
 			productReference = 7A3DD740894FE73E66768ABB17B36265 /* ShortcutRecorder */;
 			productType = "com.apple.product-type.framework";
 		};
-		DA8AE0681767D7A898B5697F983F9881 /* Pods-alt-tab-macos */ = {
+		DA8AE0681767D7A898B5697F983F9881 /* Pods-powerups-macos */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 48AE1BA746DA5160CBB670A16445FCEE /* Build configuration list for PBXNativeTarget "Pods-alt-tab-macos" */;
+			buildConfigurationList = 48AE1BA746DA5160CBB670A16445FCEE /* Build configuration list for PBXNativeTarget "Pods-powerups-macos" */;
 			buildPhases = (
 				7BE339B753F834E8DF5E76BA49F46C6E /* Headers */,
 				952AE93BA57FA33F1BA477CC928644F7 /* Sources */,
@@ -558,9 +558,9 @@
 				CBD004E9244D8EC35494985327D99122 /* PBXTargetDependency */,
 				7ECCD5E655E9FE0033FFF226FC097202 /* PBXTargetDependency */,
 			);
-			name = "Pods-alt-tab-macos";
-			productName = Pods_alt_tab_macos;
-			productReference = 25071237EE84E6AFD3B12FE9A0664CB9 /* Pods-alt-tab-macos */;
+			name = "Pods-powerups-macos";
+			productName = Pods_powerups_macos;
+			productReference = 25071237EE84E6AFD3B12FE9A0664CB9 /* Pods-powerups-macos */;
 			productType = "com.apple.product-type.framework";
 		};
 		F5FD8BEBA553437B73D18C4DCA362724 /* Pods-unit-tests */ = {
@@ -627,7 +627,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DA8AE0681767D7A898B5697F983F9881 /* Pods-alt-tab-macos */,
+				DA8AE0681767D7A898B5697F983F9881 /* Pods-powerups-macos */,
 				F5FD8BEBA553437B73D18C4DCA362724 /* Pods-unit-tests */,
 				D94AE99BF0C9025247C40F440DC9DB50 /* ShortcutRecorder */,
 				1740FECD5A74A42ADAE96F3A8246787A /* SwiftyBeaver */,
@@ -734,7 +734,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD533D65334C70773CD8386C36B3AD1F /* Pods-alt-tab-macos-dummy.m in Sources */,
+				DD533D65334C70773CD8386C36B3AD1F /* Pods-powerups-macos-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -876,7 +876,7 @@
 		};
 		80DDEE5726D1E740BDF49540C5194F78 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A92F189045C5FD082F243910D733D351 /* Pods-alt-tab-macos.debug.xcconfig */;
+			baseConfigurationReference = A92F189045C5FD082F243910D733D351 /* Pods-powerups-macos.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
@@ -894,12 +894,12 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				INFOPLIST_FILE = "Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-powerups-macos/Pods-powerups-macos-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MODULEMAP_FILE = "Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-powerups-macos/Pods-powerups-macos.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -990,7 +990,7 @@
 		};
 		C2CFD83C02790809C202BAC1B8EDBD66 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9362A6EDF7223250AD5AC5203C9AA2B2 /* Pods-alt-tab-macos.release.xcconfig */;
+			baseConfigurationReference = 9362A6EDF7223250AD5AC5203C9AA2B2 /* Pods-powerups-macos.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
@@ -1008,12 +1008,12 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				INFOPLIST_FILE = "Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-powerups-macos/Pods-powerups-macos-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MODULEMAP_FILE = "Target Support Files/Pods-alt-tab-macos/Pods-alt-tab-macos.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-powerups-macos/Pods-powerups-macos.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -1225,7 +1225,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		48AE1BA746DA5160CBB670A16445FCEE /* Build configuration list for PBXNativeTarget "Pods-alt-tab-macos" */ = {
+		48AE1BA746DA5160CBB670A16445FCEE /* Build configuration list for PBXNativeTarget "Pods-powerups-macos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				80DDEE5726D1E740BDF49540C5194F78 /* Debug */,
