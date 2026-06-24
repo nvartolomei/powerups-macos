@@ -1,5 +1,12 @@
 import Foundation
 
+/// anything the launcher ranks: `words`/`lowercasedName` feed `matchRank`, `name` breaks ties between equal ranks
+protocol LauncherSearchable {
+    var name: String { get }
+    var lowercasedName: String { get }
+    var words: [[Character]] { get }
+}
+
 /// hump search: app names are split into words (on spaces/punctuation, and on camelCase humps)
 /// a query matches if it can be consumed, in order, as prefixes of a subsequence of those words
 /// e.g. "vsc", "vsco", and "vscode" all match "Visual Studio Code" and "VisualStudioCode"

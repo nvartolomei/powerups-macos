@@ -37,9 +37,13 @@ class Launcher {
 
     static func results(_ query: String) -> [LauncherResult] {
         if let calculation = LauncherCalculator.evaluate(query) { return [.calculation(calculation)] }
-        let commands = LauncherCommands.matching(query).map { LauncherResult.command($0) }
-        let apps = matchingApps(query).prefix(maxResults - commands.count).map { LauncherResult.app($0) }
-        return apps + commands
+        let normalized = LauncherSearch.normalizedQuery(query)
+        guard !normalized.isEmpty else { return [] }
+        let matches = ranked(appsCache, normalized, LauncherResult.app) + ranked(LauncherCommands.all, normalized, LauncherResult.command)
+        return matches
+            .sorted { $0.rank == $1.rank ? $0.result.name.localizedCaseInsensitiveCompare($1.result.name) == .orderedAscending : $0.rank < $1.rank }
+            .prefix(maxResults)
+            .map { $0.result }
     }
 
     static func activate(_ result: LauncherResult) {
@@ -50,17 +54,8 @@ class Launcher {
         }
     }
 
-    private static func matchingApps(_ query: String) -> [LauncherApp] {
-        let normalized = LauncherSearch.normalizedQuery(query)
-        guard !normalized.isEmpty else { return [] }
-        var matches = [(rank: Int, app: LauncherApp)]()
-        for app in appsCache {
-            if let rank = LauncherSearch.matchRank(normalized, app.words, app.lowercasedName) {
-                matches.append((rank, app))
-            }
-        }
-        matches.sort { $0.rank == $1.rank ? $0.app.name.localizedCaseInsensitiveCompare($1.app.name) == .orderedAscending : $0.rank < $1.rank }
-        return matches.prefix(maxResults).map { $0.app }
+    private static func ranked<T: LauncherSearchable>(_ items: [T], _ query: [Character], _ wrap: (T) -> LauncherResult) -> [(rank: Int, result: LauncherResult)] {
+        items.compactMap { item in LauncherSearch.matchRank(query, item.words, item.lowercasedName).map { (rank: $0, result: wrap(item)) } }
     }
 
     private static func open(_ app: LauncherApp) {
@@ -83,7 +78,7 @@ class Launcher {
     }
 
     private static func run(_ command: LauncherCommand) {
-        Logger.info { command.keyword }
+        Logger.info { command.name }
         hide()
         command.action()
     }
@@ -151,8 +146,17 @@ enum LauncherResult {
     case app(LauncherApp)
     /// the result of evaluating the query as an arithmetic expression; activating it copies the raw value to the clipboard
     case calculation(LauncherCalculation)
-    /// a built-in command matched by keyword; activating it runs its action
+    /// a built-in command matched by name; activating it runs its action
     case command(LauncherCommand)
+
+    /// the row's display name; also the tie-break key when two results share a match rank
+    var name: String {
+        switch self {
+        case .app(let app): return app.name
+        case .calculation(let calculation): return calculation.display
+        case .command(let command): return command.name
+        }
+    }
 
     /// faint right-side label naming where a result comes from; nil for plain apps, the common case that needs no hint
     var typeLabel: String? {
@@ -164,7 +168,7 @@ enum LauncherResult {
     }
 }
 
-struct LauncherApp {
+struct LauncherApp: LauncherSearchable {
     let url: URL
     let name: String
     /// set for System Settings panes, which open via the x-apple.systempreferences URL scheme

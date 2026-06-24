@@ -30,6 +30,13 @@ final class LauncherSearchTests: XCTestCase {
         XCTAssertEqual(rank("shop", "Photoshop"), 2)
     }
 
+    func testCommandNamesMatchShortQueries() throws {
+        XCTAssertEqual(rank("ls", "Output: LSX"), 1)
+        XCTAssertEqual(rank("lsx", "Output: LSX"), 1)
+        XCTAssertEqual(rank("dar", "Switch to Dark Mode"), 1)
+        XCTAssertEqual(rank("out", "Output: LSX"), 0)
+    }
+
     func testNoMatch() throws {
         XCTAssertNil(rank("vsco", "Discord"))
         XCTAssertNil(rank("vscode", "Xcode"))
