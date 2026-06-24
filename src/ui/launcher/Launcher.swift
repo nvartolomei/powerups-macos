@@ -86,8 +86,8 @@ class Launcher {
 
     private static func openRecent(_ recent: LauncherRecent) {
         Logger.info { recent.folderUri }
-        hide()
-        LauncherVSCodeRecents.open(recent)
+        LauncherPanel.shared.beginActivationProgress()
+        LauncherVSCodeRecents.open(recent) { hide() }
     }
 
     private static func refreshAppsCacheAsync() {

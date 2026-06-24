@@ -12,6 +12,8 @@ class LauncherPanel: NSPanel {
     private var rowViews = [LauncherRowView]()
     private var results = [LauncherResult]()
     private var selectedIndex = 0
+    /// the row whose action is in flight (e.g. opening a VS Code recent), shown with a spinner until the launcher hides
+    private var activatingIndex: Int?
     private var topY = CGFloat(0)
     private var lastRenderedQuery: String?
     private var pendingRender: DispatchWorkItem?
@@ -156,7 +158,14 @@ class LauncherPanel: NSPanel {
 
     func activateResult(_ index: Int) {
         guard let result = results[safe: index] else { return }
+        activatingIndex = index
         Launcher.activate(result)
+    }
+
+    /// keep the panel up with a spinner on the row being activated, for actions that take a moment to bring another
+    /// app forward; the launcher hides once that work reports done (or when the target app steals key from the panel)
+    func beginActivationProgress() {
+        rowViews[safe: activatingIndex ?? -1]?.setLoading()
     }
 }
 
@@ -190,6 +199,8 @@ extension LauncherPanel: NSWindowDelegate {
 
 private class LauncherRowView: NSView {
     private static let iconSize = CGFloat(32)
+    /// the spinner reads lighter than a full-bleed app icon, so it sits smaller and centered within the icon's slot
+    private static let spinnerSize = CGFloat(20)
     private static let horizontalPadding = CGFloat(10)
     private static let verticalPadding = CGFloat(10)
     private static let minHeight = CGFloat(44)
@@ -199,6 +210,8 @@ private class LauncherRowView: NSView {
     private static let labelLeading = horizontalPadding + iconSize + 10
     private let indexInResults: Int
     private let icon = NSImageView(frame: .zero)
+    /// replaces the icon while the row's action is bringing another app forward, so the launcher doesn't look frozen
+    private let spinner = NSProgressIndicator(frame: .zero)
     private let label = NSTextField(labelWithString: "")
     /// faint right-aligned hint naming a result's provenance, e.g. "System Settings"; hidden for plain apps
     private let typeLabel = NSTextField(labelWithString: "")
@@ -210,6 +223,9 @@ private class LauncherRowView: NSView {
         wantsLayer = true
         layer!.cornerRadius = 8
         icon.imageScaling = .scaleProportionallyUpOrDown
+        spinner.style = .spinning
+        spinner.controlSize = .small
+        spinner.isDisplayedWhenStopped = false
         label.font = .systemFont(ofSize: Self.labelFontSize)
         label.lineBreakMode = .byTruncatingTail
         typeLabel.font = .systemFont(ofSize: 13)
@@ -217,6 +233,7 @@ private class LauncherRowView: NSView {
         typeLabel.alignment = .right
         typeLabel.lineBreakMode = .byTruncatingTail
         addSubview(icon)
+        addSubview(spinner)
         addSubview(label)
         addSubview(typeLabel)
     }
@@ -226,6 +243,9 @@ private class LauncherRowView: NSView {
     }
 
     func updateContent(_ result: LauncherResult, _ selected: Bool, _ width: CGFloat) -> CGFloat {
+        // a reused row may have been left spinning by a prior activation; rendering fresh content clears it
+        icon.isHidden = false
+        spinner.stopAnimation(nil)
         label.maximumNumberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         // size the type label first: the label's available width depends on how much room it reserves
@@ -264,6 +284,11 @@ private class LauncherRowView: NSView {
         layer!.backgroundColor = selected ? Appearance.highlightFocusedBackgroundColor.cgColor : NSColor.clear.cgColor
     }
 
+    func setLoading() {
+        icon.isHidden = true
+        spinner.startAnimation(nil)
+    }
+
     override func mouseDown(with event: NSEvent) {
         LauncherPanel.shared.activateResult(indexInResults)
     }
@@ -273,6 +298,7 @@ private class LauncherRowView: NSView {
         let labelHeight = ceil(label.cell!.cellSize(forBounds: NSRect(x: 0, y: 0, width: labelWidth, height: CGFloat.greatestFiniteMagnitude)).height)
         let height = max(Self.minHeight, labelHeight + Self.verticalPadding * 2)
         icon.frame = NSRect(x: Self.horizontalPadding, y: (height - Self.iconSize) * 0.5, width: Self.iconSize, height: Self.iconSize)
+        spinner.frame = NSRect(x: icon.frame.midX - Self.spinnerSize * 0.5, y: icon.frame.midY - Self.spinnerSize * 0.5, width: Self.spinnerSize, height: Self.spinnerSize)
         label.frame = NSRect(x: Self.labelLeading, y: (height - labelHeight) * 0.5, width: labelWidth, height: labelHeight)
         let typeHeight = ceil(typeSize.height)
         typeLabel.frame = NSRect(x: width - Self.horizontalPadding - typeWidth, y: (height - typeHeight) * 0.5, width: typeWidth, height: typeHeight)
