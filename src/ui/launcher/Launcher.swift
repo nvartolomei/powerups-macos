@@ -39,7 +39,7 @@ class Launcher {
         if let calculation = LauncherCalculator.evaluate(query) { return [.calculation(calculation)] }
         let normalized = LauncherSearch.normalizedQuery(query)
         guard !normalized.isEmpty else { return [] }
-        let matches = ranked(appsCache, normalized, LauncherResult.app) + ranked(LauncherCommands.all, normalized, LauncherResult.command)
+        let matches = ranked(appsCache, normalized, LauncherResult.app) + ranked(LauncherCommands.all, normalized, LauncherResult.command) + ranked(LauncherVSCodeRecents.all, normalized, LauncherResult.vscodeRecent)
         return matches
             .sorted { $0.rank == $1.rank ? $0.result.name.localizedCaseInsensitiveCompare($1.result.name) == .orderedAscending : $0.rank < $1.rank }
             .prefix(maxResults)
@@ -51,6 +51,7 @@ class Launcher {
         case .app(let app): open(app)
         case .calculation(let calculation): copyToClipboard(calculation.raw)
         case .command(let command): run(command)
+        case .vscodeRecent(let recent): openRecent(recent)
         }
     }
 
@@ -83,14 +84,22 @@ class Launcher {
         command.action()
     }
 
+    private static func openRecent(_ recent: LauncherRecent) {
+        Logger.info { recent.folderUri }
+        hide()
+        LauncherVSCodeRecents.open(recent)
+    }
+
     private static func refreshAppsCacheAsync() {
         DispatchQueue.global(qos: .userInteractive).async {
             _ = LauncherCalculator.icon
             _ = LauncherCommand.icon
             let apps = (scanApplicationsFolders() + scanSettingsPanes())
                 .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+            let recents = LauncherVSCodeRecents.load()
             DispatchQueue.main.async {
                 appsCache = apps
+                LauncherVSCodeRecents.all = recents
                 if LauncherPanel.shared.isVisible {
                     LauncherPanel.shared.updateResults(force: true)
                 }
@@ -148,6 +157,8 @@ enum LauncherResult {
     case calculation(LauncherCalculation)
     /// a built-in command matched by name; activating it runs its action
     case command(LauncherCommand)
+    /// a folder from VS Code's recently-opened list; activating it reopens the folder in VS Code
+    case vscodeRecent(LauncherRecent)
 
     /// the row's display name; also the tie-break key when two results share a match rank
     var name: String {
@@ -155,6 +166,7 @@ enum LauncherResult {
         case .app(let app): return app.name
         case .calculation(let calculation): return calculation.display
         case .command(let command): return command.name
+        case .vscodeRecent(let recent): return recent.name
         }
     }
 
@@ -164,6 +176,8 @@ enum LauncherResult {
         case .app(let app): return app.paneId == nil ? nil : NSLocalizedString("System Settings", comment: "")
         case .calculation: return NSLocalizedString("Calculator", comment: "")
         case .command: return NSLocalizedString("Command", comment: "")
+        // the "VSCode:" prefix in the name already names the provenance, so no separate right-side hint
+        case .vscodeRecent: return nil
         }
     }
 }

@@ -174,6 +174,7 @@
 		BF0C8E10AB12CD34EF56000E /* LauncherCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */; };
 		BF0C8E10AB12CD34EF56000F /* LauncherCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */; };
 		BF0C8E10AB12CD34EF560011 /* LauncherCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560010 /* LauncherCommands.swift */; };
+		BF0C8E10AB12CD34EF560013 /* LauncherVSCodeRecents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8E10AB12CD34EF560012 /* LauncherVSCodeRecents.swift */; };
 		BF0C8E16F38203AEC71E062B /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8343C1F6FCA82552DCB7 /* TableView.swift */; };
 		BF0C8E366BC25171C0A3881C /* ApplicationServices.HIServices.framework.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8C5C0FF5D567BF190DE5 /* ApplicationServices.HIServices.framework.swift */; };
 		BF0C8E441C550291B1EC7EDA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BF0C8B82128C43A4315B4455 /* InfoPlist.strings */; };
@@ -425,6 +426,7 @@
 		BF0C8E10AB12CD34EF56000B /* LauncherCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCalculator.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCalculatorTests.swift; sourceTree = "<group>"; };
 		BF0C8E10AB12CD34EF560010 /* LauncherCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherCommands.swift; sourceTree = "<group>"; };
+		BF0C8E10AB12CD34EF560012 /* LauncherVSCodeRecents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherVSCodeRecents.swift; sourceTree = "<group>"; };
 		BF0C8E1C49845D813673D7A2 /* 20MB-photo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "20MB-photo.jpg"; sourceTree = "<group>"; };
 		BF0C8E25373671B528AD448D /* screen-recording@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "screen-recording@2x.png"; sourceTree = "<group>"; };
 		BF0C8E63BE7394A6591E74E0 /* LightImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LightImageView.swift; sourceTree = "<group>"; };
@@ -866,6 +868,7 @@
 				BF0C8E10AB12CD34EF560010 /* LauncherCommands.swift */,
 				BF0C8E10AB12CD34EF560006 /* LauncherSearch.swift */,
 				BF0C8E10AB12CD34EF560003 /* LauncherPanel.swift */,
+				BF0C8E10AB12CD34EF560012 /* LauncherVSCodeRecents.swift */,
 			);
 			path = launcher;
 			sourceTree = "<group>";
@@ -1696,6 +1699,7 @@
 				BF0C8E10AB12CD34EF56000D /* LauncherCalculator.swift in Sources */,
 				BF0C8E10AB12CD34EF560011 /* LauncherCommands.swift in Sources */,
 				BF0C8E10AB12CD34EF560008 /* LauncherSearch.swift in Sources */,
+				BF0C8E10AB12CD34EF560013 /* LauncherVSCodeRecents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
