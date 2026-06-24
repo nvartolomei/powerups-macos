@@ -26,12 +26,16 @@ class LauncherVSCodeRecents {
     }
 
     static func open(_ recent: LauncherRecent) {
-        guard let cli = cliURL() else { return }
+        guard let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId), let cli = cliURL(appURL) else { return }
         DispatchQueue.global(qos: .userInitiated).async {
             let process = Process()
             process.executableURL = cli
             process.arguments = ["--folder-uri", recent.folderUri]
             try? process.run()
+            process.waitUntilExit()
+            // the code CLI hands the open to the already-running VS Code over IPC; as an LSUIElement accessory we never
+            // become frontmost, so the window opens in the background unless we activate VS Code the way we open apps
+            DispatchQueue.main.async { NSWorkspace.shared.openApplication(at: appURL, configuration: NSWorkspace.OpenConfiguration()) }
         }
     }
 
@@ -61,8 +65,7 @@ class LauncherVSCodeRecents {
         return NSWorkspace.shared.icon(forFile: appURL.path)
     }
 
-    private static func cliURL() -> URL? {
-        guard let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) else { return nil }
+    private static func cliURL(_ appURL: URL) -> URL? {
         let cli = appURL.appendingPathComponent("Contents/Resources/app/bin/code")
         return FileManager.default.isExecutableFile(atPath: cli.path) ? cli : nil
     }
