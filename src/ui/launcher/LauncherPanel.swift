@@ -269,6 +269,9 @@ private class LauncherRowView: NSView {
         case .vscodeRecent(let recent):
             icon.image = recent.icon
             label.stringValue = recent.name
+        case .googleSearch(let query):
+            icon.image = LauncherResult.googleIcon
+            label.stringValue = query
         }
         // template symbols (e.g. audio output commands) tint to the appearance-following label color; full-colour app icons stay as-is
         icon.contentTintColor = (icon.image?.isTemplate ?? false) ? .labelColor : nil

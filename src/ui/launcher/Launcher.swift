@@ -36,14 +36,20 @@ class Launcher {
     }
 
     static func results(_ query: String) -> [LauncherResult] {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+        // a calculation is a self-contained answer, so it stands alone without the search fallback
         if let calculation = LauncherCalculator.evaluate(query) { return [.calculation(calculation)] }
+        // a Google search of the raw query is otherwise offered last, so any query has a usable action
+        let googleSearch = LauncherResult.googleSearch(trimmed)
         let normalized = LauncherSearch.normalizedQuery(query)
-        guard !normalized.isEmpty else { return [] }
-        let matches = ranked(appsCache, normalized, LauncherResult.app) + ranked(LauncherCommands.all, normalized, LauncherResult.command) + ranked(LauncherVSCodeRecents.all, normalized, LauncherResult.vscodeRecent)
-        return matches
+        let matches = normalized.isEmpty ? [] : ranked(appsCache, normalized, LauncherResult.app) + ranked(LauncherCommands.all, normalized, LauncherResult.command) + ranked(LauncherVSCodeRecents.all, normalized, LauncherResult.vscodeRecent)
+        // reserve the last slot for the Google search so it stays visible even when matches fill the list
+        let top = matches
             .sorted { $0.rank == $1.rank ? $0.result.name.localizedCaseInsensitiveCompare($1.result.name) == .orderedAscending : $0.rank < $1.rank }
-            .prefix(maxResults)
+            .prefix(maxResults - 1)
             .map { $0.result }
+        return top + [googleSearch]
     }
 
     static func activate(_ result: LauncherResult) {
@@ -52,6 +58,7 @@ class Launcher {
         case .calculation(let calculation): copyToClipboard(calculation.raw)
         case .command(let command): run(command)
         case .vscodeRecent(let recent): openRecent(recent)
+        case .googleSearch(let query): search(query)
         }
     }
 
@@ -88,6 +95,18 @@ class Launcher {
         Logger.info { recent.folderUri }
         LauncherPanel.shared.beginActivationProgress()
         LauncherVSCodeRecents.open(recent) { hide() }
+    }
+
+    /// percent-encoding set for a search query: RFC 3986 unreserved ASCII only, so "&", "+", spaces, and
+    /// non-ASCII characters all encode rather than alter the resulting URL
+    private static let searchQueryAllowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+
+    private static func search(_ query: String) {
+        Logger.info { query }
+        hide()
+        guard let encoded = query.addingPercentEncoding(withAllowedCharacters: searchQueryAllowed),
+              let url = URL(string: "https://www.google.com/search?q=" + encoded) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     private static func refreshAppsCacheAsync() {
@@ -159,6 +178,11 @@ enum LauncherResult {
     case command(LauncherCommand)
     /// a folder from VS Code's recently-opened list; activating it reopens the folder in VS Code
     case vscodeRecent(LauncherRecent)
+    /// the raw query offered as a fallback; activating it searches Google for it in the default browser
+    case googleSearch(String)
+
+    /// the full-colour Google "G" shown on the always-last Google search row; not a template, so it keeps its colours
+    static let googleIcon = NSImage(named: "google-search") ?? LauncherCommand.symbolIcon("magnifyingglass")
 
     /// the row's display name; also the tie-break key when two results share a match rank
     var name: String {
@@ -167,6 +191,7 @@ enum LauncherResult {
         case .calculation(let calculation): return calculation.display
         case .command(let command): return command.name
         case .vscodeRecent(let recent): return recent.name
+        case .googleSearch(let query): return query
         }
     }
 
@@ -178,6 +203,7 @@ enum LauncherResult {
         case .command: return NSLocalizedString("Command", comment: "")
         // the "VSCode:" prefix in the name already names the provenance, so no separate right-side hint
         case .vscodeRecent: return nil
+        case .googleSearch: return NSLocalizedString("Search with Google", comment: "")
         }
     }
 }
