@@ -12,6 +12,19 @@ final class LauncherCalculatorTests: XCTestCase {
         XCTAssertEqual(raw("1/4"), "0.25")
     }
 
+    func testModulo() throws {
+        XCTAssertEqual(raw("10%3"), "1")
+        XCTAssertEqual(raw("10%4"), "2")
+        XCTAssertEqual(raw("5.5%2"), "1.5")
+        XCTAssertEqual(raw("-7%3"), "-1")
+        XCTAssertEqual(raw("2+10%3"), "3")
+        XCTAssertEqual(raw("10%3*2"), "2")
+        XCTAssertEqual(raw("2^10%3"), "1")
+        XCTAssertEqual(raw("10%"), "10")
+        XCTAssertNil(raw("10%0"))
+        XCTAssertEqual(LauncherCalculator.evaluate("10%3")?.evaluatedExpression, "10 % 3")
+    }
+
     func testPrecedenceAndParentheses() throws {
         XCTAssertEqual(raw("2+3*4"), "14")
         XCTAssertEqual(raw("(2+3)*4"), "20")

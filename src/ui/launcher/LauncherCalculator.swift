@@ -1,6 +1,6 @@
 import Cocoa
 
-/// evaluates the launcher query as an arithmetic expression: + - * /, power as ^ or **, parentheses,
+/// evaluates the launcher query as an arithmetic expression: + - * / %, power as ^ or **, parentheses,
 /// unary minus, decimals, and basic functions like sqrt(2); ln is natural log, log is base 10
 /// queries without an operator (plain numbers, app names) are not expressions, so they fall through to app search
 /// expressions being typed evaluate their complete part: "sin(42)*", "sin(42)*sq", and "sin(42" all evaluate "sin(42)"
@@ -14,7 +14,7 @@ class LauncherCalculator {
 
     static func evaluate(_ query: String) -> LauncherCalculation? {
         let original = Array(query.filter { !$0.isWhitespace })
-        guard original.contains(where: { "+-*/^()".contains($0) }) else { return nil }
+        guard original.contains(where: { "+-*/%^()".contains($0) }) else { return nil }
         var chars = original
         while !chars.isEmpty {
             let completed = chars + [Character](repeating: ")", count: unclosedParens(chars))
@@ -41,7 +41,7 @@ class LauncherCalculator {
     /// anything else (e.g. "1+password") is not an expression being typed, so it falls through to app search
     private static func trimIncompleteTail(_ chars: inout [Character]) -> Bool {
         guard let last = chars.last else { return false }
-        if "+-*/^.(".contains(last) {
+        if "+-*/%^.(".contains(last) {
             chars.removeLast()
             return true
         }
@@ -159,12 +159,22 @@ class LauncherCalculator {
 
         private mutating func multiplication() -> Double? {
             guard var value = unary() else { return nil }
-            while let op = peek(), op == "*" || op == "/" {
+            while let op = peek(), op == "*" || op == "/" || op == "%" {
                 i += 1
-                guard let rhs = unary(), let next = finite(op == "*" ? value * rhs : value / rhs) else { return nil }
+                guard let rhs = unary(), let next = finite(multiplicative(value, op, rhs)) else { return nil }
                 value = next
             }
             return value
+        }
+
+        /// modulo mirrors C fmod: the result takes the sign of the dividend, and a zero divisor yields NaN,
+        /// which finite() rejects so "5%0" fails like "5/0"
+        private func multiplicative(_ lhs: Double, _ op: Character, _ rhs: Double) -> Double {
+            switch op {
+            case "*": return lhs * rhs
+            case "/": return lhs / rhs
+            default: return lhs.truncatingRemainder(dividingBy: rhs)
+            }
         }
 
         private mutating func unary() -> Double? {
