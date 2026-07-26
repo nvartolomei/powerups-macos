@@ -37,6 +37,15 @@ final class LauncherSearchTests: XCTestCase {
         XCTAssertEqual(rank("out", "Output: LSX"), 0)
     }
 
+    /// a deep path whose segments share a prefix reaches the same (query position, word) pair through many branches;
+    /// unmemoized this took ~50s, so a 1s bound can't flake
+    func testSimilarWordsDoNotBacktrackExponentially() throws {
+        let name = "VSCode: ~/" + Array(repeating: "aab", count: 22).joined(separator: "/")
+        let startTime = DispatchTime.now().uptimeNanoseconds
+        XCTAssertNil(rank("aaaaaaaaaaaaaaaaaaz", name))
+        XCTAssertLessThan(Double(DispatchTime.now().uptimeNanoseconds - startTime) / 1_000_000_000, 1)
+    }
+
     func testNoMatch() throws {
         XCTAssertNil(rank("vsco", "Discord"))
         XCTAssertNil(rank("vscode", "Xcode"))

@@ -13,8 +13,11 @@ protocol LauncherSearchable {
 class LauncherSearch {
     /// lower ranks are better matches: 0 = humps from the first word, 1 = humps from a later word, 2 = plain substring
     static func matchRank(_ query: [Character], _ words: [[Character]], _ lowercasedName: String) -> Int? {
+        // the same (query position, word) pair is reached through many branches; without memoizing it, a name
+        // with many similar-prefixed words (e.g. a deep folder path) backtracks exponentially
+        var memo = [Bool?](repeating: nil, count: (query.count + 1) * words.count)
         for firstWord in 0..<words.count {
-            if matchesWordPrefixes(query, 0, words, firstWord) {
+            if matchesWordPrefixes(query, 0, words, firstWord, &memo) {
                 return firstWord == 0 ? 0 : 1
             }
         }
@@ -47,14 +50,22 @@ class LauncherSearch {
     }
 
     /// query[qi...] consumed as prefixes of words, the next prefix taken from words[wi]
-    private static func matchesWordPrefixes(_ query: [Character], _ qi: Int, _ words: [[Character]], _ wi: Int) -> Bool {
+    private static func matchesWordPrefixes(_ query: [Character], _ qi: Int, _ words: [[Character]], _ wi: Int, _ memo: inout [Bool?]) -> Bool {
+        let key = qi * words.count + wi
+        if let memoized = memo[key] { return memoized }
+        let matches = computeMatchesWordPrefixes(query, qi, words, wi, &memo)
+        memo[key] = matches
+        return matches
+    }
+
+    private static func computeMatchesWordPrefixes(_ query: [Character], _ qi: Int, _ words: [[Character]], _ wi: Int, _ memo: inout [Bool?]) -> Bool {
         let word = words[wi]
         var len = 0
         while len < word.count && qi + len < query.count && word[len] == query[qi + len] {
             len += 1
             if qi + len == query.count { return true }
             for next in (wi + 1)..<words.count {
-                if matchesWordPrefixes(query, qi + len, words, next) { return true }
+                if matchesWordPrefixes(query, qi + len, words, next, &memo) { return true }
             }
         }
         return false
