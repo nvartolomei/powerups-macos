@@ -287,10 +287,9 @@ class CachedUserDefaults {
         if let cached = cache.withLock({ $0[key] }) {
             return cached as? String
         }
-        if let string = UserDefaults.standard.string(forKey: key) {
-            cache.withLock { $0[key] = string }
-        }
-        return nil
+        guard let string = UserDefaults.standard.string(forKey: key) else { return nil }
+        cache.withLock { $0[key] = string }
+        return string
     }
 
     static func string(_ key: String) -> String {
