@@ -8,6 +8,12 @@ class Launcher {
         URL(fileURLWithPath: "/System/Applications", isDirectory: true),
     ]
     private static let settingsExtensionsFolder = URL(fileURLWithPath: "/System/Library/ExtensionKit/Extensions", isDirectory: true)
+    /// serial, so back-to-back summons scan one at a time and the caches below need no locking
+    private static let scanQueue = DispatchQueue(label: "\(App.bundleIdentifier).launcher-scan", qos: .userInteractive)
+    /// a cold icon load hits the disk, and an app's icon doesn't change between scans
+    private static var iconsCache = [String: NSImage]()
+    /// System Settings panes come from bundles we have to open to read their name; they only change with a macOS update
+    private static var settingsPanesCache: [LauncherApp]?
 
     static func initialize() {
         _ = LauncherPanel()
@@ -107,11 +113,27 @@ class Launcher {
         NSWorkspace.shared.open(url)
     }
 
+    /// the icon of a file we already scanned; only call this from scanQueue
+    static func icon(forPath path: String) -> NSImage {
+        dispatchPrecondition(condition: .onQueue(scanQueue))
+        if let cached = iconsCache[path] { return cached }
+        let icon = NSWorkspace.shared.icon(forFile: path)
+        iconsCache[path] = icon
+        return icon
+    }
+
+    private static func settingsPanes() -> [LauncherApp] {
+        if let settingsPanesCache { return settingsPanesCache }
+        let panes = scanSettingsPanes()
+        settingsPanesCache = panes
+        return panes
+    }
+
     private static func refreshAppsCacheAsync() {
-        DispatchQueue.global(qos: .userInteractive).async {
+        scanQueue.async {
             _ = LauncherCalculator.icon
             _ = LauncherCommand.icon
-            let apps = (scanApplicationsFolders() + scanSettingsPanes())
+            let apps = (scanApplicationsFolders() + settingsPanes())
                 .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
             let recents = LauncherVSCodeRecents.load()
             DispatchQueue.main.async {
@@ -215,13 +237,13 @@ struct LauncherApp: LauncherSearchable {
     let words: [[Character]]
     let icon: NSImage
 
-    /// called on a background thread: cold icon loads hit the disk and would block the main thread on first render
+    /// called on the apps-scan queue: cold icon loads hit the disk and would block the main thread on first render
     init(_ url: URL, _ name: String, _ paneId: String? = nil) {
         self.url = url
         self.name = name
         self.paneId = paneId
         lowercasedName = name.lowercased()
         words = LauncherSearch.humpWords(name)
-        icon = NSWorkspace.shared.icon(forFile: url.path)
+        icon = Launcher.icon(forPath: url.path)
     }
 }

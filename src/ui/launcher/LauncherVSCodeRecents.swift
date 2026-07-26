@@ -11,7 +11,7 @@ class LauncherVSCodeRecents {
     private static let dbURL = FileManager.default.homeDirectoryForCurrentUser
         .appendingPathComponent(".vscode-shared/sharedStorage/state.vscdb")
 
-    /// called on the apps-scan background queue: the SQLite read and cold icon load both hit the disk
+    /// called on the apps-scan queue: the SQLite read and cold icon load both hit the disk
     static func load() -> [LauncherRecent] {
         guard let json = readRecentsJSON(),
               let recents = try? JSONDecoder().decode(StoredRecents.self, from: json) else { return [] }
@@ -67,7 +67,7 @@ class LauncherVSCodeRecents {
             folder.isTemplate = true
             return folder
         }
-        return NSWorkspace.shared.icon(forFile: appURL.path)
+        return Launcher.icon(forPath: appURL.path)
     }
 
     private static func cliURL(_ appURL: URL) -> URL? {
