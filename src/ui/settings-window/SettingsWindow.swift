@@ -450,9 +450,7 @@ private final class SettingsSidebarCellView: NSTableCellView {
         let selected = backgroundStyle == .emphasized
         titleLabel.font = NSFont.systemFont(ofSize: 13.5, weight: .medium)
         titleLabel.textColor = selected ? .white : .labelColor
-        if #available(macOS 10.14, *) {
-            iconView.contentTintColor = selected ? .white : .secondaryLabelColor
-        }
+        iconView.contentTintColor = selected ? .white : .secondaryLabelColor
     }
 }
 
@@ -539,10 +537,8 @@ class SettingsWindow: NSWindow {
         isMovableByWindowBackground = true
         let toolbar = NSToolbar(identifier: "SettingsToolbar")
         self.toolbar = toolbar
-        if #available(macOS 11.0, *) {
-            toolbarStyle = .unified
-            titlebarSeparatorStyle = .none
-        }
+        toolbarStyle = .unified
+        titlebarSeparatorStyle = .none
     }
 
     private func setupView() {
@@ -581,9 +577,7 @@ class SettingsWindow: NSWindow {
         rightScrollView.hasVerticalScroller = true
         rightScrollView.hasHorizontalScroller = false
         rightScrollView.scrollerStyle = .overlay
-        if #available(macOS 11.0, *) {
-            rightScrollView.automaticallyAdjustsContentInsets = false
-        }
+        rightScrollView.automaticallyAdjustsContentInsets = false
         rightScrollView.contentInsets = NSEdgeInsetsZero
         rightScrollView.scrollerInsets = NSEdgeInsetsZero
         rightScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -642,9 +636,7 @@ class SettingsWindow: NSWindow {
         sidebarTableView.backgroundColor = .clear
         sidebarTableView.focusRingType = .none
         sidebarTableView.usesAlternatingRowBackgroundColors = false
-        if #available(macOS 11.0, *) {
-            sidebarTableView.style = .sourceList
-        }
+        sidebarTableView.style = .sourceList
         sidebarTableView.delegate = self
         sidebarTableView.dataSource = self
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "SettingsSidebarColumn"))
@@ -668,7 +660,7 @@ class SettingsWindow: NSWindow {
     private func setupResetButton(_ parent: NSView) {
         resetButton.toolTip = resetButton.title
         resetButton.bezelStyle = .rounded
-        if #available(macOS 11.0, *) { resetButton.hasDestructiveAction = true }
+        resetButton.hasDestructiveAction = true
         resetButton.target = self
         resetButton.action = #selector(resetPreferences)
         resetButton.translatesAutoresizingMaskIntoConstraints = false
@@ -702,7 +694,7 @@ class SettingsWindow: NSWindow {
     }
 
     private func sidebarImage(_ definition: SettingsSectionDefinition) -> NSImage {
-        if #available(macOS 11.0, *), let image = NSImage(systemSymbolName: definition.systemSymbolName, accessibilityDescription: nil) {
+        if let image = NSImage(systemSymbolName: definition.systemSymbolName, accessibilityDescription: nil) {
             let config = NSImage.SymbolConfiguration(pointSize: 13, weight: .medium)
             let configured = image.withSymbolConfiguration(config) ?? image
             configured.isTemplate = true

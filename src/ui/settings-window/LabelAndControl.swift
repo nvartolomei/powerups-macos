@@ -205,12 +205,10 @@ class LabelAndControl: NSObject {
             if segmentWidth > 0 {
                 button.setWidth(segmentWidth, forSegment: i)
             }
-            if #available(macOS 11.0, *) {
-                if let preference = preference as? SfSymbolMacroPreference,
-                   // each systemSymbolName has a different minimum macOS requirements; we need to make sure it exists
-                   let symbolImage = NSImage(systemSymbolName: preference.symbolName, accessibilityDescription: nil) {
-                    button.setImage(symbolImage, forSegment: i)
-                }
+            if let preference = preference as? SfSymbolMacroPreference,
+               // each systemSymbolName has a different minimum macOS requirements; we need to make sure it exists
+               let symbolImage = NSImage(systemSymbolName: preference.symbolName, accessibilityDescription: nil) {
+                button.setImage(symbolImage, forSegment: i)
             }
             let selectedSegment = CachedUserDefaults.intFromMacroPref(rawName, macroPreferences)
             if selectedSegment >= 0 && selectedSegment < macroPreferences.count {
@@ -222,11 +220,7 @@ class LabelAndControl: NSObject {
     }
 
     static func applySystemSelectedSegmentStyle(_ control: NSSegmentedControl) {
-        if #available(macOS 10.14, *) {
-            control.segmentStyle = .automatic
-        } else {
-            control.segmentStyle = .texturedRounded
-        }
+        control.segmentStyle = .automatic
     }
 
     static func makeLabelWithSlider(_ labelText: String, _ rawName: String, _ minValue: Double, _ maxValue: Double,

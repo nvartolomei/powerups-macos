@@ -249,12 +249,7 @@ class Preferences {
     }
 
     static func unarchiveShortcut(_ data: Data) -> (Bool, Shortcut?) {
-        let shortcut: Shortcut?
-        if #available(macOS 10.13, *) {
-            shortcut = try? NSKeyedUnarchiver.unarchivedObject(ofClass: Shortcut.self, from: data)
-        } else {
-            shortcut = NSKeyedUnarchiver.unarchiveObject(with: data) as? Shortcut
-        }
+        let shortcut = try? NSKeyedUnarchiver.unarchivedObject(ofClass: Shortcut.self, from: data)
         guard let shortcut else { return (false, nil) }
         return (true, shortcut.keyCode == .none && shortcut.modifierFlags == [] ? nil : shortcut)
     }

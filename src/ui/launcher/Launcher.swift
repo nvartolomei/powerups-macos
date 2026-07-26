@@ -71,10 +71,8 @@ class Launcher {
         hide()
         if let paneId = app.paneId {
             NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:" + paneId)!)
-        } else if #available(macOS 10.15, *) {
-            NSWorkspace.shared.openApplication(at: app.url, configuration: NSWorkspace.OpenConfiguration())
         } else {
-            NSWorkspace.shared.open(app.url)
+            NSWorkspace.shared.openApplication(at: app.url, configuration: NSWorkspace.OpenConfiguration())
         }
     }
 

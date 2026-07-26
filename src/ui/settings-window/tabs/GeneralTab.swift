@@ -43,7 +43,7 @@ class GeneralTab {
         alert.informativeText = NSLocalizedString("You can’t undo this action.", comment: "")
         alert.addButton(withTitle: NSLocalizedString("Cancel", comment: ""))
         let resetButton = alert.addButton(withTitle: NSLocalizedString("Reset settings and restart", comment: ""))
-        if #available(macOS 11.0, *) { resetButton.hasDestructiveAction = true }
+        resetButton.hasDestructiveAction = true
         if alert.runModal() == .alertSecondButtonReturn {
             Preferences.resetAll()
             App.restart()

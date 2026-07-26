@@ -38,6 +38,7 @@ extension CGWindow {
         return value(kCGWindowOwnerPID, pid_t.self)
     }
 
+    // periphery:ignore
     func ownerName() -> String? {
         return value(kCGWindowOwnerName, String.self)
     }

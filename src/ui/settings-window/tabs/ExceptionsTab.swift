@@ -39,12 +39,7 @@ class ExceptionsTab {
         button.isBordered = true
         button.bezelStyle = .circular
         button.showsBorderOnlyWhileMouseInside = false
-        if #available(macOS 11.0, *) {
-            button.image = NSImage(systemSymbolName: systemSymbolName, accessibilityDescription: nil)
-        } else {
-            let templateName = systemSymbolName == "plus" ? NSImage.addTemplateName : NSImage.removeTemplateName
-            button.image = NSImage(named: templateName)
-        }
+        button.image = NSImage(systemSymbolName: systemSymbolName, accessibilityDescription: nil)
         button.imagePosition = .imageOnly
         button.imageScaling = .scaleProportionallyDown
         button.widthAnchor.constraint(equalToConstant: 22).isActive = true
