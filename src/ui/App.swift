@@ -337,6 +337,7 @@ class App: NSApplication {
         Appearance.update()
         TilesPanel.updateMaxPossibleAppIconSize()
         Menubar.initialize()
+        SleepPrevention.initialize()
         MainMenu.create()
         _ = TilesPanel()
         Launcher.initialize()

@@ -41,6 +41,10 @@ class Preferences {
             "hideStatusIcons": "false",
             "trackpadHapticFeedbackEnabled": "true",
             "settingsWindowShownOnFirstLaunch": "false",
+            "preventSleepMinutes": "60",
+            "preventSleepWhilePluggedIn": "false",
+            "preventSleepBatteryCutoffEnabled": "true",
+            "preventSleepBatteryCutoff": String(SleepPreventionTestable.defaultCutoff),
         ]
         (0..<maxShortcutCount).forEach { index in
             values[indexToName("holdShortcut", index)] = defaultShortcut("⌥")
@@ -105,6 +109,10 @@ class Preferences {
     static var startAtLogin: Bool { CachedUserDefaults.bool("startAtLogin") }
     static var exceptions: [ExceptionEntry] { CachedUserDefaults.json("exceptions", [ExceptionEntry].self) }
     static var settingsWindowShownOnFirstLaunch: Bool { CachedUserDefaults.bool("settingsWindowShownOnFirstLaunch") }
+    static var preventSleepMinutes: Int { CachedUserDefaults.int("preventSleepMinutes") }
+    static var preventSleepWhilePluggedIn: Bool { CachedUserDefaults.bool("preventSleepWhilePluggedIn") }
+    static var preventSleepBatteryCutoffEnabled: Bool { CachedUserDefaults.bool("preventSleepBatteryCutoffEnabled") }
+    static var preventSleepBatteryCutoff: Int { CachedUserDefaults.int("preventSleepBatteryCutoff") }
 
     // macro values
     static var appearanceSize: AppearanceSizePreference { CachedUserDefaults.macroPref("appearanceSize", AppearanceSizePreference.allCases) }

@@ -14,6 +14,7 @@ class GeneralTab {
         let table = TableGroupView(width: SettingsWindow.contentWidth)
         table.addRow(startAtLogin)
         table.addRow(menubarIcon)
+        addBatteryCutoffRows(table)
         let exportButton = NSButton(title: NSLocalizedString("Export settings…", comment: ""), target: nil, action: nil)
         exportButton.onAction = { _ in exportSettings() }
         let importButton = NSButton(title: NSLocalizedString("Import settings…", comment: ""), target: nil, action: nil)
@@ -24,6 +25,28 @@ class GeneralTab {
     }
 
     static func refreshControlsFromPreferences() {}
+
+    /// the standing policy for every sleep-prevention session; the "Custom…" prompt starts from it and can
+    /// override it for the one session it launches
+    private static func addBatteryCutoffRows(_ table: TableGroupView) {
+        table.addRow(TableGroupView.Row(leftTitle: NSLocalizedString("Awake while plugged in", comment: ""),
+                                        subTitle: NSLocalizedString("Holds sleep off the whole time the power adapter is connected", comment: ""),
+                                        rightViews: [LabelAndControl.makeSwitch("preventSleepWhilePluggedIn")]))
+        let levelViews = LabelAndControl.makeLabelWithSlider("", "preventSleepBatteryCutoff",
+                                                             Double(SleepPreventionTestable.minCutoff),
+                                                             Double(SleepPreventionTestable.maxCutoff),
+                                                             SleepPreventionTestable.cutoffTicks,
+                                                             true, "%", width: 180)
+        let enableLevel = { (on: Bool) in levelViews.forEach { ($0 as? NSControl)?.isEnabled = on } }
+        let toggle = LabelAndControl.makeSwitch("preventSleepBatteryCutoffEnabled", extraAction: { sender in
+            enableLevel((sender as? Switch)?.state == .on)
+        })
+        table.addRow(TableGroupView.Row(leftTitle: NSLocalizedString("Let the Mac sleep on low battery", comment: ""),
+                                        subTitle: NSLocalizedString("Ends a “Prevent sleep” session before the battery runs out", comment: ""),
+                                        rightViews: [toggle]))
+        table.addRow(TableGroupView.Row(leftTitle: NSLocalizedString("Battery level", comment: ""), rightViews: levelViews))
+        enableLevel(Preferences.preventSleepBatteryCutoffEnabled)
+    }
 
     private static func enableDraggingOffMenubarIcon(_ menuIconShownToggle: Switch) {
         Menubar.statusItem.behavior = .removalAllowed

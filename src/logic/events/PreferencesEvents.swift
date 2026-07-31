@@ -50,6 +50,7 @@ class PreferencesEvents {
         switch key {
         case "menubarIcon", "menubarIconShown": applyMenubarPreferencesIfReady()
         case "nextWindowGesture": TrackpadEvents.toggle(Preferences.nextWindowGesture != .disabled)
+        case "preventSleepWhilePluggedIn": SleepPrevention.refreshPowerPolicy()
         case "startAtLogin": applyStartAtLoginPreference()
         case let k where preferencesRequiringUiReset.contains(k) && TilesPanel.shared != nil: App.resetPreferencesDependentComponents()
         default: break

@@ -18,6 +18,13 @@
 		1C9614F589E212F9A768D936 /* titles_show_status_icons_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C9611039BDBE0C84F349BA1 /* titles_show_status_icons_light@2x.jpg */; };
 		1C9618872DD3863A8EFE8414 /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C961AC3633CD0C62CCE050E /* Appearance.swift */; };
 		AA0C8A000000000000004001 /* AudioOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8A000000000000004000 /* AudioOutput.swift */; };
+		5EE9000000000000000000C1 /* SleepPrevention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000A1 /* SleepPrevention.swift */; };
+		5EE9000000000000000000C2 /* PowerSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000A2 /* PowerSource.swift */; };
+		5EE9000000000000000000C3 /* SleepPreventionTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000A3 /* SleepPreventionTestable.swift */; };
+		5EE9000000000000000000C4 /* PreventSleepPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000A4 /* PreventSleepPrompt.swift */; };
+		5EE9000000000000000000F2 /* PreventSleepCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000F1 /* PreventSleepCommands.swift */; };
+		5EE9000000000000000000D3 /* SleepPreventionTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000A3 /* SleepPreventionTestable.swift */; };
+		5EE9000000000000000000D5 /* SleepPreventionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000A5 /* SleepPreventionTests.swift */; };
 		1C9618DF753B19DB0A1255E4 /* titles_hide_app_badges_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961E051A3A4E4A174BB7C7 /* titles_hide_app_badges_light@2x.jpg */; };
 		1C96198B593CD55629ACE974 /* titles_show_app_badges_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C961B4DFAF687EFF3D12959 /* titles_show_app_badges_light@2x.jpg */; };
 		1C9619D3A3ACDBA31235409D /* titles_show_space_number_labels_light@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C9614A489E5D3C0D885F71D /* titles_show_space_number_labels_light@2x.jpg */; };
@@ -263,6 +270,7 @@
 		D04BAD1BE9DC22C48C53D195 /* AboutTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BA4A26987F67DD94C827F /* AboutTab.swift */; };
 		D04BAD2A7F2E8BF64EE982E9 /* TextArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BA7C836A8CE8C0B8D128B /* TextArea.swift */; };
 		D04BAD451966B43720120D2E /* Menubar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BAD905546AA93E5117B0A /* Menubar.swift */; };
+		5EE9000000000000000000E2 /* MenubarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE9000000000000000000E1 /* MenubarIcon.swift */; };
 		D04BADCDA9F9A6C3D6499877 /* SystemPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BA7C6F2519091717F4B4E /* SystemPermissions.swift */; };
 		D04BADE4DDF7597749FB13BD /* SettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BA099FA155FB4D517D66B /* SettingsWindow.swift */; };
 		D04BAE8B16A06A10E2FA94DE /* AccessibilityEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BA8FDCF137D892114F5F3 /* AccessibilityEvents.swift */; };
@@ -317,6 +325,12 @@
 		1C9619DEB8B7905DBF9A6030 /* titles_hide_tabs_as_windows_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_hide_tabs_as_windows_light@2x.jpg"; sourceTree = "<group>"; };
 		1C961AC3633CD0C62CCE050E /* Appearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
 		AA0C8A000000000000004000 /* AudioOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioOutput.swift; sourceTree = "<group>"; };
+		5EE9000000000000000000A1 /* SleepPrevention.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SleepPrevention.swift; sourceTree = "<group>"; };
+		5EE9000000000000000000A2 /* PowerSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PowerSource.swift; sourceTree = "<group>"; };
+		5EE9000000000000000000A3 /* SleepPreventionTestable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SleepPreventionTestable.swift; sourceTree = "<group>"; };
+		5EE9000000000000000000A4 /* PreventSleepPrompt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreventSleepPrompt.swift; sourceTree = "<group>"; };
+		5EE9000000000000000000F1 /* PreventSleepCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreventSleepCommands.swift; sourceTree = "<group>"; };
+		5EE9000000000000000000A5 /* SleepPreventionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SleepPreventionTests.swift; sourceTree = "<group>"; };
 		1C961B26B70C826BBD762AC5 /* titles_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_light@2x.jpg"; sourceTree = "<group>"; };
 		1C961B4DFAF687EFF3D12959 /* titles_show_app_badges_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_show_app_badges_light@2x.jpg"; sourceTree = "<group>"; };
 		1C961E051A3A4E4A174BB7C7 /* titles_hide_app_badges_light@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "titles_hide_app_badges_light@2x.jpg"; sourceTree = "<group>"; };
@@ -506,6 +520,7 @@
 		D04BAD40CE2D3A8AAC3819D0 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = file.gitignore; path = .gitignore; sourceTree = "<group>"; };
 		D04BAD65AA870A49D2F89DBC /* ensure_generated_files_are_up_to_date.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ensure_generated_files_are_up_to_date.sh; sourceTree = "<group>"; };
 		D04BAD905546AA93E5117B0A /* Menubar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Menubar.swift; sourceTree = "<group>"; };
+		5EE9000000000000000000E1 /* MenubarIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenubarIcon.swift; sourceTree = "<group>"; };
 		D04BAD91161791D42FEC4A60 /* HelperExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperExtensions.swift; sourceTree = "<group>"; };
 		D04BAD98C2DCFE95458947D3 /* setup_local.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = setup_local.sh; sourceTree = "<group>"; };
 		D04BADFEF9A8189ABC8BF5EE /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
@@ -836,6 +851,7 @@
 				BF0CAAAA0000000000000001 /* SearchAcronymTests.swift */,
 				BF0C8E10AB12CD34EF560007 /* LauncherSearchTests.swift */,
 				BF0C8E10AB12CD34EF56000C /* LauncherCalculatorTests.swift */,
+				5EE9000000000000000000A5 /* SleepPreventionTests.swift */,
 				BF0C829EAA93A4C4ADB42CF8 /* Mocks.swift */,
 				BF0C855CD9DBCAEFE48F9EA5 /* AXUIElementTests.swift */,
 				BF0C854910CCD4FB493C3A5D /* ImageScalingTests.swift */,
@@ -871,6 +887,25 @@
 				BF0C8E1C49845D813673D7A2 /* 20MB-photo.jpg */,
 			);
 			path = resources;
+			sourceTree = "<group>";
+		};
+		5EE9000000000000000000B1 /* sleep */ = {
+			isa = PBXGroup;
+			children = (
+				5EE9000000000000000000A1 /* SleepPrevention.swift */,
+				5EE9000000000000000000A3 /* SleepPreventionTestable.swift */,
+				5EE9000000000000000000A2 /* PowerSource.swift */,
+			);
+			path = sleep;
+			sourceTree = "<group>";
+		};
+		5EE9000000000000000000B2 /* sleep */ = {
+			isa = PBXGroup;
+			children = (
+				5EE9000000000000000000A4 /* PreventSleepPrompt.swift */,
+				5EE9000000000000000000F1 /* PreventSleepCommands.swift */,
+			);
+			path = sleep;
 			sourceTree = "<group>";
 		};
 		BF0C8E10AB12CD34EF560001 /* launcher */ = {
@@ -919,6 +954,7 @@
 				BF0C8BA452332236D972C60E /* ATShortcut.swift */,
 				1C961AC3633CD0C62CCE050E /* Appearance.swift */,
 				AA0C8A000000000000004000 /* AudioOutput.swift */,
+				5EE9000000000000000000B1 /* sleep */,
 				BF0C8D606B53D315F2D9927B /* KeyRepeatTimer.swift */,
 				BF0C8D57C86AF492D43A576D /* AppearanceTestable.swift */,
 				BF0C8998862E0E04D60CACBC /* MacroPreferences.swift */,
@@ -984,8 +1020,10 @@
 				D04BAAB92261FC04854FDDE9 /* App.swift */,
 				D04BA62E30174C336E4080FA /* main-window */,
 				BF0C8E10AB12CD34EF560001 /* launcher */,
+				5EE9000000000000000000B2 /* sleep */,
 				D04BABCD12CA72B06290C248 /* settings-window */,
 				D04BAD905546AA93E5117B0A /* Menubar.swift */,
+				5EE9000000000000000000E1 /* MenubarIcon.swift */,
 				D04BA2F0A1B2C3D4E5F60004 /* DebugWindow.swift */,
 				D04BA2CBF267F267225CA671 /* generic-components */,
 				D04BA1C271F0DA573345B860 /* permission-window */,
@@ -1604,6 +1642,8 @@
 				BF0C8E10AB12CD34EF56000A /* LauncherSearchTests.swift in Sources */,
 				BF0C8E10AB12CD34EF56000E /* LauncherCalculator.swift in Sources */,
 				BF0C8E10AB12CD34EF56000F /* LauncherCalculatorTests.swift in Sources */,
+				5EE9000000000000000000D3 /* SleepPreventionTestable.swift in Sources */,
+				5EE9000000000000000000D5 /* SleepPreventionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1641,6 +1681,7 @@
 				D04BAD1BE9DC22C48C53D195 /* AboutTab.swift in Sources */,
 				D04BA15A1B0C4871EA7CB899 /* GeneralTab.swift in Sources */,
 				D04BAD451966B43720120D2E /* Menubar.swift in Sources */,
+				5EE9000000000000000000E2 /* MenubarIcon.swift in Sources */,
 				D04BA2F0A1B2C3D4E5F60003 /* DebugWindow.swift in Sources */,
 				D04BA76A74267B1346D23687 /* GridView.swift in Sources */,
 				D04BAB4EB890853B5B9B2C61 /* BoldLabel.swift in Sources */,
@@ -1678,6 +1719,11 @@
 				1C96108A0CB2565233FE100B /* TableGroupView.swift in Sources */,
 				1C9618872DD3863A8EFE8414 /* Appearance.swift in Sources */,
 				AA0C8A000000000000004001 /* AudioOutput.swift in Sources */,
+				5EE9000000000000000000C1 /* SleepPrevention.swift in Sources */,
+				5EE9000000000000000000C2 /* PowerSource.swift in Sources */,
+				5EE9000000000000000000C3 /* SleepPreventionTestable.swift in Sources */,
+				5EE9000000000000000000C4 /* PreventSleepPrompt.swift in Sources */,
+				5EE9000000000000000000F2 /* PreventSleepCommands.swift in Sources */,
 				BF0C83578F7292F307E30751 /* PopupButtonLikeSystemSettings.swift in Sources */,
 				1C961F9CF4F1BEDF04ACAEE0 /* Switch.swift in Sources */,
 				BF0C860F1779DDE8C0171EA0 /* WindowlessAppIndicator.swift in Sources */,

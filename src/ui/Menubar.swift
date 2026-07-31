@@ -4,6 +4,10 @@ class Menubar {
     static var statusItem: NSStatusItem!
     static var menu: NSMenu!
     private static let menuDelegate = MenubarMenuDelegate()
+    private static var preventSleepItem: NSMenuItem?
+    /// the toggle's two faces, built once rather than on every menu open
+    private static let awakeIcon = icon("cup.and.saucer")
+    private static let sleepingIcon = icon("moon.zzz")
 
     // transparent stand-in so icon-less items keep their text aligned with the items that have an icon
     private static let blankIcon = NSImage(size: NSSize(width: 18, height: 18), flipped: false) { rect in
@@ -16,15 +20,15 @@ class Menubar {
     static func addMenuItem(_ title: String, _ action: Selector, _ keyEquivalent: String, _ symbolName: String?, _ color: NSColor? = nil, _ target: AnyObject? = nil) -> NSMenuItem {
         let item = menu.addItem(withTitle: title, action: action, keyEquivalent: keyEquivalent)
         item.target = target
-        if let symbolName {
-            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
-            if let color {
-                item.image = item.image?.withSymbolConfiguration(.init(paletteColors: [color]))
-            }
-        } else {
-            item.image = blankIcon
-        }
+        item.image = icon(symbolName, color)
         return item
+    }
+
+    private static func icon(_ symbolName: String?, _ color: NSColor? = nil) -> NSImage? {
+        guard let symbolName else { return blankIcon }
+        let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)
+        guard let color else { return image }
+        return image?.withSymbolConfiguration(.init(paletteColors: [color]))
     }
 
     // shows the configured global shortcut next to a menu item, and lets the open menu match it to
@@ -49,6 +53,13 @@ class Menubar {
         showShortcut(addMenuItem(NSLocalizedString("Show launcher", comment: "Menubar option"), #selector(Launcher.toggle), "", nil, nil, Launcher.self), "launcherShortcut")
         showShortcut(addMenuItem(NSLocalizedString("Show switcher", comment: "Menubar option"), #selector(App.showUiFromShortcut0), "", nil, nil, App.self), "nextWindowShortcut", "holdShortcut")
         menu.addItem(NSMenuItem.separator())
+        preventSleepItem = addMenuItem("", #selector(PreventSleepCommands.toggle), "", nil, nil, PreventSleepCommands.self)
+        addMenuItem(String(format: NSLocalizedString("Prevent sleep for %d minutes", comment: "Menubar option"), SleepPrevention.presetMinutes),
+                    #selector(PreventSleepCommands.startPreset), "", nil, nil, PreventSleepCommands.self)
+        addMenuItem(NSLocalizedString("Prevent sleep for…", comment: "Menubar option"),
+                    #selector(PreventSleepPrompt.show), "", nil, nil, PreventSleepPrompt.self)
+        SleepPrevention.onChange = refreshPreventSleep
+        menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("About %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(App.showAboutWindow), "", "info.circle", nil, App.self)
         addMenuItem(NSLocalizedString("Check permissions…", comment: "Menubar option"), #selector(App.checkPermissions), "", nil, nil, App.self)
         addMenuItem(NSLocalizedString("Debug tools", comment: "Menubar option"), #selector(App.showDebugWindow), "", nil, nil, App.self)
@@ -56,6 +67,22 @@ class Menubar {
         addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "Menubar option. %@ is PowerUps"), App.name), #selector(NSApplication.terminate(_:)), "q", "power")
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.menu = menu
+        refreshPreventSleep()
+    }
+
+    /// the toggle names what clicking it does; its countdown only has to be right when the menu opens (see the delegate)
+    static func refreshPreventSleep() {
+        guard let item = preventSleepItem else { return }
+        let isActive = SleepPrevention.isActive
+        item.title = isActive ? allowSleepTitle() : NSLocalizedString("Prevent sleep", comment: "Menubar option")
+        item.image = isActive ? sleepingIcon : awakeIcon
+        // the status icon badge is the only always-visible sign that the Mac is being kept awake
+        menubarIconCallback(nil)
+    }
+
+    private static func allowSleepTitle() -> String {
+        guard let remaining = SleepPrevention.remaining else { return NSLocalizedString("Allow sleep", comment: "Menubar option") }
+        return String(format: NSLocalizedString("Allow sleep (%@ left)", comment: "Menubar option. %@ is a duration, e.g. 25m"), remaining)
     }
 
     static func menubarIconCallback(_: NSControl?) {
@@ -67,24 +94,9 @@ class Menubar {
     }
 
     static private func loadIcon() {
-        let image = boltImage()
-        image.isTemplate = true
-        statusItem.button!.image = image
+        statusItem.button!.image = MenubarIcon.image(SleepPrevention.isActive)
         statusItem.isVisible = true
         statusItem.button!.imageScaling = .scaleProportionallyUpOrDown
-    }
-
-    static private func boltImage() -> NSImage {
-        let points = [(13.6, 3.5), (6.6, 11.6), (10.4, 11.6), (8.4, 18.5), (15.4, 10.4), (11.6, 10.4)]
-        return NSImage(size: NSSize(width: 22, height: 22), flipped: true) { _ in
-            let path = NSBezierPath()
-            path.move(to: NSPoint(x: points[0].0, y: points[0].1))
-            points.dropFirst().forEach { path.line(to: NSPoint(x: $0.0, y: $0.1)) }
-            path.close()
-            NSColor.black.setFill()
-            path.fill()
-            return true
-        }
     }
 }
 
@@ -95,6 +107,7 @@ private class MenubarMenuDelegate: NSObject, NSMenuDelegate {
     // system level and its action is deferred until the menu closes. disabling the global hotkeys lets
     // the menu's own key equivalents handle the keystroke instead: it closes and runs the action at once.
     func menuWillOpen(_ menu: NSMenu) {
+        Menubar.refreshPreventSleep()
         guard !KeyboardEvents.globalShortcutsAreDisabled else { return }
         didDisableGlobalShortcuts = true
         KeyboardEvents.toggleGlobalShortcuts(true)
