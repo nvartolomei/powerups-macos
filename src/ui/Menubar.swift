@@ -54,7 +54,7 @@ class Menubar {
         showShortcut(addMenuItem(NSLocalizedString("Show switcher", comment: "Menubar option"), #selector(App.showUiFromShortcut0), "", nil, nil, App.self), "nextWindowShortcut", "holdShortcut")
         menu.addItem(NSMenuItem.separator())
         preventSleepItem = addMenuItem("", #selector(PreventSleepCommands.toggle), "", nil, nil, PreventSleepCommands.self)
-        addMenuItem(String(format: NSLocalizedString("Prevent sleep for %d minutes", comment: "Menubar option"), SleepPrevention.presetMinutes),
+        addMenuItem(String(format: NSLocalizedString("Prevent sleep for %dm", comment: "Menubar option. %d is a number of minutes"), SleepPrevention.presetMinutes),
                     #selector(PreventSleepCommands.startPreset), "", nil, nil, PreventSleepCommands.self)
         addMenuItem(NSLocalizedString("Prevent sleep for…", comment: "Menubar option"),
                     #selector(PreventSleepPrompt.show), "", nil, nil, PreventSleepPrompt.self)
