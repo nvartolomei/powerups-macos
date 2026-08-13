@@ -55,7 +55,9 @@ class Launcher {
             .sorted { $0.rank == $1.rank ? $0.result.name.localizedCaseInsensitiveCompare($1.result.name) == .orderedAscending : $0.rank < $1.rank }
             .prefix(maxResults - 1)
             .map { $0.result }
-        return top + [googleSearch]
+        // a pasted unix timestamp gets a passive date row above the search results it could still be a query for
+        let timestamp = LauncherCalculator.timestamp(trimmed).map { [LauncherResult.calculation($0)] } ?? []
+        return timestamp + top + [googleSearch]
     }
 
     static func activate(_ result: LauncherResult) {

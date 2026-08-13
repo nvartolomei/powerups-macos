@@ -5,6 +5,10 @@ final class LauncherCalculatorTests: XCTestCase {
         LauncherCalculator.evaluate(query)?.raw
     }
 
+    private func expression(_ query: String) -> String? {
+        LauncherCalculator.evaluate(query)?.evaluatedExpression
+    }
+
     func testBasicOperations() throws {
         XCTAssertEqual(raw("2+2"), "4")
         XCTAssertEqual(raw("7-10"), "-3")
@@ -156,5 +160,107 @@ final class LauncherCalculatorTests: XCTestCase {
         XCTAssertNil(raw("1/(1/0)"))
         XCTAssertNil(raw("0*(1/0)"))
         XCTAssertNil(raw("9^9999/9^9999"))
+    }
+
+    func testUnitSuffixesMultiplyIntoBaseUnits() throws {
+        XCTAssertEqual(raw("5GiB"), "5368709120")
+        XCTAssertEqual(raw("2KB"), "2000")
+        XCTAssertEqual(raw("90min"), "5400")
+        XCTAssertEqual(raw("1GiB/4KiB"), "262144")
+        XCTAssertEqual(raw("(1+2)GiB in MB"), "3221.225472")
+        XCTAssertEqual(raw("-5d"), "-432000")
+        XCTAssertNil(raw("5Gi"))
+        XCTAssertNil(raw("5M"))
+        XCTAssertNil(raw("5x+1"))
+    }
+
+    func testDataSizeConversions() throws {
+        XCTAssertEqual(raw("3<<30 in MiB"), "3072")
+        XCTAssertEqual(raw("3<<30 to MiB"), "3072")
+        XCTAssertEqual(raw("3<<30 in GB"), "3.221225472")
+        XCTAssertEqual(raw("5GiB in MB"), "5368.70912")
+        XCTAssertEqual(raw("5GiB + 300MiB in GB"), "5.68328192")
+        XCTAssertEqual(raw("4096 in KiB"), "4")
+        XCTAssertEqual(raw("1<<10 in KiB"), "1")
+        XCTAssertEqual(raw("5gib in mb"), "5368.70912")
+        XCTAssertEqual(raw("10GiB / 125MB in s"), "85.89934592")
+        XCTAssertEqual(raw("1gbit in MB"), "125")
+    }
+
+    func testTimeConversions() throws {
+        XCTAssertEqual(raw("90min in h"), "1.5")
+        XCTAssertEqual(raw("3d in h"), "72")
+        XCTAssertEqual(raw("1.5h + 20min in s"), "6600")
+        XCTAssertEqual(raw("250ms in s"), "0.25")
+        XCTAssertEqual(raw("3600 in h"), "1")
+        XCTAssertEqual(raw("1w in d"), "7")
+        XCTAssertEqual(raw("500us in ms"), "0.5")
+        XCTAssertEqual(raw("2hr in min"), "120")
+        XCTAssertEqual(raw("1786613400123ms in s"), "1786613400.123")
+    }
+
+    func testTimestampConversions() throws {
+        XCTAssertEqual(raw("1786613400 in date"), "2026-08-13T09:30:00Z")
+        XCTAssertEqual(raw("1786613400 in utc"), "2026-08-13T09:30:00Z")
+        XCTAssertEqual(raw("1786613400123 in utc"), "2026-08-13T09:30:00.123Z")
+        XCTAssertEqual(raw("1786613400123ms in utc"), "2026-08-13T09:30:00.123Z")
+        XCTAssertEqual(raw("1786613400 + 3d in utc"), "2026-08-16T09:30:00Z")
+        XCTAssertEqual(raw("-1786613400 in utc"), "1913-05-21T14:30:00Z")
+        XCTAssertEqual(expression("1786613400 in utc"), "1786613400 in utc")
+        XCTAssertNil(raw("99^99 in date"))
+    }
+
+    func testPassiveTimestampDetection() throws {
+        XCTAssertEqual(LauncherCalculator.timestamp("1786613400")?.raw, "2026-08-13T09:30:00Z")
+        XCTAssertEqual(LauncherCalculator.timestamp("1786613400")?.evaluatedExpression, "1786613400")
+        XCTAssertEqual(LauncherCalculator.timestamp("1786613400123")?.raw, "2026-08-13T09:30:00.123Z")
+        XCTAssertEqual(LauncherCalculator.timestamp(" 1786613400 ")?.raw, "2026-08-13T09:30:00Z")
+        XCTAssertNil(LauncherCalculator.timestamp("6175551234"))
+        XCTAssertNil(LauncherCalculator.timestamp("978307199"))
+        XCTAssertNil(LauncherCalculator.timestamp("12345678901"))
+        XCTAssertNil(LauncherCalculator.timestamp("1786613400.5"))
+        XCTAssertNil(LauncherCalculator.timestamp("2+2"))
+    }
+
+    func testConversionsBeingTypedEvaluateTheCompletePart() throws {
+        XCTAssertEqual(raw("3<<30 i"), "3221225472")
+        XCTAssertEqual(raw("3<<30 in"), "3221225472")
+        XCTAssertEqual(raw("3<<30 in M"), "3221225472")
+        XCTAssertEqual(expression("3<<30 in Mi"), "3 << 30")
+        XCTAssertEqual(raw("5GiB in"), "5368709120")
+        XCTAssertEqual(raw("3<<30+ in MiB"), "3072")
+        XCTAssertEqual(expression("5m in KB"), "5 in KB")
+        XCTAssertNil(raw("5 in xyz"))
+        XCTAssertNil(raw("5 in s in ms"))
+        XCTAssertNil(raw("1 to 2"))
+        XCTAssertNil(raw("x in h + 5"))
+        XCTAssertNil(raw("in mb"))
+    }
+
+    func testEvaluatedExpressionNormalizesUnits() throws {
+        XCTAssertEqual(expression("3<<30 in mib"), "3 << 30 in MiB")
+        XCTAssertEqual(expression("5gib in mb"), "5 GiB in MB")
+        XCTAssertEqual(expression("90min in h"), "90 min in h")
+        XCTAssertEqual(expression("5GiB TO MB"), "5 GiB to MB")
+        XCTAssertEqual(expression("1GiB/4KiB"), "1 GiB / 4 KiB")
+        XCTAssertEqual(expression("2hr in min"), "2 h in min")
+    }
+
+    func testConvertedDisplayShowsUnit() throws {
+        let enUS = Locale(identifier: "en_US")
+        XCTAssertEqual(LauncherCalculator.convertedDisplay(3072, "MiB", enUS), "3,072 MiB")
+        XCTAssertEqual(LauncherCalculator.convertedDisplay(5368.70912, "MB", enUS), "5,368.70912 MB")
+        XCTAssertEqual(LauncherCalculator.convertedDisplay(1786613400.123, "s", enUS), "1,786,613,400.123 s")
+    }
+
+    func testDateDisplayIsLabeled() throws {
+        let enUS = Locale(identifier: "en_US")
+        let utc = TimeZone(identifier: "UTC")!
+        let plusTwo = TimeZone(secondsFromGMT: 7200)!
+        // en_US renders a narrow no-break space before AM/PM
+        XCTAssertEqual(LauncherCalculator.dateDisplay(1786613400, utc, enUS), "Aug 13, 2026 at 9:30:00\u{202F}AM UTC")
+        XCTAssertEqual(LauncherCalculator.dateDisplay(1786613400.123, utc, enUS), "Aug 13, 2026 at 9:30:00.123\u{202F}AM UTC")
+        XCTAssertEqual(LauncherCalculator.dateDisplay(1786613400, plusTwo, enUS), "Aug 13, 2026 at 11:30:00\u{202F}AM GMT+2")
+        XCTAssertEqual(LauncherCalculator.dateRaw(1786613400, plusTwo), "2026-08-13T11:30:00+02:00")
     }
 }
