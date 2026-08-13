@@ -41,6 +41,26 @@ final class LauncherCalculatorTests: XCTestCase {
         XCTAssertEqual(raw("2*3"), "6")
     }
 
+    func testBitshift() throws {
+        XCTAssertEqual(raw("4<<30"), "4294967296")
+        XCTAssertEqual(raw("1<<0"), "1")
+        XCTAssertEqual(raw("1<<2+3"), "32")
+        XCTAssertEqual(raw("1<<2<<3"), "32")
+        XCTAssertEqual(raw("2^2<<1"), "8")
+        XCTAssertEqual(raw("(1<<10)/2"), "512")
+        XCTAssertEqual(raw("sqrt(1<<4)"), "4")
+        XCTAssertEqual(raw("-2<<2"), "-8")
+        XCTAssertEqual(raw("1<<40"), "1099511627776")
+        XCTAssertEqual(raw("1<<64"), "1.844674407e+19")
+        XCTAssertEqual(raw("4<<"), "4")
+        XCTAssertNil(raw("1.5<<1"))
+        XCTAssertNil(raw("1<<0.5"))
+        XCTAssertNil(raw("1<<-1"))
+        XCTAssertNil(raw("1<<9999"))
+        XCTAssertNil(raw("4<5"))
+        XCTAssertEqual(LauncherCalculator.evaluate("4<<30")?.evaluatedExpression, "4 << 30")
+    }
+
     func testUnaryMinus() throws {
         XCTAssertEqual(raw("-5+10"), "5")
         XCTAssertEqual(raw("2*-3"), "-6")

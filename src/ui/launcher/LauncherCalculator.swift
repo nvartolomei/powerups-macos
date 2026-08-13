@@ -1,7 +1,7 @@
 import Cocoa
 
-/// evaluates the launcher query as an arithmetic expression: + - * / %, power as ^ or **, parentheses,
-/// unary minus, decimals, and basic functions like sqrt(2); ln is natural log, log is base 10
+/// evaluates the launcher query as an arithmetic expression: + - * / %, power as ^ or **, left shift as <<,
+/// parentheses, unary minus, decimals, and basic functions like sqrt(2); ln is natural log, log is base 10
 /// queries without an operator (plain numbers, app names) are not expressions, so they fall through to app search
 /// expressions being typed evaluate their complete part: "sin(42)*", "sin(42)*sq", and "sin(42" all evaluate "sin(42)"
 class LauncherCalculator {
@@ -14,7 +14,7 @@ class LauncherCalculator {
 
     static func evaluate(_ query: String) -> LauncherCalculation? {
         let original = Array(query.filter { !$0.isWhitespace })
-        guard original.contains(where: { "+-*/%^()".contains($0) }) else { return nil }
+        guard original.contains(where: { "+-*/%^()<".contains($0) }) else { return nil }
         var chars = original
         while !chars.isEmpty {
             let completed = chars + [Character](repeating: ")", count: unclosedParens(chars))
@@ -41,7 +41,7 @@ class LauncherCalculator {
     /// anything else (e.g. "1+password") is not an expression being typed, so it falls through to app search
     private static func trimIncompleteTail(_ chars: inout [Character]) -> Bool {
         guard let last = chars.last else { return false }
-        if "+-*/%^.(".contains(last) {
+        if "+-*/%^.(<".contains(last) {
             chars.removeLast()
             return true
         }
@@ -77,6 +77,8 @@ class LauncherCalculator {
                 tokens.append(.close); i += 1
             } else if c == "*", i + 1 < chars.count, chars[i + 1] == "*" {
                 tokens.append(.binary("**")); i += 2
+            } else if c == "<", i + 1 < chars.count, chars[i + 1] == "<" {
+                tokens.append(.binary("<<")); i += 2
             } else if c == "+" || c == "-" {
                 // a sign is binary only when it follows an operand; otherwise it's a unary that binds to the next operand
                 let followsOperand: Bool
@@ -132,6 +134,7 @@ class LauncherCalculator {
     }
 
     /// recursive descent over precedence levels: addition := multiplication (('+'|'-') multiplication)*, etc.
+    /// shift binds loosest, as in C, so "1<<2+3" is "1<<5"
     /// unary minus binds looser than power so that "-2^2" is -4; power is right-associative
     /// every intermediate value must be finite: IEEE would quietly give "1/(1/(1-1))" = 1/inf = 0
     private struct Parser {
@@ -143,7 +146,20 @@ class LauncherCalculator {
         }
 
         mutating func parseToEnd() -> Double? {
-            guard let value = addition(), i == chars.count else { return nil }
+            guard let value = shift(), i == chars.count else { return nil }
+            return value
+        }
+
+        /// scaling by a power of two instead of shifting an Int64 keeps results exact beyond 63 bits and
+        /// lets overflow go non-finite, so "1<<9999" fails like "9^9999"
+        /// fractional operands and negative counts are rejected rather than truncated
+        private mutating func shift() -> Double? {
+            guard var value = addition() else { return nil }
+            while peek() == "<", peek(1) == "<" {
+                i += 2
+                guard let rhs = addition(), value.rounded() == value, rhs.rounded() == rhs, rhs >= 0, let next = finite(value * pow(2, rhs)) else { return nil }
+                value = next
+            }
             return value
         }
 
@@ -204,7 +220,7 @@ class LauncherCalculator {
 
         private mutating func parenthesized() -> Double? {
             i += 1
-            guard let value = addition(), peek() == ")" else { return nil }
+            guard let value = shift(), peek() == ")" else { return nil }
             i += 1
             return value
         }
