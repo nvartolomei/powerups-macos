@@ -6,6 +6,9 @@ A macOS productivity toolkit built for one person. Fork it, point an AI agent at
 
 - **App switcher** — switch between open windows and apps, à la `⌘`+`Tab`.
 - **App & action launcher** — Spotlight-style search to launch apps and run actions.
+  - **Calculator** — arithmetic, units, unix timestamps, bitshifts.
+  - **Actions** — dark/light mode, audio output switching, keep awake.
+  - **Search sources** — System Settings panes, VS Code recent folders, web search fallback.
 - **Keep awake** — hold off sleep indefinitely, for a set time, or while plugged in, with a low-battery cutoff.
 - **Markdown Quick Look** — a Quick Look extension that renders Markdown files with a proper preview.
 
