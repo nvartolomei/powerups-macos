@@ -152,6 +152,13 @@ extension Collection {
     }
 }
 
+extension NSPasteboard {
+    static func copy(_ text: String) {
+        general.clearContents()
+        general.setString(text, forType: .string)
+    }
+}
+
 // allow using a closure for NSControl action, instead of selector
 class SelectorWrapper<T> {
     let selector: Selector
@@ -214,6 +221,14 @@ extension NSImage {
     // NSImage(named) caches/reuses NSImage objects; we force separate instances of images by using copy()
     static func initCopy(_ name: String) -> NSImage {
         return NSImage(named: name)!.copy() as! NSImage
+    }
+
+    /// an SF Symbol as a template image, so it tints to whatever label color its appearance calls for
+    static func templateSymbol(_ name: String, _ pointSize: CGFloat, _ weight: NSFont.Weight = .regular) -> NSImage? {
+        let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
+            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: pointSize, weight: weight))
+        image?.isTemplate = true
+        return image
     }
 
     func tinted(_ color: NSColor) -> NSImage {

@@ -303,6 +303,25 @@ enum ExceptionIgnorePreference: String/* required for jsonEncode */, CaseIterabl
     }
 }
 
+/// the request/response shapes chat endpoints speak; the path, the auth header, and the stream all differ.
+/// the cases are stored by index, so new ones go at the end
+enum LLMFormatPreference: CaseIterable, MacroPreference {
+    case messages
+    case chatCompletions
+    case responses
+
+    var localizedString: LocalizedString {
+        switch self {
+            case .messages: return NSLocalizedString("Messages (/v1/messages)", comment: "")
+            case .chatCompletions: return NSLocalizedString("Chat completions (/v1/chat/completions)", comment: "")
+            case .responses: return NSLocalizedString("Responses (/v1/responses)", comment: "")
+        }
+    }
+
+    /// only two of the three can look things up: chat completions gates search behind dedicated search models
+    var supportsWebSearch: Bool { self != .chatCompletions }
+}
+
 // MacroPreference are collection of values derived from a single key
 // we don't want to store every value in UserDefaults as the user could change them and contradict the macro
 protocol MacroPreference {

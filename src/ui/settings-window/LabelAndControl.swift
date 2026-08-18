@@ -141,7 +141,6 @@ class LabelAndControl: NSObject {
         return [hStack]
     }
 
-    // periphery:ignore
     static func makeTextArea(_ nCharactersWide: CGFloat, _ nLinesHigh: Int, _ placeholder: String, _ rawName: String, extraAction: ActionClosure? = nil) -> [NSView] {
         let textArea = TextArea(nCharactersWide, nLinesHigh, placeholder)
         textArea.callback = {

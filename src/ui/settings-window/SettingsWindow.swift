@@ -690,6 +690,7 @@ class SettingsWindow: NSWindow {
             SettingsSectionDefinition(id: "controls", title: NSLocalizedString("Controls", comment: ""), imageName: "controls", systemSymbolName: "command", view: ControlsTab.initTab()),
             SettingsSectionDefinition(id: "general", title: NSLocalizedString("General", comment: ""), imageName: "general", systemSymbolName: "gearshape", view: GeneralTab.initTab()),
             SettingsSectionDefinition(id: "exceptions", title: NSLocalizedString("Exceptions", comment: ""), imageName: "exceptions", systemSymbolName: "hand.raised", view: ExceptionsTab.initTab()),
+            SettingsSectionDefinition(id: "ai", title: NSLocalizedString("AI", comment: ""), imageName: "general", systemSymbolName: "sparkles", view: AITab.initTab()),
         ]
     }
 

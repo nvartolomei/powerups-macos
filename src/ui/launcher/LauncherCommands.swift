@@ -32,11 +32,8 @@ struct LauncherCommand: LauncherSearchable {
         words = LauncherSearch.humpWords(name)
     }
 
-    /// an SF Symbol rendered as a template image, so it tints to the launcher's appearance-following label color
+    /// an SF Symbol at the size a launcher row draws it, falling back to the settings icon when it doesn't exist
     static func symbolIcon(_ name: String) -> NSImage {
-        guard let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
-            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 22, weight: .regular)) else { return icon }
-        image.isTemplate = true
-        return image
+        NSImage.templateSymbol(name, 22) ?? icon
     }
 }

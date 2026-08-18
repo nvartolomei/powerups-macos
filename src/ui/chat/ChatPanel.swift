@@ -1,0 +1,323 @@
+import Cocoa
+
+/// a conversation window. every question from the launcher opens its own, and they float above other apps without
+/// pulling focus back when you return to what you were doing
+class ChatPanel: NSPanel {
+    private static var panels = [ChatPanel]()
+    private static let defaultSize = NSSize(width: 470, height: 430)
+    private static let padding = CGFloat(12)
+    private static let rowSpacing = CGFloat(6)
+    private static let sendButtonSize = CGFloat(24)
+    private static let statusHeight = CGFloat(16)
+    private static let composerInset = NSEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
+    private static let cascadeStep = CGFloat(26)
+    private static let cascadeCount = CGFloat(6)
+    private static let sendImage = NSImage.templateSymbol("arrow.up.circle.fill", 17)
+    private static let stopImage = NSImage.templateSymbol("stop.circle.fill", 17)
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { false }
+    private let session = ChatSession()
+    private let scrollView = NSScrollView()
+    private let transcriptView = ChatTranscriptView()
+    private let composer = ChatComposerView()
+    private let composerScrollView = NSScrollView()
+    private let statusLabel = NSTextField(labelWithString: "")
+    private let spinner = NSProgressIndicator()
+    private let sendButton = NSButton()
+    private weak var answerView: ChatMessageView?
+    /// the transcript follows new text only while the reader hasn't scrolled up to look at something
+    private var stickToBottom = true
+    /// what the send button is currently showing, which leads the session: an exchange is set up before it starts
+    private var isStreaming = false
+
+    static func start(_ prompt: String) {
+        let panel = ChatPanel()
+        panels.append(panel)
+        panel.show()
+        panel.submit(prompt)
+    }
+
+    convenience init() {
+        self.init(contentRect: NSRect(origin: .zero, size: Self.defaultSize),
+                  styleMask: [.titled, .closable, .resizable, .utilityWindow],
+                  backing: .buffered, defer: false)
+        delegate = self
+        isFloatingPanel = true
+        level = .floating
+        // staying up while another app is in front is the point of the window; it's a reference, not a destination
+        hidesOnDeactivate = false
+        collectionBehavior = [.fullScreenAuxiliary]
+        isReleasedWhenClosed = false
+        title = NSLocalizedString("Ask AI", comment: "")
+        minSize = NSSize(width: 340, height: 260)
+        configureTranscript()
+        configureComposer()
+        configureStatus()
+        configureTitlebarAccessory()
+        let content = ChatContentView()
+        content.onLayout = { [weak self] in self?.layoutContents() }
+        content.setSubviews([scrollView, spinner, statusLabel, composerScrollView, sendButton])
+        contentView = content
+    }
+
+    @objc func copyTranscript() {
+        let transcript = session.transcript()
+        Logger.info { "\(transcript.count) characters" }
+        guard !transcript.isEmpty else { return }
+        NSPasteboard.copy(transcript)
+    }
+
+    private func show() {
+        NSScreen.updatePreferred()
+        positionOnPreferredScreen()
+        App.shared.activate(ignoringOtherApps: true)
+        makeKeyAndOrderFront(nil)
+        makeFirstResponder(composer)
+    }
+
+    private func submit(_ prompt: String) {
+        let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !session.isStreaming else { return }
+        if session.messages.isEmpty {
+            title = String(trimmed.prefix(60))
+        }
+        // setting `string` doesn't go through didChangeText, so the composer has to be re-measured by hand
+        composer.string = ""
+        contentView?.needsLayout = true
+        appendMessage(.user).setText(trimmed)
+        let answerView = appendMessage(.assistant)
+        self.answerView = answerView
+        setStreaming(true)
+        setStatus(NSLocalizedString("Thinking…", comment: ""), isError: false)
+        session.send(trimmed) { [weak self, weak answerView] event in
+            switch event {
+                // the only event off the main queue: it lands in the message's buffer and is drawn on the next frame
+                case .text(let delta): answerView?.appendStreamedText(delta)
+                case .status(let line): self?.setStatus(line)
+                case .finished(let answer): self?.endExchange(answer, nil)
+                case .failed(let message): self?.endExchange(nil, message)
+            }
+        }
+    }
+
+    /// a failure that arrives after some text keeps that text, so the answer view is finalised either way
+    private func endExchange(_ answer: String?, _ error: String?) {
+        if let error { Logger.error { error } }
+        setStreaming(false)
+        setStatus(error, isError: error != nil)
+        makeFirstResponder(composer)
+        guard let answerView else { return }
+        self.answerView = nil
+        let final = answer ?? answerView.text
+        guard !final.isEmpty else {
+            transcriptView.remove(answerView)
+            return
+        }
+        answerView.endStreaming(final)
+    }
+
+    private func appendMessage(_ role: ChatMessage.Role) -> ChatMessageView {
+        let messageView = ChatMessageView(role)
+        messageView.onContentChanged = { [weak self] in self?.transcriptDidChange() }
+        messageView.onTypedInto = { [weak self] event in self?.focusComposer(event) }
+        transcriptView.append(messageView)
+        stickToBottom = true
+        return messageView
+    }
+
+    private func transcriptDidChange() {
+        stickToBottom = stickToBottom || isScrolledToBottom()
+        transcriptView.needsLayout = true
+    }
+
+    private func isScrolledToBottom() -> Bool {
+        let visible = scrollView.contentView.documentVisibleRect
+        return visible.maxY >= transcriptView.bounds.height - 8
+    }
+
+    /// laying out doesn't move the transcript on its own, and scrolling to where we already are would round-trip
+    /// back through the clip view's bounds notification for nothing
+    private func scrollToBottom() {
+        let offset = max(0, transcriptView.bounds.height - scrollView.contentView.bounds.height)
+        guard abs(scrollView.contentView.bounds.origin.y - offset) > 0.5 else { return }
+        scrollView.contentView.scroll(to: NSPoint(x: 0, y: offset))
+        scrollView.reflectScrolledClipView(scrollView.contentView)
+    }
+
+    private func setStreaming(_ isStreaming: Bool) {
+        self.isStreaming = isStreaming
+        sendButton.image = isStreaming ? Self.stopImage : Self.sendImage
+        sendButton.toolTip = isStreaming
+            ? NSLocalizedString("Stop", comment: "")
+            : NSLocalizedString("Send", comment: "")
+        if isStreaming {
+            spinner.startAnimation(nil)
+        } else {
+            spinner.stopAnimation(nil)
+        }
+        refreshSendEnabled()
+    }
+
+    /// the only part of the send button that follows the composer rather than the exchange, so it is the only part
+    /// a keystroke touches
+    private func refreshSendEnabled() {
+        sendButton.isEnabled = isStreaming || composer.string.contains { !$0.isWhitespace }
+    }
+
+    private func setStatus(_ text: String?, isError: Bool = false) {
+        let wasVisible = !statusLabel.isHidden
+        statusLabel.stringValue = text ?? ""
+        statusLabel.textColor = isError ? .systemRed : .secondaryLabelColor
+        statusLabel.isHidden = text == nil
+        spinner.isHidden = text == nil || isError
+        if wasVisible != !statusLabel.isHidden {
+            contentView?.needsLayout = true
+        }
+    }
+
+    @objc private func sendButtonPressed() {
+        if session.isStreaming {
+            session.cancel()
+        } else {
+            submit(composer.string)
+        }
+    }
+
+    private func focusComposer(_ event: NSEvent?) {
+        makeFirstResponder(composer)
+        guard let event else { return }
+        composer.keyDown(with: event)
+    }
+
+    private func layoutContents() {
+        guard let content = contentView else { return }
+        let width = content.bounds.width
+        let composerWidth = width - Self.padding * 2 - Self.sendButtonSize - Self.rowSpacing
+        let insetHeight = Self.composerInset.top + Self.composerInset.bottom
+        let composerHeight = composer.heightThatFits(composerWidth - Self.composerInset.left - Self.composerInset.right) + insetHeight
+        let rowHeight = max(composerHeight, Self.sendButtonSize)
+        var y = Self.padding
+        composerScrollView.frame = NSRect(x: Self.padding, y: y + (rowHeight - composerHeight) * 0.5,
+                                          width: composerWidth, height: composerHeight)
+        sendButton.frame = NSRect(x: width - Self.padding - Self.sendButtonSize, y: y + (rowHeight - Self.sendButtonSize) * 0.5,
+                                  width: Self.sendButtonSize, height: Self.sendButtonSize)
+        y += rowHeight + Self.rowSpacing
+        if !statusLabel.isHidden {
+            spinner.frame = NSRect(x: Self.padding, y: y, width: Self.statusHeight, height: Self.statusHeight)
+            let labelX = spinner.isHidden ? Self.padding : Self.padding + Self.statusHeight + 5
+            statusLabel.frame = NSRect(x: labelX, y: y, width: max(0, width - labelX - Self.padding), height: Self.statusHeight)
+            y += Self.statusHeight + Self.rowSpacing
+        }
+        scrollView.frame = NSRect(x: Self.padding, y: y, width: width - Self.padding * 2,
+                                  height: max(0, content.bounds.height - y - Self.padding))
+        // the transcript sizes itself to the clip view it sits in, so a new scroll view width has to re-wrap it
+        transcriptView.needsLayout = true
+    }
+
+    private func positionOnPreferredScreen() {
+        let screenFrame = NSScreen.preferred.visibleFrame
+        let step = CGFloat(Self.panels.count - 1).truncatingRemainder(dividingBy: Self.cascadeCount) * Self.cascadeStep
+        let x = (screenFrame.midX - frame.width * 0.5 + step).rounded()
+        let y = (screenFrame.midY - frame.height * 0.5 - step).rounded()
+        setFrameOrigin(NSPoint(x: min(x, screenFrame.maxX - frame.width), y: max(y, screenFrame.minY)))
+    }
+
+    private func configureTranscript() {
+        scrollView.contentView = ChatClipView()
+        scrollView.documentView = transcriptView
+        scrollView.drawsBackground = false
+        scrollView.hasVerticalScroller = true
+        scrollView.autohidesScrollers = true
+        scrollView.scrollerStyle = .overlay
+        transcriptView.onLaidOut = { [weak self] in
+            guard let self, self.stickToBottom else { return }
+            self.scrollToBottom()
+        }
+        NotificationCenter.default.addObserver(self, selector: #selector(transcriptScrolled),
+                                               name: NSView.boundsDidChangeNotification, object: scrollView.contentView)
+        scrollView.contentView.postsBoundsChangedNotifications = true
+    }
+
+    private func configureComposer() {
+        composer.placeholder = NSLocalizedString("Ask a follow-up…", comment: "")
+        composer.onSubmit = { [weak self] in self?.submit(self?.composer.string ?? "") }
+        composer.onCancel = { [weak self] in self?.session.cancel() }
+        composer.onTextChanged = { [weak self] in
+            guard let self else { return }
+            refreshSendEnabled()
+            contentView?.needsLayout = true
+        }
+        composerScrollView.documentView = composer
+        composerScrollView.drawsBackground = false
+        composerScrollView.hasVerticalScroller = false
+        composerScrollView.automaticallyAdjustsContentInsets = false
+        composerScrollView.contentInsets = Self.composerInset
+        composerScrollView.wantsLayer = true
+        composerScrollView.layer!.cornerRadius = 8
+        composerScrollView.layer!.borderWidth = 1
+        composerScrollView.layer!.borderColor = NSColor.separatorColor.cgColor
+        sendButton.image = Self.sendImage
+        sendButton.imagePosition = .imageOnly
+        sendButton.isBordered = false
+        sendButton.contentTintColor = .systemAccentColor
+        sendButton.isEnabled = false
+        sendButton.target = self
+        sendButton.action = #selector(sendButtonPressed)
+    }
+
+    private func configureStatus() {
+        statusLabel.font = .systemFont(ofSize: 11)
+        statusLabel.textColor = .secondaryLabelColor
+        statusLabel.lineBreakMode = .byTruncatingTail
+        statusLabel.isHidden = true
+        spinner.style = .spinning
+        spinner.controlSize = .small
+        spinner.isDisplayedWhenStopped = false
+        spinner.isHidden = true
+    }
+
+    private func configureTitlebarAccessory() {
+        let button = NSButton(title: NSLocalizedString("Copy transcript", comment: ""), target: self, action: #selector(copyTranscript))
+        button.bezelStyle = .accessoryBarAction
+        button.controlSize = .small
+        button.keyEquivalent = "c"
+        button.keyEquivalentModifierMask = [.command, .shift]
+        button.frame = NSRect(x: 0, y: 3, width: 122, height: 20)
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 130, height: 26))
+        container.addSubview(button)
+        let accessory = NSTitlebarAccessoryViewController()
+        accessory.view = container
+        accessory.layoutAttribute = .right
+        addTitlebarAccessoryViewController(accessory)
+    }
+
+    @objc private func transcriptScrolled() {
+        stickToBottom = isScrolledToBottom()
+    }
+}
+
+extension ChatPanel: NSWindowDelegate {
+    func windowWillClose(_ notification: Notification) {
+        Logger.info { "" }
+        session.cancel()
+        transcriptView.teardown()
+        NotificationCenter.default.removeObserver(self)
+        Self.panels.removeAll { $0 === self }
+    }
+}
+
+/// the window's contents are laid out by hand in `layout`, which runs when the view is marked as needing it.
+/// a frame change doesn't mark it, so a resized window would otherwise keep the layout it was first shown with
+private class ChatContentView: NSView {
+    var onLayout: (() -> Void)?
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        needsLayout = true
+    }
+
+    override func layout() {
+        super.layout()
+        onLayout?()
+    }
+}

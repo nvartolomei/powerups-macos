@@ -45,6 +45,10 @@ class Preferences {
             "preventSleepWhilePluggedIn": "false",
             "preventSleepBatteryCutoffEnabled": "true",
             "preventSleepBatteryCutoff": String(SleepPreventionTestable.defaultCutoff),
+            "llmEndpoint": LLMClient.defaultEndpoint,
+            "llmModel": LLMClient.defaultModel,
+            "llmFormat": LLMFormatPreference.messages.indexAsString,
+            "llmWebSearch": "true",
         ]
         (0..<maxShortcutCount).forEach { index in
             values[indexToName("holdShortcut", index)] = defaultShortcut("⌥")
@@ -113,6 +117,10 @@ class Preferences {
     static var preventSleepWhilePluggedIn: Bool { CachedUserDefaults.bool("preventSleepWhilePluggedIn") }
     static var preventSleepBatteryCutoffEnabled: Bool { CachedUserDefaults.bool("preventSleepBatteryCutoffEnabled") }
     static var preventSleepBatteryCutoff: Int { CachedUserDefaults.int("preventSleepBatteryCutoff") }
+    static var llmEndpoint: String { CachedUserDefaults.string("llmEndpoint") }
+    static var llmModel: String { CachedUserDefaults.string("llmModel") }
+    static var llmFormat: LLMFormatPreference { CachedUserDefaults.macroPref("llmFormat", LLMFormatPreference.allCases) }
+    static var llmWebSearch: Bool { CachedUserDefaults.bool("llmWebSearch") }
 
     // macro values
     static var appearanceSize: AppearanceSizePreference { CachedUserDefaults.macroPref("appearanceSize", AppearanceSizePreference.allCases) }

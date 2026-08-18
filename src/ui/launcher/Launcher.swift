@@ -46,18 +46,18 @@ class Launcher {
         guard !trimmed.isEmpty else { return [] }
         // a calculation is a self-contained answer, so it stands alone without the search fallback
         if let calculation = LauncherCalculator.evaluate(query) { return [.calculation(calculation)] }
-        // a Google search of the raw query is otherwise offered last, so any query has a usable action
-        let googleSearch = LauncherResult.googleSearch(trimmed)
+        // the two things any query can always do; in a fixed order, so the rows don't move around under the cursor
+        let fallbacks = [LauncherResult.prompt(trimmed), LauncherResult.googleSearch(trimmed)]
         let normalized = LauncherSearch.normalizedQuery(query)
         let matches = normalized.isEmpty ? [] : ranked(appsCache, normalized, LauncherResult.app) + ranked(LauncherCommands.all, normalized, LauncherResult.command) + ranked(LauncherVSCodeRecents.all, normalized, LauncherResult.vscodeRecent)
-        // reserve the last slot for the Google search so it stays visible even when matches fill the list
+        // reserve the last slots for the fallbacks so they stay visible even when matches fill the list
         let top = matches
             .sorted { $0.rank == $1.rank ? $0.result.name.localizedCaseInsensitiveCompare($1.result.name) == .orderedAscending : $0.rank < $1.rank }
-            .prefix(maxResults - 1)
+            .prefix(maxResults - fallbacks.count)
             .map { $0.result }
         // a pasted unix timestamp gets a passive date row above the search results it could still be a query for
         let timestamp = LauncherCalculator.timestamp(trimmed).map { [LauncherResult.calculation($0)] } ?? []
-        return timestamp + top + [googleSearch]
+        return timestamp + top + fallbacks
     }
 
     static func activate(_ result: LauncherResult) {
@@ -67,6 +67,7 @@ class Launcher {
         case .command(let command): run(command)
         case .vscodeRecent(let recent): openRecent(recent)
         case .googleSearch(let query): search(query)
+        case .prompt(let query): prompt(query)
         }
     }
 
@@ -87,8 +88,7 @@ class Launcher {
     private static func copyToClipboard(_ text: String) {
         Logger.info { text }
         hide()
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(text, forType: .string)
+        NSPasteboard.copy(text)
     }
 
     private static func run(_ command: LauncherCommand) {
@@ -106,6 +106,13 @@ class Launcher {
     /// percent-encoding set for a search query: RFC 3986 unreserved ASCII only, so "&", "+", spaces, and
     /// non-ASCII characters all encode rather than alter the resulting URL
     private static let searchQueryAllowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+
+    /// each question opens its own window, so asking again doesn't disturb an answer that is still being read
+    private static func prompt(_ query: String) {
+        Logger.info { query }
+        hide()
+        ChatPanel.start(query)
+    }
 
     private static func search(_ query: String) {
         Logger.info { query }
@@ -202,9 +209,12 @@ enum LauncherResult {
     case vscodeRecent(LauncherRecent)
     /// the raw query offered as a fallback; activating it searches Google for it in the default browser
     case googleSearch(String)
+    /// the raw query offered as a fallback; activating it asks the model in a new chat window
+    case prompt(String)
 
     /// the full-colour Google "G" shown on the always-last Google search row; not a template, so it keeps its colours
     static let googleIcon = NSImage(named: "google-search") ?? LauncherCommand.symbolIcon("magnifyingglass")
+    static let promptIcon = LauncherCommand.symbolIcon("sparkles")
 
     /// the row's display name; also the tie-break key when two results share a match rank
     var name: String {
@@ -214,6 +224,7 @@ enum LauncherResult {
         case .command(let command): return command.name
         case .vscodeRecent(let recent): return recent.name
         case .googleSearch(let query): return query
+        case .prompt(let query): return query
         }
     }
 
@@ -226,6 +237,7 @@ enum LauncherResult {
         // the "VSCode:" prefix in the name already names the provenance, so no separate right-side hint
         case .vscodeRecent: return nil
         case .googleSearch: return NSLocalizedString("Search with Google", comment: "")
+        case .prompt: return NSLocalizedString("Ask AI", comment: "")
         }
     }
 }

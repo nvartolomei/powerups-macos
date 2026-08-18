@@ -9,6 +9,7 @@ A macOS productivity toolkit built for one person. Fork it, point an AI agent at
   - **Calculator** — arithmetic, units, unix timestamps, bitshifts.
   - **Actions** — dark/light mode, audio output switching, keep awake.
   - **Search sources** — System Settings panes, VS Code recent folders, web search fallback.
+  - **Ask AI** — send the query to a model and read the streamed answer in a small floating window, with follow-ups. Endpoint, model, API format (`/v1/messages`, `/v1/responses`, or `/v1/chat/completions`), web search, and API key are set in Settings → AI; the key is kept in the keychain.
 - **Keep awake** — hold off sleep indefinitely, for a set time, or while plugged in, with a low-battery cutoff.
 - **Markdown Quick Look** — a Quick Look extension that renders Markdown files with a proper preview.
 
