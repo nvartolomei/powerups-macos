@@ -14,13 +14,20 @@ class ChatPanel: NSPanel {
     private static let cascadeCount = CGFloat(6)
     private static let sendImage = NSImage.templateSymbol("arrow.up.circle.fill", 17)
     private static let stopImage = NSImage.templateSymbol("stop.circle.fill", 17)
+    private static let copyImage = NSImage.templateSymbol("doc.on.doc", 13)
+    private static let copyButtonSize = NSSize(width: 24, height: 20)
+    private static let buttonMargin = CGFloat(2)
+    private static let titlebarInset = CGFloat(9)
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
     private let session = ChatSession()
+    private let glassView = LiquidGlassEffectView(nil)
+    private let content = ChatContentView()
     private let scrollView = NSScrollView()
+    private lazy var transcriptFade = ChatTranscriptFadeView(scrollView)
     private let transcriptView = ChatTranscriptView()
     private let composer = ChatComposerView()
-    private let composerScrollView = NSScrollView()
+    private let composerScrollView = ChatComposerScrollView()
     private let statusLabel = NSTextField(labelWithString: "")
     private let spinner = NSProgressIndicator()
     private let sendButton = NSButton()
@@ -39,7 +46,7 @@ class ChatPanel: NSPanel {
 
     convenience init() {
         self.init(contentRect: NSRect(origin: .zero, size: Self.defaultSize),
-                  styleMask: [.titled, .closable, .resizable, .utilityWindow],
+                  styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                   backing: .buffered, defer: false)
         delegate = self
         isFloatingPanel = true
@@ -54,10 +61,24 @@ class ChatPanel: NSPanel {
         configureComposer()
         configureStatus()
         configureTitlebarAccessory()
-        let content = ChatContentView()
+        configureGlass()
+        configureContent()
+    }
+
+    private func configureGlass() {
+        titlebarAppearsTransparent = true
+        titlebarSeparatorStyle = .none
+        isOpaque = false
+        backgroundColor = .clear
+        glassView.cornerRadius = 0
+    }
+
+    private func configureContent() {
         content.onLayout = { [weak self] in self?.layoutContents() }
-        content.setSubviews([scrollView, spinner, statusLabel, composerScrollView, sendButton])
-        contentView = content
+        content.setSubviews([transcriptFade, spinner, statusLabel, composerScrollView, sendButton])
+        content.autoresizingMask = [.width, .height]
+        glassView.setContent(content)
+        contentView = glassView
     }
 
     @objc func copyTranscript() {
@@ -83,7 +104,7 @@ class ChatPanel: NSPanel {
         }
         // setting `string` doesn't go through didChangeText, so the composer has to be re-measured by hand
         composer.string = ""
-        contentView?.needsLayout = true
+        content.needsLayout = true
         appendMessage(.user).setText(trimmed)
         let answerView = appendMessage(.assistant)
         self.answerView = answerView
@@ -128,6 +149,7 @@ class ChatPanel: NSPanel {
     private func transcriptDidChange() {
         stickToBottom = stickToBottom || isScrolledToBottom()
         transcriptView.needsLayout = true
+        transcriptFade.updateFade()
     }
 
     private func isScrolledToBottom() -> Bool {
@@ -171,7 +193,7 @@ class ChatPanel: NSPanel {
         statusLabel.isHidden = text == nil
         spinner.isHidden = text == nil || isError
         if wasVisible != !statusLabel.isHidden {
-            contentView?.needsLayout = true
+            content.needsLayout = true
         }
     }
 
@@ -190,26 +212,37 @@ class ChatPanel: NSPanel {
     }
 
     private func layoutContents() {
-        guard let content = contentView else { return }
+        let composerTop = layoutComposerRow()
+        let transcriptBottom = statusLabel.isHidden ? composerTop : layoutStatusRow(composerTop)
+        layoutTranscript(transcriptBottom)
+    }
+
+    private func layoutComposerRow() -> CGFloat {
         let width = content.bounds.width
         let composerWidth = width - Self.padding * 2 - Self.sendButtonSize - Self.rowSpacing
         let insetHeight = Self.composerInset.top + Self.composerInset.bottom
         let composerHeight = composer.heightThatFits(composerWidth - Self.composerInset.left - Self.composerInset.right) + insetHeight
         let rowHeight = max(composerHeight, Self.sendButtonSize)
-        var y = Self.padding
-        composerScrollView.frame = NSRect(x: Self.padding, y: y + (rowHeight - composerHeight) * 0.5,
+        composerScrollView.frame = NSRect(x: Self.padding, y: Self.padding + (rowHeight - composerHeight) * 0.5,
                                           width: composerWidth, height: composerHeight)
-        sendButton.frame = NSRect(x: width - Self.padding - Self.sendButtonSize, y: y + (rowHeight - Self.sendButtonSize) * 0.5,
+        sendButton.frame = NSRect(x: width - Self.padding - Self.sendButtonSize,
+                                  y: Self.padding + (rowHeight - Self.sendButtonSize) * 0.5,
                                   width: Self.sendButtonSize, height: Self.sendButtonSize)
-        y += rowHeight + Self.rowSpacing
-        if !statusLabel.isHidden {
-            spinner.frame = NSRect(x: Self.padding, y: y, width: Self.statusHeight, height: Self.statusHeight)
-            let labelX = spinner.isHidden ? Self.padding : Self.padding + Self.statusHeight + 5
-            statusLabel.frame = NSRect(x: labelX, y: y, width: max(0, width - labelX - Self.padding), height: Self.statusHeight)
-            y += Self.statusHeight + Self.rowSpacing
-        }
-        scrollView.frame = NSRect(x: Self.padding, y: y, width: width - Self.padding * 2,
-                                  height: max(0, content.bounds.height - y - Self.padding))
+        return Self.padding + rowHeight
+    }
+
+    private func layoutStatusRow(_ y: CGFloat) -> CGFloat {
+        let top = y + Self.rowSpacing
+        spinner.frame = NSRect(x: Self.padding, y: top, width: Self.statusHeight, height: Self.statusHeight)
+        let labelX = spinner.isHidden ? Self.padding : Self.padding + Self.statusHeight + 5
+        let width = max(0, content.bounds.width - labelX - Self.padding)
+        statusLabel.frame = NSRect(x: labelX, y: top, width: width, height: Self.statusHeight)
+        return top + Self.statusHeight + Self.rowSpacing
+    }
+
+    private func layoutTranscript(_ y: CGFloat) {
+        let width = content.bounds.width - Self.padding * 2
+        transcriptFade.frame = NSRect(x: Self.padding, y: y, width: width, height: max(0, contentLayoutRect.maxY - y))
         // the transcript sizes itself to the clip view it sits in, so a new scroll view width has to re-wrap it
         transcriptView.needsLayout = true
     }
@@ -245,17 +278,13 @@ class ChatPanel: NSPanel {
         composer.onTextChanged = { [weak self] in
             guard let self else { return }
             refreshSendEnabled()
-            contentView?.needsLayout = true
+            content.needsLayout = true
         }
         composerScrollView.documentView = composer
         composerScrollView.drawsBackground = false
         composerScrollView.hasVerticalScroller = false
         composerScrollView.automaticallyAdjustsContentInsets = false
         composerScrollView.contentInsets = Self.composerInset
-        composerScrollView.wantsLayer = true
-        composerScrollView.layer!.cornerRadius = 8
-        composerScrollView.layer!.borderWidth = 1
-        composerScrollView.layer!.borderColor = NSColor.separatorColor.cgColor
         sendButton.image = Self.sendImage
         sendButton.imagePosition = .imageOnly
         sendButton.isBordered = false
@@ -266,7 +295,7 @@ class ChatPanel: NSPanel {
     }
 
     private func configureStatus() {
-        statusLabel.font = .systemFont(ofSize: 11)
+        statusLabel.font = .systemFont(ofSize: 12)
         statusLabel.textColor = .secondaryLabelColor
         statusLabel.lineBreakMode = .byTruncatingTail
         statusLabel.isHidden = true
@@ -277,13 +306,20 @@ class ChatPanel: NSPanel {
     }
 
     private func configureTitlebarAccessory() {
-        let button = NSButton(title: NSLocalizedString("Copy transcript", comment: ""), target: self, action: #selector(copyTranscript))
-        button.bezelStyle = .accessoryBarAction
-        button.controlSize = .small
+        let button = NSButton()
+        button.target = self
+        button.action = #selector(copyTranscript)
+        button.image = Self.copyImage
+        button.isBordered = false
+        button.imagePosition = .imageOnly
+        button.contentTintColor = .secondaryLabelColor
+        button.toolTip = NSLocalizedString("Copy transcript (⇧⌘C)", comment: "")
         button.keyEquivalent = "c"
         button.keyEquivalentModifierMask = [.command, .shift]
-        button.frame = NSRect(x: 0, y: 3, width: 122, height: 20)
-        let container = NSView(frame: NSRect(x: 0, y: 0, width: 130, height: 26))
+        button.frame = NSRect(x: 0, y: Self.buttonMargin, width: Self.copyButtonSize.width, height: Self.copyButtonSize.height)
+        button.autoresizingMask = [.minYMargin, .maxYMargin]
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: Self.copyButtonSize.width + Self.titlebarInset,
+                                             height: Self.copyButtonSize.height + Self.buttonMargin * 2))
         container.addSubview(button)
         let accessory = NSTitlebarAccessoryViewController()
         accessory.view = container
@@ -293,6 +329,7 @@ class ChatPanel: NSPanel {
 
     @objc private func transcriptScrolled() {
         stickToBottom = isScrolledToBottom()
+        transcriptFade.updateFade()
     }
 }
 

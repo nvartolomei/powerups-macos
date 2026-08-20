@@ -1,11 +1,15 @@
 import Cocoa
 
+extension NSAttributedString.Key {
+    static let codeBlock = NSAttributedString.Key("chatCodeBlock")
+}
+
 /// renders the markdown that actually turns up in answers: fenced code, headers, lists, quotes, and inline styling.
 /// block structure is parsed here; the inside of a line is parsed by Foundation, so escapes and nested spans stay
 /// correct without hand-written scanning
 class ChatMarkdown {
     static let bodyFont = NSFont.systemFont(ofSize: bodyFontSize)
-    private static let bodyFontSize = CGFloat(13)
+    private static let bodyFontSize = CGFloat(14)
     private static let codeFont = NSFont.monospacedSystemFont(ofSize: bodyFontSize - 1, weight: .regular)
     private static let listIndent = CGFloat(16)
     private static let codeIndent = CGFloat(8)
@@ -26,7 +30,14 @@ class ChatMarkdown {
         $0.paragraphSpacing = 0
         $0.headIndent = codeIndent
         $0.firstLineHeadIndent = codeIndent
+        $0.tailIndent = -codeIndent
         $0.lineHeightMultiple = 1.1
+    }
+
+    static let codeBackgroundColor = NSColor(name: "chatCodeBackground") { appearance in
+        appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.09)
+            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.06)
     }
 
     /// unstyled text in the body font; what the answer is drawn with while it streams in
@@ -89,7 +100,7 @@ class ChatMarkdown {
             .font: codeFont,
             .foregroundColor: NSColor.labelColor,
             .paragraphStyle: codeStyle,
-            .backgroundColor: NSColor.textBackgroundColor.withAlphaComponent(0.6),
+            .codeBlock: true,
         ])
         code.append(NSAttributedString(string: "\n", attributes: [.font: NSFont.systemFont(ofSize: 4)]))
         return code
@@ -138,7 +149,7 @@ class ChatMarkdown {
         if intent.contains(.code) {
             text.addAttributes([
                 .font: NSFont.monospacedSystemFont(ofSize: font.pointSize - 1, weight: .regular),
-                .backgroundColor: NSColor.textBackgroundColor.withAlphaComponent(0.6),
+                .backgroundColor: codeBackgroundColor,
             ], range: range)
             return
         }
@@ -182,5 +193,33 @@ class ChatMarkdown {
         let style = NSMutableParagraphStyle()
         configure(style)
         return style
+    }
+}
+
+class ChatLayoutManager: NSLayoutManager {
+    private static let cornerRadius = CGFloat(6)
+    private static let verticalPadding = CGFloat(4)
+
+    override func drawBackground(forGlyphRange glyphsToShow: NSRange, at origin: NSPoint) {
+        fillCodeBlocks(origin)
+        super.drawBackground(forGlyphRange: glyphsToShow, at: origin)
+    }
+
+    private func fillCodeBlocks(_ origin: NSPoint) {
+        guard let textStorage, let container = textContainers.first else { return }
+        ChatMarkdown.codeBackgroundColor.setFill()
+        textStorage.enumerateAttribute(.codeBlock, in: NSRange(location: 0, length: textStorage.length)) { value, range, _ in
+            guard value != nil else { return }
+            let rect = blockRect(range, container, origin)
+            NSBezierPath(roundedRect: rect, xRadius: Self.cornerRadius, yRadius: Self.cornerRadius).fill()
+        }
+    }
+
+    private func blockRect(_ range: NSRange, _ container: NSTextContainer, _ origin: NSPoint) -> NSRect {
+        let glyphRange = glyphRange(forCharacterRange: range, actualCharacterRange: nil)
+        var rect = boundingRect(forGlyphRange: glyphRange, in: container)
+        rect.origin.x = 0
+        rect.size.width = container.size.width
+        return rect.insetBy(dx: 0, dy: -Self.verticalPadding).offsetBy(dx: origin.x, dy: origin.y)
     }
 }

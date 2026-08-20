@@ -1,5 +1,31 @@
 import Cocoa
 
+class ChatComposerScrollView: NSScrollView {
+    private static let cornerRadius = CGFloat(12)
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer!.cornerRadius = Self.cornerRadius
+        layer!.cornerCurve = .continuous
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("Class only supports programmatic initialization")
+    }
+
+    override var wantsUpdateLayer: Bool { true }
+
+    override func updateLayer() {
+        layer!.backgroundColor = NSColor.tertiarySystemFill.cgColor
+    }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        needsDisplay = true
+    }
+}
+
 /// the input field: it grows with the text up to a few lines, then scrolls. return sends, shift-return breaks a line
 class ChatComposerView: NSTextView {
     private static let maximumLines = 6

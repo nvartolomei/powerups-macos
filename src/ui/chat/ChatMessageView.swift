@@ -22,13 +22,14 @@ class ChatMessageView: NSView {
     private var pending = ""
     private var isRenderLinkRunning = false
     private(set) var text = ""
+    private var padding: NSSize { role == .user ? Self.bubblePadding : Self.plainPadding }
     var onContentChanged: (() -> Void)?
     var onTypedInto: ((NSEvent) -> Void)?
 
     init(_ role: ChatMessage.Role) {
         self.role = role
         let storage = NSTextStorage()
-        let manager = NSLayoutManager()
+        let manager = ChatLayoutManager()
         let container = NSTextContainer(size: NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude))
         container.lineFragmentPadding = 0
         manager.addTextContainer(container)
@@ -42,7 +43,8 @@ class ChatMessageView: NSView {
         super.init(frame: .zero)
         configureTextView()
         wantsLayer = true
-        layer!.cornerRadius = 10
+        layer!.cornerRadius = 14
+        layer!.cornerCurve = .continuous
         layer!.backgroundColor = role == .user ? Appearance.highlightFocusedBackgroundColor.cgColor : NSColor.clear.cgColor
     }
 
@@ -85,7 +87,6 @@ class ChatMessageView: NSView {
 
     /// lays the message out within `maxWidth` and reports the size it needs; a user message hugs its text
     func layoutContent(_ maxWidth: CGFloat) -> NSSize {
-        let padding = role == .user ? Self.bubblePadding : Self.plainPadding
         let widthLimit = role == .user ? (maxWidth * Self.maxUserWidthRatio).rounded() : maxWidth
         let availableWidth = max(1, widthLimit - padding.width * 2)
         textContainer.size = NSSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
@@ -94,7 +95,7 @@ class ChatMessageView: NSView {
         let textWidth = role == .user ? min(ceil(widthInUse()), availableWidth) : availableWidth
         let textHeight = ceil(used.height)
         let size = NSSize(width: textWidth + padding.width * 2, height: textHeight + padding.height * 2)
-        textView.frame = NSRect(x: padding.width, y: padding.height, width: textWidth, height: textHeight)
+        textView.frame = NSRect(origin: .zero, size: size)
         return size
     }
 
@@ -150,7 +151,7 @@ class ChatMessageView: NSView {
         textView.isEditable = false
         textView.isSelectable = true
         textView.drawsBackground = false
-        textView.textContainerInset = .zero
+        textView.textContainerInset = padding
         textView.isVerticallyResizable = false
         textView.isHorizontallyResizable = false
         textView.onTypingKey = { [weak self] event in self?.onTypedInto?(event) }
