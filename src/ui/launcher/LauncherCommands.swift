@@ -9,7 +9,9 @@ class LauncherCommands {
         LauncherCommand(NSLocalizedString("Output: AirPods", comment: ""), { AudioOutput.route(to: "AirPods") }, icon: LauncherCommand.symbolIcon("airpods")),
         LauncherCommand(NSLocalizedString("Output: MacBook Speakers", comment: ""), { AudioOutput.route(to: "MacBook") }, icon: LauncherCommand.symbolIcon("speaker.wave.2.fill")),
         LauncherCommand(NSLocalizedString("Prevent Sleep", comment: ""), { PreventSleepCommands.start(nil, SleepPrevention.configuredCutoff) }, icon: LauncherCommand.symbolIcon("cup.and.saucer.fill")),
-        LauncherCommand(NSLocalizedString("Prevent Sleep for 30m", comment: ""), { PreventSleepCommands.startPreset() }, icon: LauncherCommand.symbolIcon("timer")),
+        LauncherCommand(String(format: NSLocalizedString("Prevent Sleep for %dm", comment: "Launcher command. %d is a number of minutes"), SleepPrevention.presetMinutes),
+                        { PreventSleepCommands.startPreset() }, icon: LauncherCommand.symbolIcon("timer")),
+        LauncherCommand(NSLocalizedString("Prevent Sleep for…", comment: "Launcher command"), { PreventSleepPrompt.show() }, icon: LauncherCommand.symbolIcon("hourglass")),
         LauncherCommand(NSLocalizedString("Allow Sleep", comment: ""), { PreventSleepCommands.stop() }, icon: LauncherCommand.symbolIcon("moon.zzz.fill")),
     ]
 }
