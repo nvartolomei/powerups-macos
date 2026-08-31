@@ -6,6 +6,7 @@ class MainMenu {
     private static var mainMenu: NSMenu!
     private static var menuItemsWithShortcut = [NSMenuItem: String]()
     private static var editMenuItems = Set<NSMenuItem>()
+    private static let windowMenuDelegate = WindowMenuDelegate()
 
     static func create() {
         mainMenu = NSMenu(title: "Main Menu")
@@ -54,6 +55,8 @@ class MainMenu {
 
     private static func appMenuItem() -> NSMenuItem {
         let menu = NSMenu(title: App.name)
+        menu.addItem(item("About \(App.name)", "showAboutWindow", target: App.self))
+        menu.addItem(.separator())
         menu.addItem(item("Preferences…", "orderFrontPreferencesPanel:", ","))
         menu.addItem(.separator())
         let servicesItem = NSMenuItem(title: "Services", action: nil, keyEquivalent: "")
@@ -62,6 +65,8 @@ class MainMenu {
         NSApp.servicesMenu = servicesMenu
         menu.addItem(servicesItem)
         menu.addItem(.separator())
+        menu.addItem(item("Hide \(App.name)", "hide:", "h"))
+        menu.addItem(item("Hide Others", "hideOtherApplications:", "h", [.option, .command]))
         menu.addItem(item("Show All", "unhideAllApplications:"))
         menu.addItem(.separator())
         menu.addItem(item("Quit \(App.name)", "terminate:", "q"))
@@ -240,8 +245,10 @@ class MainMenu {
         let menu = NSMenu(title: "Window")
         menu.addItem(item("Minimize", "performMiniaturize:", "m"))
         menu.addItem(item("Zoom", "performZoom:"))
+        menu.addItem(item("Float on Top", "toggleFloatOnTop:", "t", [.control, .command]))
         menu.addItem(.separator())
         menu.addItem(item("Bring All to Front", "arrangeInFront:"))
+        menu.delegate = windowMenuDelegate
         NSApp.windowsMenu = menu
         return menuBarItem(menu)
     }
@@ -278,5 +285,14 @@ class MainMenu {
         let item = self.item(title, action, key, modifiers, target: target)
         item.tag = tag
         return item
+    }
+}
+
+/// AppKit enables the toggle on its own, by finding a window that takes it; the check mark is ours to keep in sync
+/// with whichever window that is
+private class WindowMenuDelegate: NSObject, NSMenuDelegate {
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        guard let item = menu.items.first(where: { $0.action == #selector(ChatWindow.toggleFloatOnTop(_:)) }) else { return }
+        item.state = (NSApp.keyWindow as? ChatWindow)?.isFloating == true ? .on : .off
     }
 }

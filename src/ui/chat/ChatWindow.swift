@@ -1,9 +1,9 @@
 import Cocoa
 
-/// a conversation window. every question from the launcher opens its own, and they float above other apps without
-/// pulling focus back when you return to what you were doing
-class ChatPanel: NSPanel {
-    private static var panels = [ChatPanel]()
+/// a conversation window. every question from the launcher opens its own, floating above other apps by default so it
+/// stays readable while you work; each window can be turned into an ordinary one that sits in the normal window order
+class ChatWindow: NSWindow {
+    private static var windows = [ChatWindow]()
     private static let defaultSize = NSSize(width: 470, height: 430)
     private static let padding = CGFloat(12)
     private static let rowSpacing = CGFloat(6)
@@ -15,10 +15,12 @@ class ChatPanel: NSPanel {
     private static let sendImage = NSImage.templateSymbol("arrow.up.circle.fill", 17)
     private static let stopImage = NSImage.templateSymbol("stop.circle.fill", 17)
     private static let copyImage = NSImage.templateSymbol("doc.on.doc", 13)
-    private static let copyButtonSize = NSSize(width: 24, height: 20)
+    private static let floatingImage = NSImage.templateSymbol("pin.fill", 13)
+    private static let regularImage = NSImage.templateSymbol("pin.slash", 13)
+    private static let titlebarButtonSize = NSSize(width: 24, height: 20)
     private static let buttonMargin = CGFloat(2)
     private static let titlebarInset = CGFloat(9)
-    private static let titlebarAccessoryWidth = copyButtonSize.width + titlebarInset
+    private static let titlebarAccessoryWidth = titlebarButtonSize.width * 2 + titlebarInset
     private static let titleFont = NSFont.titleBarFont(ofSize: NSFont.systemFontSize)
     /// measured on macOS 26: the title starts 13pt past the zoom button. the trailing gap is the clear space the
     /// ellipsis leaves before the copy button
@@ -26,7 +28,11 @@ class ChatPanel: NSPanel {
     private static let titleTrailingGap = CGFloat(8)
     private static let ellipsis = "…"
     override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { false }
+    override var canBecomeMain: Bool { !isFloating }
+    /// floating windows stay above other apps and out of everything that lists windows; a regular one takes its place
+    /// in the normal window order, which is also what earns the app a menu bar and a Dock icon
+    private(set) var isFloating = true
+    private let floatButton = NSButton()
     private let session = ChatSession()
     private let glassView = LiquidGlassEffectView(nil)
     private let content = ChatContentView()
@@ -49,10 +55,10 @@ class ChatPanel: NSPanel {
     private var isStreaming = false
 
     static func start(_ prompt: String) {
-        let panel = ChatPanel()
-        panels.append(panel)
-        panel.show()
-        panel.submit(prompt)
+        let window = ChatWindow()
+        windows.append(window)
+        window.show()
+        window.submit(prompt)
     }
 
     convenience init() {
@@ -60,11 +66,8 @@ class ChatPanel: NSPanel {
                   styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                   backing: .buffered, defer: false)
         delegate = self
-        isFloatingPanel = true
-        level = .floating
-        // staying up while another app is in front is the point of the window; it's a reference, not a destination
+        // staying up while another app is in front is the point of a floating window; it's a reference, not a destination
         hidesOnDeactivate = false
-        collectionBehavior = [.fullScreenAuxiliary]
         isReleasedWhenClosed = false
         updateTitle(NSLocalizedString("Ask AI", comment: ""))
         minSize = NSSize(width: 340, height: 260)
@@ -74,6 +77,45 @@ class ChatPanel: NSPanel {
         configureTitlebarAccessory()
         configureGlass()
         configureContent()
+        applyFloating()
+    }
+
+    @objc func toggleFloatOnTop(_ sender: Any?) {
+        isFloating = !isFloating
+        Logger.info { "isFloating:\(self.isFloating)" }
+        applyFloating()
+        Self.refreshActivationPolicy()
+        App.shared.activate(ignoringOtherApps: true)
+        makeKeyAndOrderFront(nil)
+    }
+
+    private func applyFloating() {
+        level = isFloating ? .floating : .normal
+        collectionBehavior = isFloating ? [.fullScreenAuxiliary] : [.fullScreenPrimary]
+        isExcludedFromWindowsMenu = isFloating
+        // window switchers list windows by their accessibility subrole; a floating helper has no place in that list
+        setAccessibilitySubrole(isFloating ? .floatingWindow : .standardWindow)
+        styleMask = isFloating ? styleMask.subtracting(.miniaturizable) : styleMask.union(.miniaturizable)
+        updateFloatButton()
+        // the traffic lights just gained or lost a button, so the title has a different width to fit into
+        updateTitle(fullTitle)
+    }
+
+    private func updateFloatButton() {
+        floatButton.image = isFloating ? Self.floatingImage : Self.regularImage
+        floatButton.contentTintColor = isFloating ? .secondaryLabelColor : .tertiaryLabelColor
+        floatButton.toolTip = isFloating
+            ? NSLocalizedString("Stop floating on top (⌃⌘T)", comment: "")
+            : NSLocalizedString("Float on top (⌃⌘T)", comment: "")
+    }
+
+    /// an accessory app has no menu bar and no Dock icon of its own. a window that is meant to behave like any other
+    /// app's window needs both, so the policy follows whether any conversation is still asking for it
+    private static func refreshActivationPolicy() {
+        let policy: NSApplication.ActivationPolicy = windows.contains { !$0.isFloating } ? .regular : .accessory
+        guard App.shared.activationPolicy() != policy else { return }
+        Logger.info { "\(policy == .regular ? "regular" : "accessory")" }
+        App.shared.setActivationPolicy(policy)
     }
 
     private func configureGlass() {
@@ -260,7 +302,7 @@ class ChatPanel: NSPanel {
 
     private func positionOnPreferredScreen() {
         let screenFrame = NSScreen.preferred.visibleFrame
-        let step = CGFloat(Self.panels.count - 1).truncatingRemainder(dividingBy: Self.cascadeCount) * Self.cascadeStep
+        let step = CGFloat(Self.windows.count - 1).truncatingRemainder(dividingBy: Self.cascadeCount) * Self.cascadeStep
         let x = (screenFrame.midX - frame.width * 0.5 + step).rounded()
         let y = (screenFrame.midY - frame.height * 0.5 - step).rounded()
         setFrameOrigin(NSPoint(x: min(x, screenFrame.maxX - frame.width), y: max(y, screenFrame.minY)))
@@ -316,26 +358,32 @@ class ChatPanel: NSPanel {
         spinner.isHidden = true
     }
 
+    /// the app only has a menu bar in regular mode, so the way out of floating has to live on the window itself
     private func configureTitlebarAccessory() {
-        let button = NSButton()
-        button.target = self
-        button.action = #selector(copyTranscript)
-        button.image = Self.copyImage
-        button.isBordered = false
-        button.imagePosition = .imageOnly
-        button.contentTintColor = .secondaryLabelColor
-        button.toolTip = NSLocalizedString("Copy transcript (⇧⌘C)", comment: "")
-        button.keyEquivalent = "c"
-        button.keyEquivalentModifierMask = [.command, .shift]
-        button.frame = NSRect(x: 0, y: Self.buttonMargin, width: Self.copyButtonSize.width, height: Self.copyButtonSize.height)
-        button.autoresizingMask = [.minYMargin, .maxYMargin]
+        let copyButton = titlebarButton(NSButton(), #selector(copyTranscript), Self.titlebarButtonSize.width)
+        copyButton.image = Self.copyImage
+        copyButton.contentTintColor = .secondaryLabelColor
+        copyButton.toolTip = NSLocalizedString("Copy transcript (⇧⌘C)", comment: "")
+        copyButton.keyEquivalent = "c"
+        copyButton.keyEquivalentModifierMask = [.command, .shift]
         let container = NSView(frame: NSRect(x: 0, y: 0, width: Self.titlebarAccessoryWidth,
-                                             height: Self.copyButtonSize.height + Self.buttonMargin * 2))
-        container.addSubview(button)
+                                             height: Self.titlebarButtonSize.height + Self.buttonMargin * 2))
+        container.setSubviews([titlebarButton(floatButton, #selector(toggleFloatOnTop(_:)), 0), copyButton])
         let accessory = NSTitlebarAccessoryViewController()
         accessory.view = container
         accessory.layoutAttribute = .right
         addTitlebarAccessoryViewController(accessory)
+    }
+
+    private func titlebarButton(_ button: NSButton, _ action: Selector, _ x: CGFloat) -> NSButton {
+        button.target = self
+        button.action = action
+        button.isBordered = false
+        button.imagePosition = .imageOnly
+        button.frame = NSRect(x: x, y: Self.buttonMargin,
+                              width: Self.titlebarButtonSize.width, height: Self.titlebarButtonSize.height)
+        button.autoresizingMask = [.minYMargin, .maxYMargin]
+        return button
     }
 
     private func updateTitle(_ text: String) {
@@ -383,7 +431,7 @@ class ChatPanel: NSPanel {
     }
 }
 
-extension ChatPanel: NSWindowDelegate {
+extension ChatWindow: NSWindowDelegate {
     func windowDidResize(_ notification: Notification) {
         refreshTitle()
     }
@@ -393,7 +441,8 @@ extension ChatPanel: NSWindowDelegate {
         session.cancel()
         transcriptView.teardown()
         NotificationCenter.default.removeObserver(self)
-        Self.panels.removeAll { $0 === self }
+        Self.windows.removeAll { $0 === self }
+        Self.refreshActivationPolicy()
     }
 }
 

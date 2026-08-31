@@ -10,7 +10,7 @@
 		CA7000000000000000000101 /* LLMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000001 /* LLMClient.swift */; };
 		CA7000000000000000000102 /* LLMKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000002 /* LLMKeychain.swift */; };
 		CA7000000000000000000103 /* ChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000003 /* ChatSession.swift */; };
-		CA7000000000000000000104 /* ChatPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000004 /* ChatPanel.swift */; };
+		CA7000000000000000000104 /* ChatWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000004 /* ChatWindow.swift */; };
 		CA7000000000000000000105 /* ChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000005 /* ChatMessageView.swift */; };
 		CA7000000000000000000106 /* ChatTranscriptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000006 /* ChatTranscriptView.swift */; };
 		CA7000000000000000000107 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7000000000000000000007 /* ChatComposerView.swift */; };
@@ -324,7 +324,7 @@
 		CA7000000000000000000001 /* LLMClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LLMClient.swift; sourceTree = "<group>"; };
 		CA7000000000000000000002 /* LLMKeychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LLMKeychain.swift; sourceTree = "<group>"; };
 		CA7000000000000000000003 /* ChatSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatSession.swift; sourceTree = "<group>"; };
-		CA7000000000000000000004 /* ChatPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatPanel.swift; sourceTree = "<group>"; };
+		CA7000000000000000000004 /* ChatWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatWindow.swift; sourceTree = "<group>"; };
 		CA7000000000000000000005 /* ChatMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageView.swift; sourceTree = "<group>"; };
 		CA7000000000000000000006 /* ChatTranscriptView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTranscriptView.swift; sourceTree = "<group>"; };
 		CA7000000000000000000007 /* ChatComposerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
@@ -597,7 +597,7 @@
 		CA70000000000000000000A2 /* chat */ = {
 			isa = PBXGroup;
 			children = (
-				CA7000000000000000000004 /* ChatPanel.swift */,
+				CA7000000000000000000004 /* ChatWindow.swift */,
 				CA7000000000000000000005 /* ChatMessageView.swift */,
 				CA7000000000000000000006 /* ChatTranscriptView.swift */,
 				CA7000000000000000000007 /* ChatComposerView.swift */,
@@ -1694,7 +1694,7 @@
 				CA7000000000000000000101 /* LLMClient.swift in Sources */,
 				CA7000000000000000000102 /* LLMKeychain.swift in Sources */,
 				CA7000000000000000000103 /* ChatSession.swift in Sources */,
-				CA7000000000000000000104 /* ChatPanel.swift in Sources */,
+				CA7000000000000000000104 /* ChatWindow.swift in Sources */,
 				CA7000000000000000000105 /* ChatMessageView.swift in Sources */,
 				CA7000000000000000000106 /* ChatTranscriptView.swift in Sources */,
 				CA7000000000000000000107 /* ChatComposerView.swift in Sources */,

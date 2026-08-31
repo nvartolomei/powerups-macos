@@ -111,7 +111,7 @@ class Launcher {
     private static func prompt(_ query: String) {
         Logger.info { query }
         hide()
-        ChatPanel.start(query)
+        ChatWindow.start(query)
     }
 
     private static func search(_ query: String) {

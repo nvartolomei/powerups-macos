@@ -397,7 +397,10 @@ extension App: NSApplicationDelegate {
         SystemPermissions.ensurePermissionsAreGranted()
     }
 
+    /// with a chat window in regular mode the app has a Dock icon, and clicking it should raise that window rather
+    /// than pop the settings on top of it
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        guard !flag else { return true }
         App.showSettingsWindow()
         return true
     }
