@@ -60,11 +60,13 @@ class ChatComposerView: NSTextView {
 
     func heightThatFits(_ width: CGFloat) -> CGFloat {
         guard let container = textContainer, let manager = layoutManager else { return 0 }
-        container.size = NSSize(width: max(1, width), height: CGFloat.greatestFiniteMagnitude)
+        let containerWidth = max(1, width)
+        container.size = NSSize(width: containerWidth, height: CGFloat.greatestFiniteMagnitude)
         manager.ensureLayout(for: container)
         let lineHeight = manager.defaultLineHeight(for: ChatMarkdown.bodyFont)
-        let used = ceil(manager.usedRect(for: container).height)
-        return min(max(used, lineHeight), lineHeight * CGFloat(Self.maximumLines)).rounded(.up)
+        let natural = max(ceil(manager.usedRect(for: container).height), lineHeight)
+        setFrameSize(NSSize(width: containerWidth, height: natural))
+        return min(natural, lineHeight * CGFloat(Self.maximumLines)).rounded(.up)
     }
 
     override func doCommand(by selector: Selector) {
