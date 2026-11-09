@@ -18,7 +18,7 @@ class Applications {
     }
 
     static func addInitialRunningApplications() {
-        addRunningApplications(NSWorkspace.shared.runningApplications, false)
+        addRunningApplications(NSWorkspace.shared.runningApplications)
     }
 
     static func manuallyRefreshAllWindows() {
@@ -131,7 +131,7 @@ class Applications {
         }
     }
 
-    static func addRunningApplications(_ runningApps: [NSRunningApplication], _ needToVerifyFrontmostPid: Bool) {
+    static func addRunningApplications(_ runningApps: [NSRunningApplication]) {
         runningApps.forEach {
             let bundleIdentifier = $0.bundleIdentifier
             let processIdentifier = $0.processIdentifier
@@ -140,7 +140,7 @@ class Applications {
             }
             // com.apple.universalcontrol always fails subscribeToNotification. We blacklist it to save resources on everyone's machines
             if bundleIdentifier != "com.apple.universalcontrol" {
-                findOrCreate(processIdentifier, needToVerifyFrontmostPid)
+                findOrCreate($0)
             }
         }
     }
@@ -189,7 +189,7 @@ class Applications {
     static func refreshBadges_(_ items: [(URL?, String?)]) {
         Windows.list.enumerated().forEach { (i, window) in
             let view = TilesView.recycledViews[i]
-            if let app = findOrCreate(window.application.pid, false) {
+            if let app = findOrCreate(window.application.pid) {
                 if app.runningApplication.activationPolicy == .regular,
                    let matchingItem = (items.first { $0.0 == app.bundleURL }),
                    let label = matchingItem.1 {
@@ -204,15 +204,23 @@ class Applications {
     }
 
     @discardableResult
-    static func findOrCreate(_ pid: pid_t, _ needToVerifyFrontmostPid: Bool) -> Application? {
+    static func findOrCreate(_ pid: pid_t) -> Application? {
         if let app = (list.first { $0.pid == pid }) {
             return app
         }
-        guard let runningApp = NSRunningApplication(processIdentifier: pid) else {
-            Logger.debug { "NSRunningApplication init failed for pid:\(pid)" }
-            return nil
+        return NSWorkspace.shared.runningApplications.first { $0.processIdentifier == pid }.flatMap { findOrCreate($0) }
+    }
+
+    /// we only create apps from NSWorkspace's NSRunningApplication instances
+    /// NSRunningApplication(processIdentifier:) can return nil right after an app launches, even after it checked in with LaunchServices
+    @discardableResult
+    static func findOrCreate(_ runningApp: NSRunningApplication) -> Application? {
+        let pid = runningApp.processIdentifier
+        if let app = (list.first { $0.pid == pid }) {
+            return app
         }
-        guard ApplicationDiscriminator.isActualApplication(pid, runningApp.bundleIdentifier) else {
+        guard pid > 0 && !runningApp.isTerminated,
+              ApplicationDiscriminator.isActualApplication(pid, runningApp.bundleIdentifier) else {
             return nil
         }
         let app = Application(runningApp)

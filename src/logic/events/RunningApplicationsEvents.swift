@@ -14,7 +14,7 @@ class RunningApplicationsEvents {
         let quit = change.oldValue
         if let launched {
             Logger.debug { "launched:\(launched.map { $0.debugId() })" }
-            Applications.addRunningApplications(launched, true)
+            Applications.addRunningApplications(launched)
         }
         if let quit {
             Logger.debug { "quit:\(quit.map { $0.debugId() })" }

@@ -41,7 +41,7 @@ class AccessibilityEvents {
         let wid = try appFocusedWindow?.cgWindowId()
         DispatchQueue.main.async {
             Applications.appListUpdateThrottler.throttleOrProceed(key: "\(pid)") {
-                guard let app = Applications.findOrCreate(pid, false) else { return }
+                guard let app = Applications.findOrCreate(pid) else { return }
                 Logger.info { "\(type) app:\(app.debugId)" }
                 if type == kAXApplicationActivatedNotification {
                     applicationActivated(app, pid, type, appFocusedWindow, wid)
@@ -89,7 +89,7 @@ class AccessibilityEvents {
         let tabSiblingTitles = isSelf ? nil : TabGroup.extractTabTitles(a.children)
         DispatchQueue.main.async {
             Applications.windowListUpdateThrottler.throttleOrProceed(key: "\(wid)") {
-                guard let app = Applications.findOrCreate(pid, false) else { return }
+                guard let app = Applications.findOrCreate(pid) else { return }
                 Logger.info { "\(type) wid:\(wid) app:\(app.debugId)" }
                 let findOrCreate = Windows.findOrCreate(element, wid, app, level, a.title, a.subrole, a.role, a.size, a.position, a.isFullscreen, a.isMinimized)
                 guard let window = findOrCreate.0 else {
