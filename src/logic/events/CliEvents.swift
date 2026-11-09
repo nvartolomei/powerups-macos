@@ -74,6 +74,9 @@ class CliServer {
                 }
             )
         }
+        if rawValue == "--debug-apps" {
+            return debugApps()
+        }
         if rawValue.hasPrefix("--focus="),
            let id = CGWindowID(rawValue.dropFirst("--focus=".count)), let window = (Windows.list.first { $0.cgWindowId == id }) {
             window.focus()
@@ -90,6 +93,55 @@ class CliServer {
             return noOutput
         }
         return error
+    }
+
+    private static func debugApps() -> JsonDebugApps {
+        let knownPids = Set(Applications.list.map { $0.pid })
+        let missing = NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular && !knownPids.contains($0.processIdentifier) }
+            .map { $0.debugId() }
+        return JsonDebugApps(apps: Applications.list.map(debugApp), regularAppsMissingFromList: missing)
+    }
+
+    private static func debugApp(_ app: Application) -> JsonDebugApp {
+        let runningApp = app.runningApplication
+        let windows = Windows.list.filter { $0.application === app }
+        return JsonDebugApp(
+            debugId: app.debugId,
+            pid: app.pid,
+            runningAppPid: runningApp.processIdentifier,
+            activationPolicy: runningApp.activationPolicy.rawValue,
+            isTerminated: runningApp.isTerminated,
+            isFinishedLaunching: runningApp.isFinishedLaunching,
+            isReallyFinishedLaunching: app.isReallyFinishedLaunching,
+            hasAxUiElement: app.axUiElement != nil,
+            hasAxObserver: app.axObserver != nil,
+            windows: windows.filter { !$0.isWindowlessApp }.compactMap { $0.cgWindowId },
+            hasWindowlessEntry: windows.contains { $0.isWindowlessApp },
+            pidKey: AXCallScheduler.shared.debugState("pid-\(app.pid)", app.pid),
+            subscriptionKey: AXCallScheduler.shared.debugState("sub-app-\(app.pid)", app.pid)
+        )
+    }
+
+    private struct JsonDebugApps: Codable {
+        var apps: [JsonDebugApp]
+        var regularAppsMissingFromList: [String]
+    }
+
+    private struct JsonDebugApp: Codable {
+        var debugId: String
+        var pid: pid_t
+        var runningAppPid: pid_t
+        var activationPolicy: Int
+        var isTerminated: Bool
+        var isFinishedLaunching: Bool
+        var isReallyFinishedLaunching: Bool
+        var hasAxUiElement: Bool
+        var hasAxObserver: Bool
+        var windows: [CGWindowID]
+        var hasWindowlessEntry: Bool
+        var pidKey: String?
+        var subscriptionKey: String?
     }
 
     private struct JsonWindowList: Codable {
@@ -128,7 +180,7 @@ class CliClient {
     static func detectCommand() -> String? {
         let args = CommandLine.arguments
         if args.count == 2 && !args[1].starts(with: "--logs=") {
-            if args[1] == "--list" || args[1] == "--detailed-list" || args[1].hasPrefix("--focus=") || args[1].hasPrefix("--focusUsingLastFocusOrder=") || args[1].hasPrefix("--show=") {
+            if args[1] == "--list" || args[1] == "--detailed-list" || args[1] == "--debug-apps" || args[1].hasPrefix("--focus=") || args[1].hasPrefix("--focusUsingLastFocusOrder=") || args[1].hasPrefix("--show=") {
                 return args[1]
             }
         }

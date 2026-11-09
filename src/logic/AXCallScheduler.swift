@@ -94,6 +94,13 @@ class AXCallScheduler {
         lock.unlock()
     }
 
+    func debugState(_ key: String, _ pid: pid_t) -> String? {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let state = keyStates[key] else { return nil }
+        return "\(state.phase) pending:\(state.pendingBlock != nil) retries:\(state.retryCount) cancelRetries:\(state.cancelRetries) unresponsive:\(unresponsivePids.contains(pid))"
+    }
+
     func removeUnresponsivePid(_ pid: pid_t) {
         lock.lock()
         unresponsivePids.remove(pid)
